@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fabi feiert doppelt &mdash; 27. November 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --cream:#FFE8CF; --peach:#FFB68C; --ink:#3B2415; --terracotta:#A83E1E;
+    --dark:#0E0E0E; --dark2:#141414; --chrome:#EAF2FF; --pink:#FF3E9A; --blue:#3E7BFF;
+    --card:#FFFFFF; --line:rgba(59,36,21,0.15);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Inter',sans-serif;color:var(--ink);background:var(--cream);}
+  h1,h2,h3{font-family:'Fraunces',serif;margin:0 0 .3em;}
+  p{margin:0 0 1em;line-height:1.5;}
+  .wrap{max-width:640px;margin:0 auto;padding:0 20px;}
+
+  /* ===== HERO (warm) ===== */
+  .hero{background:linear-gradient(180deg,var(--cream),var(--peach));padding:56px 0 40px;text-align:center;}
+  .ball{width:70px;height:70px;border-radius:50%;margin:0 auto 18px;
+    background:radial-gradient(circle at 35% 30%,#fff,#cbb7f2 45%,#8e77c9 100%);}
+  .hero h1{font-size:clamp(32px,7vw,48px);color:var(--terracotta);font-weight:700;}
+  .hero .date{font-weight:600;color:var(--ink);margin-bottom:28px;}
+  .timecards{display:flex;gap:10px;justify-content:center;max-width:380px;margin:0 auto;}
+  .timecard{flex:1;background:var(--card);border-radius:999px;padding:8px 14px;
+    box-shadow:0 2px 8px rgba(59,36,21,0.08);text-align:center;}
+  .timecard .time{font-weight:700;color:var(--terracotta);font-size:13px;display:block;}
+  .timecard .label{font-size:11px;color:var(--ink);opacity:.6;}
+
+  /* ===== SECTIONS (light) ===== */
+  section.light{padding:40px 0;}
+  section.light h2{font-size:24px;color:var(--terracotta);}
+  .sub{color:var(--ink);opacity:.7;margin-top:-6px;margin-bottom:20px;font-size:15px;}
+
+  .food-groups{display:grid;gap:14px;}
+  .food-group{background:var(--card);border-radius:14px;padding:16px 18px;box-shadow:0 2px 8px rgba(59,36,21,0.06);}
+  .food-group h4{margin:0 0 8px;font-size:15px;text-transform:uppercase;letter-spacing:.04em;color:var(--terracotta);}
+  .food-group ul{list-style:none;margin:0;padding:0;}
+  .food-group li{padding:5px 0;border-bottom:1px solid var(--line);font-size:15px;}
+  .food-group li:last-child{border-bottom:none;}
+  .food-group .empty{opacity:.5;font-style:italic;}
+
+  form{background:var(--card);border-radius:14px;padding:18px;margin-top:16px;
+    box-shadow:0 2px 8px rgba(59,36,21,0.06);display:grid;gap:10px;}
+  label{font-size:13px;font-weight:600;opacity:.75;}
+  input,select{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--line);
+    font-family:'Inter',sans-serif;font-size:15px;background:#fff;color:var(--ink);}
+  button{cursor:pointer;border:none;border-radius:999px;padding:12px 20px;font-weight:600;
+    font-size:15px;font-family:'Inter',sans-serif;}
+  .btn-warm{background:var(--terracotta);color:#fff;}
+  .btn-warm:hover{opacity:.9;}
+  .hint{font-size:12px;opacity:.55;}
+
+  /* ===== TRANSITION ===== */
+  .divider{height:60px;background:linear-gradient(180deg,var(--cream),var(--dark));}
+
+  /* ===== NIGHT SECTION (dark) ===== */
+  .night{background:var(--dark);color:#EDEAE2;padding:10px 0 60px;position:relative;overflow:hidden;}
+  .night .wrap{position:relative;z-index:1;}
+  .glow{position:absolute;border-radius:50%;filter:blur(40px);opacity:.55;z-index:0;}
+  .g1{width:280px;height:280px;background:var(--pink);top:20px;left:-100px;}
+  .g2{width:320px;height:320px;background:var(--blue);top:220px;right:-120px;}
+  .eyebrow{text-align:center;font-size:13px;letter-spacing:.15em;opacity:.6;margin-bottom:2px;}
+  .lichter-aus{text-align:center;font-family:'Fraunces',serif;font-style:italic;color:#ffb3c7;
+    font-size:20px;margin-bottom:6px;}
+  .night h1.chrome{text-align:center;font-size:clamp(28px,7vw,44px);letter-spacing:1px;
+    background:linear-gradient(180deg,#fff,#b9c6d9 45%,#eaf2ff 55%,#8a9dbe);
+    -webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:22px;}
+  .night h2{color:#fff;font-size:22px;}
+  .night .sub{color:#c9c4d8;}
+  .playlist-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
+    border-radius:16px;padding:20px;text-align:center;margin-bottom:22px;}
+  .playlist-card p{color:#D8D3C6;font-size:15px;}
+  .btn-neon{display:inline-block;background:linear-gradient(90deg,var(--pink),var(--blue));
+    color:#fff;text-decoration:none;padding:13px 26px;border-radius:999px;font-weight:600;}
+  .night form{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);box-shadow:none;}
+  .night label{color:#D8D3C6;opacity:.85;}
+  .night input{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;}
+  .night input::placeholder{color:#8b8578;}
+  .btn-neon-sm{background:linear-gradient(90deg,var(--pink),var(--blue));color:#fff;}
+  .song-list{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:8px;}
+  .song-list li{background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 14px;font-size:14px;}
+  .song-list .who{opacity:.55;font-size:12px;}
+
+  footer{text-align:center;padding:24px 20px 40px;color:#9C93C4;font-size:13px;background:var(--dark);}
+
+  @media(max-width:480px){.timecards{flex-direction:column;}}
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="wrap">
+      <div class="ball"></div>
+      <h1>Fabi feiert doppelt</h1>
+      <div class="date">Freitag, 27. November 2026 &middot; bei uns im Partykeller</div>
+      <div class="timecards">
+        <div class="timecard">
+          <span class="time">15:00&ndash;18:00</span>
+          <span class="label">Mini-Disco</span>
+        </div>
+        <div class="timecard">
+          <span class="time">ab 20:00</span>
+          <span class="label">Dance Moves an</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="light">
+    <div class="wrap">
+      <h2>Wer bringt was mit?</h2>
+      <p class="sub">Trag dich ein, damit wir nicht zehnmal Muffins haben &mdash; die Liste ist live für alle sichtbar.</p>
+
+      <div class="food-groups" id="foodGroups"></div>
+
+      <form id="foodForm">
+        <div>
+          <label for="foodName">Dein Name</label>
+          <input id="foodName" type="text" placeholder="z. B. Lisa" required>
+        </div>
+        <div>
+          <label for="foodCategory">Kategorie</label>
+          <select id="foodCategory" required>
+            <option value="">Bitte wählen</option>
+            <option value="Süß">Süß</option>
+            <option value="Herzhaft">Herzhaft</option>
+            <option value="Vegan/Vegetarisch">Vegan/Vegetarisch</option>
+            <option value="Getränke">Getränke</option>
+          </select>
+        </div>
+        <div>
+          <label for="foodItem">Was bringst du mit?</label>
+          <input id="foodItem" type="text" placeholder="z. B. Obstspieße" required>
+        </div>
+        <button type="submit" class="btn-warm">Eintragen</button>
+        <span class="hint" id="foodStatus"></span>
+      </form>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <div class="night">
+    <div class="glow g1"></div>
+    <div class="glow g2"></div>
+    <div class="wrap">
+      <div class="eyebrow">AB 20:00 UHR</div>
+      <div class="lichter-aus">Lichterkinder aus</div>
+      <h1 class="chrome">DANCE MOVES AN</h1>
+
+      <h2>Songwünsche</h2>
+      <p class="sub">Pack deinen Track direkt in unsere Playlist &mdash; oder schreib ihn uns kurz hier rein.</p>
+
+      <div class="playlist-card">
+        <p>Unsere gemeinsame Playlist &mdash; jeder kann live Songs adden:</p>
+        <a class="btn-neon" id="playlistLink" href="#" target="_blank" rel="noopener">Playlist auf Spotify öffnen</a>
+      </div>
+
+      <form id="songForm">
+        <div>
+          <label for="songName">Dein Name</label>
+          <input id="songName" type="text" placeholder="z. B. Tom">
+        </div>
+        <div>
+          <label for="songTitle">Songwunsch (Titel &amp; Interpret)</label>
+          <input id="songTitle" type="text" placeholder="z. B. Calvin Harris &ndash; Summer" required>
+        </div>
+        <button type="submit" class="btn-neon-sm">Wunsch abschicken</button>
+        <span class="hint" id="songStatus" style="color:#9C93C4;"></span>
+      </form>
+
+      <ul class="song-list" id="songList"></ul>
+    </div>
+  </div>
+
+  <footer>bei uns im Partykeller &middot; Familie Plastrotmann</footer>
+
+<script>
+  // ===== TODO: hier eintragen =====
+  const SUPABASE_URL = "https://wqmdjrczvirpmpcyavvs.supabase.co"; // gleiche Instanz wie Happy Cornelius
+  const SUPABASE_ANON_KEY = "DEIN_SUPABASE_ANON_KEY"; // aus index.html / punkte.html kopieren
+  const SPOTIFY_PLAYLIST_URL = "https://open.spotify.com/playlist/DEINE_PLAYLIST_ID";
+  // =================================
+
+  document.getElementById('playlistLink').href = SPOTIFY_PLAYLIST_URL;
+
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  async function listByPrefix(prefix){
+    const { data, error } = await sb
+      .from('storage')
+      .select('*')
+      .like('key', prefix + '%')
+      .order('updated_at', { ascending: true });
+    if(error){ console.error(error); return []; }
+    return data.map(row => ({ ...JSON.parse(row.value), _key: row.key }));
+  }
+
+  async function upsert(key, valueObj){
+    const { error } = await sb
+      .from('storage')
+      .upsert({ key, value: JSON.stringify(valueObj), updated_at: new Date().toISOString() },
+               { onConflict: 'key' });
+    return !error;
+  }
+
+  function uid(){
+    return (crypto.randomUUID ? crypto.randomUUID() : Date.now() + '-' + Math.random());
+  }
+
+  // ---- Fingerfood ----
+  const CATEGORIES = ["Süß","Herzhaft","Vegan/Vegetarisch","Getränke"];
+
+  async function renderFood(){
+    const items = await listByPrefix('party:fingerfood:');
+    const container = document.getElementById('foodGroups');
+    container.innerHTML = '';
+    CATEGORIES.forEach(cat => {
+      const group = items.filter(i => i.category === cat);
+      const div = document.createElement('div');
+      div.className = 'food-group';
+      div.innerHTML = `<h4>${cat}</h4><ul>${
+        group.length
+          ? group.map(g => `<li><strong>${g.item}</strong> &mdash; ${g.name}</li>`).join('')
+          : '<li class="empty">Noch nichts eingetragen</li>'
+      }</ul>`;
+      container.appendChild(div);
+    });
+  }
+
+  document.getElementById('foodForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('foodName').value.trim();
+    const category = document.getElementById('foodCategory').value;
+    const item = document.getElementById('foodItem').value.trim();
+    if(!name || !category || !item) return;
+    const status = document.getElementById('foodStatus');
+    status.textContent = 'Speichert…';
+    const ok = await upsert('party:fingerfood:' + uid(), { name, category, item });
+    status.textContent = ok ? 'Danke! Eingetragen ✓' : 'Hat nicht geklappt, bitte nochmal.';
+    if(ok){ e.target.reset(); renderFood(); }
+  });
+
+  // ---- Songs ----
+  async function renderSongs(){
+    const items = await listByPrefix('party:song:');
+    const list = document.getElementById('songList');
+    list.innerHTML = items.slice().reverse().map(i =>
+      `<li>${i.title}<div class="who">von ${i.name || 'Anonym'}</div></li>`
+    ).join('');
+  }
+
+  document.getElementById('songForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('songName').value.trim();
+    const title = document.getElementById('songTitle').value.trim();
+    if(!title) return;
+    const status = document.getElementById('songStatus');
+    status.textContent = 'Speichert…';
+    const ok = await upsert('party:song:' + uid(), { name, title });
+    status.textContent = ok ? 'Danke! ✓' : 'Hat nicht geklappt, bitte nochmal.';
+    if(ok){ e.target.reset(); renderSongs(); }
+  });
+
+  renderFood();
+  renderSongs();
+</script>
+</body>
+</html>
