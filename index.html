@@ -15,6 +15,7 @@
     --card:#FFFFFF; --line:rgba(59,36,21,0.15);
   }
   *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
   body{margin:0;font-family:'Inter',sans-serif;color:var(--ink);background:var(--cream);}
   h1,h2,h3{font-family:'Fraunces',serif;margin:0 0 .3em;}
   p{margin:0 0 1em;line-height:1.5;}
@@ -28,7 +29,7 @@
   .hero .date{font-weight:600;color:var(--ink);margin-bottom:28px;}
   .timecards{display:flex;gap:10px;justify-content:center;max-width:380px;margin:0 auto;}
   .timecard{flex:1;background:var(--card);border-radius:999px;padding:8px 14px;
-    box-shadow:0 2px 8px rgba(59,36,21,0.08);text-align:center;}
+    box-shadow:0 2px 8px rgba(59,36,21,0.08);text-align:center;text-decoration:none;display:block;}
   .timecard .time{font-weight:700;color:var(--terracotta);font-size:13px;display:block;}
   .timecard .label{font-size:11px;color:var(--ink);opacity:.6;}
 
@@ -55,6 +56,12 @@
   .btn-warm{background:var(--terracotta);color:#fff;}
   .btn-warm:hover{opacity:.9;}
   .hint{font-size:12px;opacity:.55;}
+
+  .playlist-card-light{background:var(--card);border-radius:14px;padding:20px;text-align:center;
+    box-shadow:0 2px 8px rgba(59,36,21,0.06);margin-top:14px;}
+  .playlist-card-light p{font-size:14px;opacity:.75;}
+  .btn-outline-warm{display:inline-block;background:transparent;border:2px solid var(--terracotta);
+    color:var(--terracotta);text-decoration:none;padding:11px 24px;border-radius:999px;font-weight:600;}
 
   /* ===== TRANSITION ===== */
   .divider{height:60px;background:linear-gradient(180deg,var(--cream),var(--dark));}
@@ -87,6 +94,23 @@
   .song-list li{background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 14px;font-size:14px;}
   .song-list .who{opacity:.55;font-size:12px;}
 
+  .pizza-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:6px;}
+  .pizza-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
+    border-radius:14px;padding:14px;text-align:center;}
+  .pizza-wheel{width:88px;height:88px;border-radius:50%;margin:0 auto 8px;position:relative;
+    background:conic-gradient(#FFC85C calc(var(--fill)*1%), rgba(255,255,255,0.10) 0);}
+  .pizza-wheel::after{content:'';position:absolute;inset:0;border-radius:50%;
+    background:repeating-conic-gradient(rgba(0,0,0,0.35) 0deg 1.5deg, transparent 1.5deg 45deg);}
+  .pizza-badge{position:absolute;top:-6px;right:-6px;background:linear-gradient(90deg,var(--pink),var(--blue));
+    color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;z-index:1;}
+  .pizza-card .pname{font-weight:600;font-size:15px;margin-bottom:2px;}
+  .pizza-card .pcount{font-size:12px;opacity:.6;margin-bottom:10px;}
+  .pizza-card button{width:100%;padding:9px;font-size:13px;
+    background:linear-gradient(90deg,var(--pink),var(--blue));color:#fff;}
+  .pizza-card button.btn-undo-card{background:transparent;border:1px solid rgba(255,255,255,0.3);color:#EDEAE2;}
+  .pizza-wish{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
+    border-radius:14px;padding:16px;margin-top:16px;display:grid;gap:10px;}
+
   footer{text-align:center;padding:24px 20px 40px;color:#9C93C4;font-size:13px;background:var(--dark);}
 
   @media(max-width:480px){.timecards{flex-direction:column;}}
@@ -100,19 +124,19 @@
       <h1>Fabi feiert doppelt</h1>
       <div class="date">Freitag, 27. November 2026 &middot; bei uns im Partykeller</div>
       <div class="timecards">
-        <div class="timecard">
+        <a href="#foodSection" class="timecard">
           <span class="time">15:00&ndash;18:00</span>
           <span class="label">Mini-Disco</span>
-        </div>
-        <div class="timecard">
+        </a>
+        <a href="#nightPlaylist" class="timecard">
           <span class="time">ab 20:00</span>
           <span class="label">Dance Moves an</span>
-        </div>
+        </a>
       </div>
     </div>
   </div>
 
-  <section class="light">
+  <section class="light" id="foodSection">
     <div class="wrap">
       <h2>Wer bringt was mit?</h2>
       <p class="sub">Trag dich ein, damit wir nicht zehnmal Muffins haben &mdash; die Liste ist live für alle sichtbar.</p>
@@ -141,6 +165,11 @@
         <button type="submit" class="btn-warm">Eintragen</button>
         <span class="hint" id="foodStatus"></span>
       </form>
+
+      <div class="playlist-card-light">
+        <p>Für die Mini-Disco haben wir eine Kids-Playlist &mdash; Wünsche gerne direkt dort adden:</p>
+        <a class="btn-outline-warm" id="kidsPlaylistLink" href="#" target="_blank" rel="noopener">Kids-Playlist öffnen</a>
+      </div>
     </div>
   </section>
 
@@ -157,16 +186,12 @@
       <h2>Songwünsche</h2>
       <p class="sub">Pack deinen Track direkt in unsere Playlist &mdash; oder schreib ihn uns kurz hier rein.</p>
 
-      <div class="playlist-card">
+      <div class="playlist-card" id="nightPlaylist">
         <p>Unsere gemeinsame Playlist &mdash; jeder kann live Songs adden:</p>
         <a class="btn-neon" id="playlistLink" href="#" target="_blank" rel="noopener">Playlist auf Spotify öffnen</a>
       </div>
 
       <form id="songForm">
-        <div>
-          <label for="songName">Dein Name</label>
-          <input id="songName" type="text" placeholder="z. B. Tom">
-        </div>
         <div>
           <label for="songTitle">Songwunsch (Titel &amp; Interpret)</label>
           <input id="songTitle" type="text" placeholder="z. B. Calvin Harris &ndash; Summer" required>
@@ -176,6 +201,22 @@
       </form>
 
       <ul class="song-list" id="songList"></ul>
+
+      <h2 style="margin-top:34px;">Pizza-Bestellung</h2>
+      <p class="sub">Ein Klick = 2 Stück für dich. Bei jeder Sorte kannst du einmal mitmachen &mdash; falls du dich verklickst, in der Kachel rückgängig machen.</p>
+
+      <label for="pizzaName">Dein Name</label>
+      <input id="pizzaName" type="text" placeholder="z. B. Nina" style="margin-bottom:14px;">
+
+      <div class="pizza-grid" id="pizzaGrid"></div>
+
+      <div class="pizza-wish">
+        <label for="pizzaWishText">Eigener Pizza-Vorschlag</label>
+        <input id="pizzaWishText" type="text" placeholder="z. B. Pizza Hawaii">
+        <button type="button" id="pizzaWishBtn" class="btn-neon-sm">Vorschlag senden</button>
+        <span class="hint" id="pizzaWishStatus" style="color:#9C93C4;"></span>
+      </div>
+      <ul class="song-list" id="pizzaWishList"></ul>
     </div>
   </div>
 
@@ -184,11 +225,13 @@
 <script>
   // ===== TODO: hier eintragen =====
   const SUPABASE_URL = "https://wqmdjrczvirpmpcyavvs.supabase.co"; // gleiche Instanz wie Happy Cornelius
-  const SUPABASE_ANON_KEY = "sb_publishable_Ck-GOya77QX93-dLxTYuYw_Ldb8VkAv"; // aus index.html / punkte.html kopieren
-  const SPOTIFY_PLAYLIST_URL = "https://open.spotify.com/playlist/6OGiIFaTT8jClmO2IZWFBi?si=onBdX-XCRBK9IG5JsX9_DQ&utm_source=copy-link&pi=yLN9HlanSYKzM";
+  const SUPABASE_ANON_KEY = "DEIN_SUPABASE_ANON_KEY"; // aus index.html / punkte.html kopieren
+  const SPOTIFY_PLAYLIST_URL = "https://open.spotify.com/playlist/DEINE_PLAYLIST_ID";
+  const KIDS_PLAYLIST_URL = "https://open.spotify.com/playlist/DEINE_KIDS_PLAYLIST_ID";
   // =================================
 
   document.getElementById('playlistLink').href = SPOTIFY_PLAYLIST_URL;
+  document.getElementById('kidsPlaylistLink').href = KIDS_PLAYLIST_URL;
 
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -252,24 +295,101 @@
     const items = await listByPrefix('party:song:');
     const list = document.getElementById('songList');
     list.innerHTML = items.slice().reverse().map(i =>
-      `<li>${i.title}<div class="who">von ${i.name || 'Anonym'}</div></li>`
+      `<li>${i.title}</li>`
     ).join('');
   }
 
   document.getElementById('songForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const name = document.getElementById('songName').value.trim();
     const title = document.getElementById('songTitle').value.trim();
     if(!title) return;
     const status = document.getElementById('songStatus');
     status.textContent = 'Speichert…';
-    const ok = await upsert('party:song:' + uid(), { name, title });
+    const ok = await upsert('party:song:' + uid(), { title });
     status.textContent = ok ? 'Danke! ✓' : 'Hat nicht geklappt, bitte nochmal.';
     if(ok){ e.target.reset(); renderSongs(); }
   });
 
   renderFood();
   renderSongs();
+
+  // ---- Pizza ----
+  const PIZZAS = ["Margherita","Thunfisch","Döner","Veggie"];
+  let myPizzaOrders = JSON.parse(localStorage.getItem('myPizzaOrders') || '{}'); // {pizza: key}
+
+  async function renderPizza(){
+    const items = await listByPrefix('party:pizza:');
+    const grid = document.getElementById('pizzaGrid');
+    grid.innerHTML = '';
+    PIZZAS.forEach(pizza => {
+      const count = items.filter(i => i.pizza === pizza).length;
+      const totalSlices = count * 2;
+      const wholePizzas = Math.floor(totalSlices / 8);
+      const remainder = totalSlices % 8;
+      const pct = totalSlices > 0 && remainder === 0 ? 100 : (remainder / 8 * 100);
+      const mine = myPizzaOrders[pizza];
+      const div = document.createElement('div');
+      div.className = 'pizza-card';
+      div.innerHTML = `
+        <div class="pizza-wheel" style="--fill:${pct}">${wholePizzas > 0 ? `<span class="pizza-badge">&times;${wholePizzas}</span>` : ''}</div>
+        <div class="pname">${pizza}</div>
+        <div class="pcount">${remainder}/8 Stück${wholePizzas > 0 ? ' im Rest' : ''}</div>
+        ${mine
+          ? `<button type="button" class="btn-undo-card" data-pizza="${pizza}" data-mode="undo">Rückgängig</button>`
+          : `<button type="button" data-pizza="${pizza}" data-mode="order">+2 Stück für mich</button>`}
+      `;
+      grid.appendChild(div);
+    });
+    grid.querySelectorAll('button[data-pizza]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if(btn.dataset.mode === 'undo') undoPizza(btn.dataset.pizza);
+        else orderPizza(btn.dataset.pizza);
+      });
+    });
+  }
+
+  async function orderPizza(pizza){
+    const name = document.getElementById('pizzaName').value.trim();
+    if(!name){ alert('Bitte trag zuerst deinen Namen ein.'); return; }
+    const key = 'party:pizza:' + uid();
+    const ok = await upsert(key, { name, pizza });
+    if(ok){
+      myPizzaOrders[pizza] = key;
+      localStorage.setItem('myPizzaOrders', JSON.stringify(myPizzaOrders));
+      renderPizza();
+    }
+  }
+
+  async function undoPizza(pizza){
+    const key = myPizzaOrders[pizza];
+    if(!key) return;
+    await sb.from('storage').delete().eq('key', key);
+    delete myPizzaOrders[pizza];
+    localStorage.setItem('myPizzaOrders', JSON.stringify(myPizzaOrders));
+    renderPizza();
+  }
+
+  async function renderPizzaWishes(){
+    const items = await listByPrefix('party:pizzawish:');
+    const list = document.getElementById('pizzaWishList');
+    list.innerHTML = items.slice().reverse().map(i =>
+      `<li>${i.suggestion}<div class="who">von ${i.name || 'Anonym'}</div></li>`
+    ).join('');
+  }
+
+  document.getElementById('pizzaWishBtn').addEventListener('click', async () => {
+    const name = document.getElementById('pizzaName').value.trim();
+    const suggestion = document.getElementById('pizzaWishText').value.trim();
+    if(!suggestion) return;
+    const status = document.getElementById('pizzaWishStatus');
+    status.textContent = 'Speichert…';
+    const ok = await upsert('party:pizzawish:' + uid(), { name: name || 'Anonym', suggestion });
+    status.textContent = ok ? 'Danke! ✓' : 'Hat nicht geklappt.';
+    if(ok){ document.getElementById('pizzaWishText').value = ''; renderPizzaWishes(); }
+  });
+
+  renderPizza();
+  renderPizzaWishes();
 </script>
 </body>
 </html>
