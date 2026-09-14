@@ -12,10 +12,24 @@
   :root{
     --cream:#FFE8CF; --peach:#FFB68C; --ink:#3B2415; --terracotta:#A83E1E;
     --dark:#0E0E0E; --dark2:#141414; --chrome:#EAF2FF; --pink:#FF3E9A; --blue:#3E7BFF;
-    --card:#FFFFFF; --line:rgba(59,36,21,0.15);
+    --card:#FFFFFF; --line:rgba(59,36,21,0.15); --ease:cubic-bezier(.22,1,.36,1);
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
+  *:focus{outline:none;}
+  input:focus, select:focus, .guest-options input:focus + label, .pizza-options input:focus + label{
+    box-shadow:0 0 0 3px rgba(168,62,30,.25) !important;}
+  button:focus-visible, a:focus-visible{box-shadow:0 0 0 3px rgba(168,62,30,.35);}
+  .night input:focus{box-shadow:0 0 0 3px rgba(255,62,154,.4) !important;}
+  .night button:focus-visible, .night a:focus-visible{box-shadow:0 0 0 3px rgba(255,62,154,.4);}
+
+  ::-webkit-scrollbar{width:10px;}
+  ::-webkit-scrollbar-track{background:var(--cream);}
+  ::-webkit-scrollbar-thumb{background:var(--terracotta);border-radius:10px;}
+  a,button,.food-group,.pizza-card,.timecard,.guest-options label{
+    transition:transform .35s var(--ease), box-shadow .35s var(--ease), opacity .35s var(--ease), background .25s var(--ease);}
+  button{-webkit-tap-highlight-color:transparent;}
+  button:active{transform:scale(.97);}
   body{margin:0;font-family:'Inter',sans-serif;color:var(--ink);background:var(--cream);}
   h1,h2,h3{font-family:'Fraunces',serif;margin:0 0 .3em;}
   p{margin:0 0 1em;line-height:1.5;}
@@ -25,11 +39,13 @@
   .hero{background:linear-gradient(180deg,var(--cream),var(--peach));padding:56px 0 40px;text-align:center;}
   .ball{width:70px;height:70px;border-radius:50%;margin:0 auto 18px;
     background:radial-gradient(circle at 35% 30%,#fff,#cbb7f2 45%,#8e77c9 100%);}
-  .hero h1{font-size:clamp(32px,7vw,48px);color:var(--terracotta);font-weight:700;}
+  .hero h1{font-size:clamp(32px,7vw,48px);color:var(--terracotta);font-weight:700;letter-spacing:-.01em;
+    font-optical-sizing:auto;}
   .hero .date{font-weight:600;color:var(--ink);margin-bottom:28px;}
   .timecards{display:flex;gap:10px;justify-content:center;max-width:380px;margin:0 auto;}
   .timecard{flex:1;background:var(--card);border-radius:999px;padding:8px 14px;
-    box-shadow:0 2px 8px rgba(59,36,21,0.08);text-align:center;text-decoration:none;display:block;}
+    box-shadow:0 1px 2px rgba(59,36,21,.05), 0 6px 16px rgba(59,36,21,.08);text-align:center;text-decoration:none;display:block;}
+  .timecard:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(59,36,21,.06), 0 10px 22px rgba(59,36,21,.12);}
   .timecard .time{font-weight:700;color:var(--terracotta);font-size:13px;display:block;}
   .timecard .label{font-size:11px;color:var(--ink);opacity:.6;}
 
@@ -38,8 +54,30 @@
   section.light h2{font-size:24px;color:var(--terracotta);}
   .sub{color:var(--ink);opacity:.7;margin-top:-6px;margin-bottom:20px;font-size:15px;}
 
+  /* ===== GUEST SECTION (own palette, distinct from Mini-Disco) ===== */
+  .section-guest{position:relative;overflow:hidden;padding:40px 0;
+    background:linear-gradient(135deg,#FFE9F1 0%,#FFF3D6 55%,#E4F0FF 100%);}
+  .section-guest h2{font-size:24px;color:#D93B72;}
+  .section-guest .sub{color:var(--ink);opacity:.7;margin-top:-6px;margin-bottom:20px;font-size:15px;}
+  .section-guest .wrap{position:relative;z-index:1;}
+  .confetti-bg{position:absolute;inset:0;z-index:0;}
+  .confetti-bg .dot{position:absolute;border-radius:50%;opacity:.7;animation:floaty ease-in-out infinite;}
+  .d1{width:14px;height:14px;background:#FF6F91;top:12%;left:8%;animation-duration:6s;animation-delay:0s;}
+  .d2{width:9px;height:9px;background:#3E7BFF;top:20%;right:10%;animation-duration:5s;animation-delay:.6s;}
+  .d3{width:11px;height:11px;background:#FFDA6B;bottom:18%;left:14%;animation-duration:7s;animation-delay:1.2s;}
+  .d4{width:8px;height:8px;background:#8CD9A8;top:55%;right:6%;animation-duration:5.5s;animation-delay:.3s;}
+  .d5{width:10px;height:10px;background:#3E7BFF;bottom:10%;right:22%;animation-duration:6.5s;animation-delay:1.8s;}
+  .d6{width:12px;height:12px;background:#FF6F91;bottom:30%;left:4%;animation-duration:4.5s;animation-delay:.9s;}
+
+  @keyframes floaty{
+    0%,100%{transform:translate(0,0) scale(1);}
+    25%{transform:translate(10px,-14px) scale(1.1);}
+    50%{transform:translate(-6px,-4px) scale(.9);}
+    75%{transform:translate(8px,10px) scale(1.05);}
+  }
+
   .food-groups{display:grid;gap:14px;}
-  .food-group{background:var(--card);border-radius:14px;padding:16px 18px;box-shadow:0 2px 8px rgba(59,36,21,0.06);}
+  .food-group{background:var(--card);border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(59,36,21,.04), 0 6px 18px rgba(59,36,21,.07);}
   .food-group h4{margin:0 0 8px;font-size:15px;text-transform:uppercase;letter-spacing:.04em;color:var(--terracotta);}
   .food-group ul{list-style:none;margin:0;padding:0;}
   .food-group li{padding:5px 0;border-bottom:1px solid var(--line);font-size:15px;}
@@ -54,8 +92,55 @@
   button{cursor:pointer;border:none;border-radius:999px;padding:12px 20px;font-weight:600;
     font-size:15px;font-family:'Inter',sans-serif;}
   .btn-warm{background:var(--terracotta);color:#fff;}
-  .btn-warm:hover{opacity:.9;}
+  .btn-warm:hover{opacity:.92;transform:translateY(-1px);box-shadow:0 6px 16px rgba(168,62,30,.25);}
   .hint{font-size:12px;opacity:.55;}
+
+  .guest-card{background:#fff;border-radius:22px;padding:26px 22px;
+    box-shadow:0 2px 6px rgba(59,36,21,.06), 0 16px 36px rgba(59,36,21,.14);margin-bottom:22px;}
+  .guest-card label{display:block;font-size:13px;font-weight:700;opacity:.6;margin-bottom:8px;
+    text-transform:uppercase;letter-spacing:.03em;}
+  .guest-card input[type="text"]{padding:14px 16px;border-radius:12px;font-size:16px;margin-bottom:20px;}
+  .guest-options{display:flex;gap:10px;margin-bottom:22px;}
+  .guest-options input{display:none;}
+  .guest-options label{flex:1;cursor:pointer;padding:16px 8px;border-radius:16px;
+    border:2px solid var(--line);background:#fff;font-size:14px;font-weight:700;color:var(--ink);
+    text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;transition:all .15s ease;}
+  .guest-options label span{font-size:13px;}
+  .guest-options label .emoji{font-size:24px;}
+  .guest-options input:checked + label{background:linear-gradient(135deg,#FF6F91,#3E7BFF);
+    border-color:transparent;color:#fff;transform:translateY(-2px);
+    box-shadow:0 6px 16px rgba(233,70,126,0.3);}
+  .btn-guest{width:100%;padding:16px;font-size:16px;font-weight:700;border-radius:14px;
+    background:linear-gradient(135deg,#FF6F91,#3E7BFF);color:#fff;box-shadow:0 8px 20px rgba(233,70,126,0.25);}
+  .btn-guest:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(233,70,126,.32);}
+  .guest-card .hint{display:block;text-align:center;margin-top:12px;}
+  .guest-groups{display:grid;gap:16px;margin-top:22px;}
+  .guest-groups .food-group{border-top:5px solid transparent;position:relative;overflow:hidden;
+    padding:20px 22px;border-radius:18px;}
+  .guest-groups .food-group h4{font-size:17px;letter-spacing:0;text-transform:none;margin-bottom:12px;}
+  .guest-groups .food-group ul li{padding:8px 0;font-size:15.5px;}
+  .guest-groups .who{display:flex;align-items:center;}
+  .guest-count{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;
+    margin-left:6px;color:#fff;vertical-align:middle;}
+  .group-nachmittag{border-top-color:#FF6F91;}
+  .group-nachmittag h4{color:#E8467E;}
+  .group-nachmittag .guest-count{background:#FF6F91;}
+  .group-abend{border-top-color:#3E7BFF;}
+  .group-abend h4{color:#2A5FE0;}
+  .group-abend .guest-count{background:#3E7BFF;}
+  .group-beides{border-top:5px solid;border-image:linear-gradient(90deg,#FF6F91,#3E7BFF) 1;}
+  .group-beides h4{background:linear-gradient(90deg,#E8467E,#2A5FE0);-webkit-background-clip:text;
+    background-clip:text;color:transparent;}
+  .group-beides .guest-count{background:linear-gradient(90deg,#FF6F91,#3E7BFF);}
+  .badge-nachmittag{background:#FF6F91;}
+  .badge-abend{background:#3E7BFF;}
+  .badge-beides{background:linear-gradient(90deg,#FF6F91,#3E7BFF);}
+  .guest-avatar{width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;
+    justify-content:center;font-size:12px;font-weight:700;color:#fff;margin-right:10px;flex-shrink:0;}
+  .guest-confirm{background:#fff;border-radius:18px;padding:18px 22px;display:flex;
+    justify-content:space-between;align-items:center;gap:12px;box-shadow:0 2px 6px rgba(59,36,21,.05), 0 12px 26px rgba(59,36,21,.1);
+    flex-wrap:wrap;font-size:15px;margin-bottom:22px;}
+  .guest-confirm .btn-outline-warm{padding:9px 18px;font-size:13px;}
 
   .playlist-card-light{background:var(--card);border-radius:14px;padding:20px;text-align:center;
     box-shadow:0 2px 8px rgba(59,36,21,0.06);margin-top:14px;}
@@ -65,12 +150,18 @@
   .kids-song-list li{background:var(--cream);border-radius:8px;padding:8px 12px;font-size:14px;}
   .btn-outline-warm{display:inline-block;background:transparent;border:2px solid var(--terracotta);
     color:var(--terracotta);text-decoration:none;padding:11px 24px;border-radius:999px;font-weight:600;}
+  .btn-outline-warm:hover{background:var(--terracotta);color:#fff;}
 
   /* ===== TRANSITION ===== */
-  .divider{height:60px;background:linear-gradient(180deg,var(--cream),var(--dark));}
+  .divider{height:70px;background:var(--cream);position:relative;overflow:hidden;}
+  .divider svg{position:absolute;bottom:-1px;left:0;width:200%;height:100%;
+    animation:waveScroll 9s linear infinite;}
+  @keyframes waveScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 
   /* ===== NIGHT SECTION (dark) ===== */
   .night{background:var(--dark);color:#EDEAE2;padding:10px 0 60px;position:relative;overflow:hidden;}
+  .night::before{content:'';position:absolute;inset:0;z-index:0;opacity:.05;pointer-events:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");}
   .night .wrap{position:relative;z-index:1;}
   .glow{position:absolute;border-radius:50%;filter:blur(40px);opacity:.55;z-index:0;}
   .g1{width:280px;height:280px;background:var(--pink);top:20px;left:-100px;}
@@ -88,11 +179,13 @@
   .playlist-card p{color:#D8D3C6;font-size:15px;}
   .btn-neon{display:inline-block;background:linear-gradient(90deg,var(--pink),var(--blue));
     color:#fff;text-decoration:none;padding:13px 26px;border-radius:999px;font-weight:600;}
+  .btn-neon:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(255,62,154,.3);}
   .night form{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);box-shadow:none;}
   .night label{color:#D8D3C6;opacity:.85;}
   .night input{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;}
   .night input::placeholder{color:#8b8578;}
   .btn-neon-sm{background:linear-gradient(90deg,var(--pink),var(--blue));color:#fff;}
+  .btn-neon-sm:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(255,62,154,.28);}
   .song-list{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:8px;}
   .song-list li{background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 14px;font-size:14px;}
   .song-list .who{opacity:.55;font-size:12px;}
@@ -100,6 +193,7 @@
   .pizza-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:6px;}
   .pizza-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
     border-radius:14px;padding:14px;text-align:center;}
+  .pizza-card:hover{background:rgba(255,255,255,0.09);}
   .pizza-wheel{width:88px;height:88px;border-radius:50%;margin:0 auto 8px;position:relative;
     background:conic-gradient(#FFC85C calc(var(--fill)*1%), rgba(255,255,255,0.10) 0);}
   .pizza-wheel::after{content:'';position:absolute;inset:0;border-radius:50%;
@@ -117,6 +211,18 @@
   footer{text-align:center;padding:24px 20px 40px;color:#9C93C4;font-size:13px;background:var(--dark);}
 
   @media(max-width:480px){.timecards{flex-direction:column;}}
+
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s var(--ease), transform .7s var(--ease);}
+  .reveal.is-visible{opacity:1;transform:translateY(0);}
+
+  .reveal .food-group, .reveal .pizza-card{opacity:0;}
+  .reveal.is-visible .food-group, .reveal.is-visible .pizza-card{
+    animation:fadeUp .6s var(--ease) both;}
+  .reveal.is-visible .food-group:nth-child(1), .reveal.is-visible .pizza-card:nth-child(1){animation-delay:.05s;}
+  .reveal.is-visible .food-group:nth-child(2), .reveal.is-visible .pizza-card:nth-child(2){animation-delay:.15s;}
+  .reveal.is-visible .food-group:nth-child(3), .reveal.is-visible .pizza-card:nth-child(3){animation-delay:.25s;}
+  .reveal.is-visible .food-group:nth-child(4), .reveal.is-visible .pizza-card:nth-child(4){animation-delay:.35s;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 </style>
 </head>
 <body>
@@ -139,12 +245,50 @@
     </div>
   </div>
 
+  <section class="section-guest">
+    <div class="confetti-bg">
+      <span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span>
+      <span class="dot d4"></span><span class="dot d5"></span><span class="dot d6"></span>
+    </div>
+    <div class="wrap">
+      <h2>Wer kommt?</h2>
+      <p class="sub">Trag dich in die Gästeliste ein &mdash; kommst du nachmittags, abends oder zu beidem?</p>
+
+      <div class="guest-card reveal" id="guestFormWrap">
+        <label for="guestName">Dein Name</label>
+        <input id="guestName" type="text" placeholder="z. B. Fabian">
+
+        <div class="guest-options" id="guestOptions">
+          <input type="radio" name="guestWhen" id="gw1" value="nachmittag">
+          <label for="gw1"><span class="emoji">&#9728;&#65039;</span><span>Nachmittag</span></label>
+          <input type="radio" name="guestWhen" id="gw2" value="abend">
+          <label for="gw2"><span class="emoji">&#127769;</span><span>Abend</span></label>
+          <input type="radio" name="guestWhen" id="gw3" value="beides">
+          <label for="gw3"><span class="emoji">&#10024;</span><span>Beides</span></label>
+        </div>
+
+        <button type="button" id="guestSubmit" class="btn-guest">Ich bin dabei!</button>
+        <span class="hint" id="guestStatus"></span>
+      </div>
+
+      <div id="guestConfirm" class="guest-confirm" style="display:none;">
+        <span>Du bist eingetragen als <strong id="guestConfirmName"></strong> &middot; <span id="guestConfirmWhen"></span></span>
+        <span style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" id="guestCalendarBtn" class="btn-outline-warm">In Kalender eintragen</button>
+          <button type="button" id="guestEdit" class="btn-outline-warm">Ändern</button>
+        </span>
+      </div>
+
+      <div class="food-groups guest-groups reveal" id="guestList"></div>
+    </div>
+  </section>
+
   <section class="light" id="foodSection">
     <div class="wrap">
       <h2>Wer bringt was mit?</h2>
       <p class="sub">Trag dich ein, damit wir nicht zehnmal Muffins haben &mdash; die Liste ist live für alle sichtbar.</p>
 
-      <div class="food-groups" id="foodGroups"></div>
+      <div class="food-groups reveal" id="foodGroups"></div>
 
       <form id="foodForm">
         <div>
@@ -169,7 +313,7 @@
         <span class="hint" id="foodStatus"></span>
       </form>
 
-      <div class="playlist-card-light">
+      <div class="playlist-card-light reveal">
         <p>Für die Mini-Disco haben wir eine Kids-Playlist &mdash; Wünsche gerne direkt dort adden:</p>
         <a class="btn-outline-warm" id="kidsPlaylistLink" href="#" target="_blank" rel="noopener">Kids-Playlist öffnen</a>
 
@@ -183,7 +327,9 @@
     </div>
   </section>
 
-  <div class="divider"></div>
+  <div class="divider">
+    <svg viewBox="0 0 800 60" preserveAspectRatio="none"><path d="M0,30 C100,60 300,0 400,30 C500,60 700,0 800,30 L800,60 L0,60 Z" fill="#0E0E0E"/></svg>
+  </div>
 
   <div class="night">
     <div class="glow g1"></div>
@@ -196,7 +342,7 @@
       <h2>Songwünsche</h2>
       <p class="sub">Pack deinen Track direkt in unsere Playlist &mdash; oder schreib ihn uns kurz hier rein.</p>
 
-      <div class="playlist-card" id="nightPlaylist">
+      <div class="playlist-card reveal" id="nightPlaylist">
         <p>Unsere gemeinsame Playlist &mdash; jeder kann live Songs adden:</p>
         <a class="btn-neon" id="playlistLink" href="#" target="_blank" rel="noopener">Playlist auf Spotify öffnen</a>
       </div>
@@ -218,7 +364,7 @@
       <label for="pizzaName">Dein Name</label>
       <input id="pizzaName" type="text" placeholder="z. B. Nina" style="margin-bottom:14px;">
 
-      <div class="pizza-grid" id="pizzaGrid"></div>
+      <div class="pizza-grid reveal" id="pizzaGrid"></div>
 
       <div class="pizza-wish">
         <label for="pizzaWishText">Eigener Pizza-Vorschlag</label>
@@ -235,9 +381,9 @@
 <script>
   // ===== TODO: hier eintragen =====
   const SUPABASE_URL = "https://wqmdjrczvirpmpcyavvs.supabase.co"; // gleiche Instanz wie Happy Cornelius
-  const SUPABASE_ANON_KEY = "sb_publishable_Ck-GOya77QX93-dLxTYuYw_Ldb8VkAv"; // aus index.html / punkte.html kopieren
-  const SPOTIFY_PLAYLIST_URL = "https://open.spotify.com/playlist/6OGiIFaTT8jClmO2IZWFBi?si=efFyQCoeSKCeBOdMyDy3lg&utm_source=copy-link";
-  const KIDS_PLAYLIST_URL = "https://open.spotify.com/playlist/2SnyXpqvasiZ38VvButbFW?si=w73AKg45T76J4al36SlSWw&utm_source=copy-link&pt=4389caf35c3be4ee1cdc9d3b23d6a19f&pi=RN7d-L0pT2-cm";
+  const SUPABASE_ANON_KEY = "DEIN_SUPABASE_ANON_KEY"; // aus index.html / punkte.html kopieren
+  const SPOTIFY_PLAYLIST_URL = "https://open.spotify.com/playlist/DEINE_PLAYLIST_ID";
+  const KIDS_PLAYLIST_URL = "https://open.spotify.com/playlist/DEINE_KIDS_PLAYLIST_ID";
   // =================================
 
   document.getElementById('playlistLink').href = SPOTIFY_PLAYLIST_URL;
@@ -319,6 +465,133 @@
     status.textContent = ok ? 'Danke! ✓' : 'Hat nicht geklappt, bitte nochmal.';
     if(ok){ e.target.reset(); renderSongs(); }
   });
+
+  // ---- Kalender-Export (.ics) ----
+  function pad(n){ return n.toString().padStart(2, '0'); }
+
+  function dtStampNow(){
+    const d = new Date();
+    return d.getUTCFullYear() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate()) + 'T' +
+           pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + pad(d.getUTCSeconds()) + 'Z';
+  }
+
+  function icsDate(y, mo, d, h, mi){
+    return `${y}${pad(mo)}${pad(d)}T${pad(h)}${pad(mi)}00`;
+  }
+
+  const CALENDAR_RANGES = {
+    nachmittag: { start: [2026,11,27,15,0], end: [2026,11,27,18,0], title: 'Fabi feiert doppelt \u2013 Mini-Disco' },
+    abend:      { start: [2026,11,27,20,0], end: [2026,11,28,0,0],  title: 'Fabi feiert doppelt \u2013 Dance Moves an' },
+    beides:     { start: [2026,11,27,15,0], end: [2026,11,28,0,0],  title: 'Fabi feiert doppelt' }
+  };
+
+  function downloadICS(when){
+    const r = CALENDAR_RANGES[when];
+    if(!r) return;
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Fabi Party//DE',
+      'BEGIN:VEVENT',
+      'UID:' + uid() + '@party.plastrotmann.de',
+      'DTSTAMP:' + dtStampNow(),
+      'DTSTART:' + icsDate(...r.start),
+      'DTEND:' + icsDate(...r.end),
+      'SUMMARY:' + r.title,
+      'LOCATION:bei uns im Partykeller',
+      'DESCRIPTION:Fabi feiert doppelt am 27. November 2026.',
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].join('\r\n');
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'fabi-party.ics';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ---- Gästeliste ----
+  const WHEN_LABEL = { nachmittag:'Nachmittag', abend:'Abend', beides:'Beides' };
+  const WHEN_ORDER = ['nachmittag','abend','beides'];
+  let myGuestEntry = JSON.parse(localStorage.getItem('myGuestEntry') || 'null'); // {key,name,when}
+
+  function initials(name){
+    return name.trim().split(/\s+/).map(w => w[0]).slice(0,2).join('').toUpperCase();
+  }
+
+  async function renderGuests(){
+    const container = document.getElementById('guestList');
+    if(!myGuestEntry){
+      container.innerHTML = '';
+      return;
+    }
+    const items = await listByPrefix('party:guest:');
+    container.innerHTML = '';
+    WHEN_ORDER.forEach(when => {
+      const group = items.filter(i => i.when === when);
+      const div = document.createElement('div');
+      div.className = 'food-group group-' + when;
+      div.innerHTML = `<h4>${WHEN_LABEL[when]} <span class="guest-count">${group.length}</span></h4><ul>${
+        group.length
+          ? group.map(g => `<li><span class="who"><span class="guest-avatar badge-${when}">${initials(g.name)}</span>${g.name}</span></li>`).join('')
+          : '<li class="empty">Noch niemand</li>'
+      }</ul>`;
+      container.appendChild(div);
+    });
+  }
+
+  function updateGuestFormUI(){
+    const wrap = document.getElementById('guestFormWrap');
+    const confirm = document.getElementById('guestConfirm');
+    if(myGuestEntry){
+      wrap.style.display = 'none';
+      confirm.style.display = 'flex';
+      document.getElementById('guestConfirmName').textContent = myGuestEntry.name;
+      document.getElementById('guestConfirmWhen').textContent = WHEN_LABEL[myGuestEntry.when];
+    } else {
+      wrap.style.display = 'block';
+      confirm.style.display = 'none';
+    }
+  }
+
+  document.getElementById('guestSubmit').addEventListener('click', async () => {
+    const name = document.getElementById('guestName').value.trim();
+    const selected = document.querySelector('input[name="guestWhen"]:checked');
+    if(!name || !selected){ alert('Bitte Namen eintragen und auswählen, wann du kommst.'); return; }
+    const status = document.getElementById('guestStatus');
+    status.textContent = 'Speichert…';
+    const key = 'party:guest:' + uid();
+    const when = selected.value;
+    const ok = await upsert(key, { name, when });
+    status.textContent = ok ? 'Danke! ✓' : 'Hat nicht geklappt, bitte nochmal.';
+    if(ok){
+      myGuestEntry = { key, name, when };
+      localStorage.setItem('myGuestEntry', JSON.stringify(myGuestEntry));
+      updateGuestFormUI();
+      renderGuests();
+    }
+  });
+
+  document.getElementById('guestCalendarBtn').addEventListener('click', () => {
+    if(myGuestEntry) downloadICS(myGuestEntry.when);
+  });
+
+  document.getElementById('guestEdit').addEventListener('click', async () => {
+    if(!myGuestEntry) return;
+    await sb.from('storage').delete().eq('key', myGuestEntry.key);
+    myGuestEntry = null;
+    localStorage.removeItem('myGuestEntry');
+    document.getElementById('guestName').value = '';
+    document.querySelectorAll('input[name="guestWhen"]').forEach(r => r.checked = false);
+    document.getElementById('guestStatus').textContent = '';
+    updateGuestFormUI();
+    renderGuests();
+  });
+
+  updateGuestFormUI();
+  renderGuests();
 
   renderFood();
   renderSongs();
@@ -420,6 +693,17 @@
 
   renderPizza();
   renderPizzaWishes();
+
+  // ---- Scroll-Reveal ----
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 </script>
 </body>
 </html>
