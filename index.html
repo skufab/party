@@ -114,12 +114,10 @@
     background:linear-gradient(135deg,#FF6F91,#3E7BFF);color:#fff;box-shadow:0 8px 20px rgba(233,70,126,0.25);}
   .btn-guest:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(233,70,126,.32);}
   .guest-card .hint{display:block;text-align:center;margin-top:12px;}
-  .guest-groups{display:grid;gap:16px;margin-top:22px;}
+  .guest-groups{display:grid;gap:10px;margin-top:16px;}
   .guest-groups .food-group{border-top:5px solid transparent;position:relative;overflow:hidden;
-    padding:20px 22px;border-radius:18px;}
-  .guest-groups .food-group h4{font-size:17px;letter-spacing:0;text-transform:none;margin-bottom:12px;}
-  .guest-groups .food-group ul li{padding:8px 0;font-size:15.5px;}
-  .guest-groups .who{display:flex;align-items:center;}
+    padding:14px 16px;border-radius:16px;}
+  .guest-groups .food-group h4{font-size:15px;letter-spacing:0;text-transform:none;margin-bottom:10px;}
   .guest-count{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;
     margin-left:6px;color:#fff;vertical-align:middle;}
   .group-nachmittag{border-top-color:#FF6F91;}
@@ -135,11 +133,14 @@
   .badge-nachmittag{background:#FF6F91;}
   .badge-abend{background:#3E7BFF;}
   .badge-beides{background:linear-gradient(90deg,#FF6F91,#3E7BFF);}
-  .guest-avatar{width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;
-    justify-content:center;font-size:12px;font-weight:700;color:#fff;margin-right:10px;flex-shrink:0;}
-  .guest-confirm{background:#fff;border-radius:18px;padding:18px 22px;display:flex;
+  .guest-chip-list{display:flex;flex-wrap:wrap;gap:6px;}
+  .guest-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(59,36,21,0.05);
+    padding:5px 12px;border-radius:999px;font-size:13.5px;}
+  .guest-chip .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+  .guest-chip-empty{font-size:13.5px;opacity:.5;font-style:italic;}
+  .guest-confirm{background:#fff;border-radius:16px;padding:14px 18px;display:flex;
     justify-content:space-between;align-items:center;gap:12px;box-shadow:0 2px 6px rgba(59,36,21,.05), 0 12px 26px rgba(59,36,21,.1);
-    flex-wrap:wrap;font-size:15px;margin-bottom:22px;}
+    flex-wrap:wrap;font-size:14px;margin-bottom:16px;}
   .guest-confirm .btn-outline-warm{padding:9px 18px;font-size:13px;}
 
   .playlist-card-light{background:var(--card);border-radius:14px;padding:20px;text-align:center;
@@ -381,9 +382,10 @@
 <script>
   // ===== TODO: hier eintragen =====
   const SUPABASE_URL = "https://wqmdjrczvirpmpcyavvs.supabase.co"; // gleiche Instanz wie Happy Cornelius
-  const SUPABASE_ANON_KEY = "sb_publishable_Ck-GOya77QX93-dLxTYuYw_Ldb8VkAv"; // aus index.html / punkte.html kopieren
-  const SPOTIFY_PLAYLIST_URL = "https://open.spotify.com/playlist/6OGiIFaTT8jClmO2IZWFBi?si=efFyQCoeSKCeBOdMyDy3lg&utm_source=copy-link";
-  const KIDS_PLAYLIST_URL = "https://open.spotify.com/playlist/2SnyXpqvasiZ38VvButbFW?si=w73AKg45T76J4al36SlSWw&utm_source=copy-link&pt=4389caf35c3be4ee1cdc9d3b23d6a19f&pi=RN7d-L0pT2-cm";
+  const SUPABASE_ANON_KEY = "DEIN_SUPABASE_ANON_KEY"; // aus index.html / punkte.html kopieren
+  const SPOTIFY_PLAYLIST_URL = "https://open.spotify.com/playlist/DEINE_PLAYLIST_ID";
+  const KIDS_PLAYLIST_URL = "https://open.spotify.com/playlist/DEINE_KIDS_PLAYLIST_ID";
+  const PARTY_ADDRESS = "EURE STRASSE 12, PLZ ORT"; // hier eure echte Adresse eintragen
   // =================================
 
   document.getElementById('playlistLink').href = SPOTIFY_PLAYLIST_URL;
@@ -498,8 +500,8 @@
       'DTSTART:' + icsDate(...r.start),
       'DTEND:' + icsDate(...r.end),
       'SUMMARY:' + r.title,
-      'LOCATION:bei uns im Partykeller',
-      'DESCRIPTION:Fabi feiert doppelt am 27. November 2026.',
+      'LOCATION:' + PARTY_ADDRESS,
+      'DESCRIPTION:Fabi feiert doppelt am 27. November 2026\\, ' + PARTY_ADDRESS + '.',
       'END:VEVENT',
       'END:VCALENDAR'
     ].join('\r\n');
@@ -517,10 +519,6 @@
   const WHEN_ORDER = ['nachmittag','abend','beides'];
   let myGuestEntry = JSON.parse(localStorage.getItem('myGuestEntry') || 'null'); // {key,name,when}
 
-  function initials(name){
-    return name.trim().split(/\s+/).map(w => w[0]).slice(0,2).join('').toUpperCase();
-  }
-
   async function renderGuests(){
     const container = document.getElementById('guestList');
     if(!myGuestEntry){
@@ -533,11 +531,11 @@
       const group = items.filter(i => i.when === when);
       const div = document.createElement('div');
       div.className = 'food-group group-' + when;
-      div.innerHTML = `<h4>${WHEN_LABEL[when]} <span class="guest-count">${group.length}</span></h4><ul>${
+      div.innerHTML = `<h4>${WHEN_LABEL[when]} <span class="guest-count">${group.length}</span></h4><div class="guest-chip-list">${
         group.length
-          ? group.map(g => `<li><span class="who"><span class="guest-avatar badge-${when}">${initials(g.name)}</span>${g.name}</span></li>`).join('')
-          : '<li class="empty">Noch niemand</li>'
-      }</ul>`;
+          ? group.map(g => `<span class="guest-chip"><span class="dot badge-${when}"></span>${g.name}</span>`).join('')
+          : '<span class="guest-chip-empty">Noch niemand</span>'
+      }</div>`;
       container.appendChild(div);
     });
   }
