@@ -60,6 +60,9 @@
   .playlist-card-light{background:var(--card);border-radius:14px;padding:20px;text-align:center;
     box-shadow:0 2px 8px rgba(59,36,21,0.06);margin-top:14px;}
   .playlist-card-light p{font-size:14px;opacity:.75;}
+  .playlist-card-light form{background:transparent;box-shadow:none;padding:0;margin-top:16px;}
+  .kids-song-list{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:6px;text-align:left;}
+  .kids-song-list li{background:var(--cream);border-radius:8px;padding:8px 12px;font-size:14px;}
   .btn-outline-warm{display:inline-block;background:transparent;border:2px solid var(--terracotta);
     color:var(--terracotta);text-decoration:none;padding:11px 24px;border-radius:999px;font-weight:600;}
 
@@ -169,6 +172,13 @@
       <div class="playlist-card-light">
         <p>Für die Mini-Disco haben wir eine Kids-Playlist &mdash; Wünsche gerne direkt dort adden:</p>
         <a class="btn-outline-warm" id="kidsPlaylistLink" href="#" target="_blank" rel="noopener">Kids-Playlist öffnen</a>
+
+        <form id="kidsSongForm" style="margin-top:16px;box-shadow:none;background:transparent;padding:0;">
+          <input id="kidsSongTitle" type="text" placeholder="Songwunsch (Titel &amp; Interpret)" required>
+          <button type="submit" class="btn-warm">Wunsch abschicken</button>
+          <span class="hint" id="kidsSongStatus"></span>
+        </form>
+        <ul class="kids-song-list" id="kidsSongList"></ul>
       </div>
     </div>
   </section>
@@ -312,6 +322,26 @@
 
   renderFood();
   renderSongs();
+
+  // ---- Kids-Songwünsche ----
+  async function renderKidsSongs(){
+    const items = await listByPrefix('party:kidsong:');
+    const list = document.getElementById('kidsSongList');
+    list.innerHTML = items.slice().reverse().map(i => `<li>${i.title}</li>`).join('');
+  }
+
+  document.getElementById('kidsSongForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const title = document.getElementById('kidsSongTitle').value.trim();
+    if(!title) return;
+    const status = document.getElementById('kidsSongStatus');
+    status.textContent = 'Speichert…';
+    const ok = await upsert('party:kidsong:' + uid(), { title });
+    status.textContent = ok ? 'Danke! ✓' : 'Hat nicht geklappt, bitte nochmal.';
+    if(ok){ e.target.reset(); renderKidsSongs(); }
+  });
+
+  renderKidsSongs();
 
   // ---- Pizza ----
   const PIZZAS = ["Margherita","Thunfisch","Döner","Veggie"];
