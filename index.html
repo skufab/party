@@ -61,19 +61,26 @@
   .section-guest .sub{color:var(--ink);opacity:.7;margin-top:-6px;margin-bottom:20px;font-size:15px;}
   .section-guest .wrap{position:relative;z-index:1;}
   .confetti-bg{position:absolute;inset:0;z-index:0;}
-  .confetti-bg .dot{position:absolute;border-radius:50%;opacity:.7;animation:floaty ease-in-out infinite;}
-  .d1{width:14px;height:14px;background:#FF6F91;top:12%;left:8%;animation-duration:6s;animation-delay:0s;}
-  .d2{width:9px;height:9px;background:#3E7BFF;top:20%;right:10%;animation-duration:5s;animation-delay:.6s;}
-  .d3{width:11px;height:11px;background:#FFDA6B;bottom:18%;left:14%;animation-duration:7s;animation-delay:1.2s;}
-  .d4{width:8px;height:8px;background:#8CD9A8;top:55%;right:6%;animation-duration:5.5s;animation-delay:.3s;}
-  .d5{width:10px;height:10px;background:#3E7BFF;bottom:10%;right:22%;animation-duration:6.5s;animation-delay:1.8s;}
-  .d6{width:12px;height:12px;background:#FF6F91;bottom:30%;left:4%;animation-duration:4.5s;animation-delay:.9s;}
+  .confetti-bg .dot{position:absolute;top:-8%;border-radius:50%;opacity:0;animation:confettiFall linear infinite;}
+  .d1{width:14px;height:14px;background:#FF6F91;left:8%;animation-duration:8s;animation-delay:0s;}
+  .d2{width:9px;height:9px;background:#3E7BFF;right:10%;animation-duration:7s;animation-delay:1.6s;}
+  .d3{width:11px;height:11px;background:#FFDA6B;left:14%;animation-duration:9s;animation-delay:3.2s;}
+  .d4{width:8px;height:8px;background:#8CD9A8;right:6%;animation-duration:6.5s;animation-delay:.8s;}
+  .d5{width:10px;height:10px;background:#3E7BFF;right:22%;animation-duration:8.5s;animation-delay:4.4s;}
+  .d6{width:12px;height:12px;background:#FF6F91;left:4%;animation-duration:6s;animation-delay:2.4s;}
+  .d7{width:10px;height:10px;background:#FFDA6B;left:45%;animation-duration:7.2s;animation-delay:1s;}
+  .d8{width:8px;height:8px;background:#FF6F91;left:30%;animation-duration:8.2s;animation-delay:3.8s;}
+  .d9{width:13px;height:13px;background:#3E7BFF;left:60%;animation-duration:7.8s;animation-delay:2s;}
+  .d10{width:9px;height:9px;background:#8CD9A8;left:38%;animation-duration:6.8s;animation-delay:5s;}
+  .d11{width:11px;height:11px;background:#FFDA6B;right:38%;animation-duration:9.5s;animation-delay:.5s;}
+  .d12{width:7px;height:7px;background:#3E7BFF;right:32%;animation-duration:6.2s;animation-delay:3.5s;}
 
-  @keyframes floaty{
-    0%,100%{transform:translate(0,0) scale(1);}
-    25%{transform:translate(10px,-14px) scale(1.1);}
-    50%{transform:translate(-6px,-4px) scale(.9);}
-    75%{transform:translate(8px,10px) scale(1.05);}
+  @keyframes confettiFall{
+    0%{top:-8%;transform:translateX(0) rotate(0deg);opacity:0;}
+    8%{opacity:.7;}
+    50%{transform:translateX(16px) rotate(180deg);}
+    92%{opacity:.7;}
+    100%{top:108%;transform:translateX(-14px) rotate(360deg);opacity:0;}
   }
 
   .food-groups{display:grid;gap:14px;}
@@ -250,6 +257,8 @@
     <div class="confetti-bg">
       <span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span>
       <span class="dot d4"></span><span class="dot d5"></span><span class="dot d6"></span>
+      <span class="dot d7"></span><span class="dot d8"></span><span class="dot d9"></span>
+      <span class="dot d10"></span><span class="dot d11"></span><span class="dot d12"></span>
     </div>
     <div class="wrap">
       <h2>Wer kommt?</h2>
@@ -294,7 +303,7 @@
       <form id="foodForm">
         <div>
           <label for="foodName">Dein Name</label>
-          <input id="foodName" type="text" placeholder="z. B. Lisa" required>
+          <input id="foodName" type="text" placeholder="z. B. Romi" required>
         </div>
         <div>
           <label for="foodCategory">Kategorie</label>
@@ -363,7 +372,7 @@
       <p class="sub">Ein Klick = 2 Stück für dich. Bei jeder Sorte kannst du einmal mitmachen &mdash; falls du dich verklickst, in der Kachel rückgängig machen.</p>
 
       <label for="pizzaName">Dein Name</label>
-      <input id="pizzaName" type="text" placeholder="z. B. Nina" style="margin-bottom:14px;">
+      <input id="pizzaName" type="text" placeholder="z. B. Romi" style="margin-bottom:14px;">
 
       <div class="pizza-grid reveal" id="pizzaGrid"></div>
 
@@ -382,10 +391,10 @@
 <script>
   // ===== TODO: hier eintragen =====
   const SUPABASE_URL = "https://wqmdjrczvirpmpcyavvs.supabase.co"; // gleiche Instanz wie Happy Cornelius
-  const SUPABASE_ANON_KEY = "sb_publishable_Ck-GOya77QX93-dLxTYuYw_Ldb8VkAv"; // aus index.html / punkte.html kopieren
-  const SPOTIFY_PLAYLIST_URL = "https://open.spotify.com/playlist/6OGiIFaTT8jClmO2IZWFBi?si=efFyQCoeSKCeBOdMyDy3lg&utm_source=copy-link";
-  const KIDS_PLAYLIST_URL = "https://open.spotify.com/playlist/2SnyXpqvasiZ38VvButbFW?si=w73AKg45T76J4al36SlSWw&utm_source=copy-link&pt=4389caf35c3be4ee1cdc9d3b23d6a19f&pi=RN7d-L0pT2-cm";
-  const PARTY_ADDRESS = "Corneliusstr. 62, 51107 Köln"; // hier eure echte Adresse eintragen
+  const SUPABASE_ANON_KEY = "DEIN_SUPABASE_ANON_KEY"; // aus index.html / punkte.html kopieren
+  const SPOTIFY_PLAYLIST_URL = "https://open.spotify.com/playlist/DEINE_PLAYLIST_ID";
+  const KIDS_PLAYLIST_URL = "https://open.spotify.com/playlist/DEINE_KIDS_PLAYLIST_ID";
+  const PARTY_ADDRESS = "EURE STRASSE 12, PLZ ORT"; // hier eure echte Adresse eintragen
   // =================================
 
   document.getElementById('playlistLink').href = SPOTIFY_PLAYLIST_URL;
