@@ -6,7 +6,7 @@
 <title>Fabi feiert doppelt &mdash; 27. November 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
@@ -61,7 +61,8 @@
   .section-guest .sub{color:var(--ink);opacity:.7;margin-top:-6px;margin-bottom:20px;font-size:15px;}
   .section-guest .wrap{position:relative;z-index:1;}
   .confetti-bg{position:absolute;inset:0;z-index:0;}
-  .confetti-bg .dot{position:absolute;top:-8%;border-radius:50%;opacity:0;animation:confettiFall linear infinite;}
+  .confetti-bg .dot{position:absolute;top:-8%;border-radius:50%;opacity:0;
+    animation-name:confettiFall;animation-timing-function:linear;animation-iteration-count:infinite;}
   .d1{width:14px;height:14px;background:#FF6F91;left:8%;animation-duration:8s;animation-delay:0s;}
   .d2{width:9px;height:9px;background:#3E7BFF;right:10%;animation-duration:7s;animation-delay:1.6s;}
   .d3{width:11px;height:11px;background:#FFDA6B;left:14%;animation-duration:9s;animation-delay:3.2s;}
@@ -231,10 +232,153 @@
   .reveal.is-visible .food-group:nth-child(3), .reveal.is-visible .pizza-card:nth-child(3){animation-delay:.25s;}
   .reveal.is-visible .food-group:nth-child(4), .reveal.is-visible .pizza-card:nth-child(4){animation-delay:.35s;}
   @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+  /* ===== COUNTDOWN ===== */
+  .countdown{max-width:380px;margin:26px auto 0;text-align:center;}
+  .cd-label{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--terracotta);margin-bottom:10px;}
+  .cd-boxes{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  .cd-box{background:var(--card);border-radius:14px;padding:10px 4px 8px;
+    box-shadow:0 1px 2px rgba(59,36,21,.05), 0 8px 20px rgba(59,36,21,.09);}
+  .cd-box b{display:block;font-family:'Fraunces',serif;font-size:28px;line-height:1;color:var(--terracotta);font-variant-numeric:tabular-nums;}
+  .cd-box span{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;opacity:.55;margin-top:4px;}
+  .cd-next{margin-top:12px;font-size:13px;opacity:.75;}
+  .cd-next a{color:var(--terracotta);font-weight:700;text-decoration:none;}
+
+  /* ===== PREP (Planungs-Etappen) ===== */
+  .section-prep{padding:44px 0;background:linear-gradient(180deg,#FFF6EA 0%,#FFE8CF 100%);}
+  .section-prep h2{font-size:24px;color:var(--terracotta);}
+  .prep-track{display:flex;align-items:center;margin:4px 0 22px;}
+  .prep-dot{width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid var(--line);flex:none;transition:.4s var(--ease);}
+  .prep-dot.on{background:var(--terracotta);border-color:var(--terracotta);box-shadow:0 0 0 5px rgba(168,62,30,.15);}
+  .prep-line{flex:1;height:2px;background:var(--line);}
+  .prep-line.on{background:var(--terracotta);}
+  .prep-card{background:var(--card);border-radius:16px;padding:18px 18px 16px;margin-bottom:14px;
+    box-shadow:0 1px 2px rgba(59,36,21,.04), 0 8px 22px rgba(59,36,21,.08);position:relative;}
+  .prep-head{display:flex;align-items:center;gap:12px;}
+  .prep-ico{font-size:26px;line-height:1;}
+  .prep-head h3{margin:0;font-size:17px;color:var(--ink);}
+  .prep-head small{display:block;font-size:12px;opacity:.6;margin-top:2px;}
+  .prep-badge{margin-left:auto;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    background:var(--terracotta);color:#fff;border-radius:999px;padding:4px 10px;}
+  .prep-card.locked{background:rgba(255,255,255,.55);box-shadow:none;border:1px dashed var(--line);}
+  .prep-card.locked .prep-head{opacity:.55;}
+  .prep-card.locked .prep-body{display:none;}
+  .prep-lock{display:none;font-size:13px;opacity:.65;margin-top:8px;}
+  .prep-card.locked .prep-lock{display:block;}
+  .prep-body{margin-top:14px;}
+  .prep-body p{margin:0 0 12px;font-size:14px;opacity:.8;}
+  .opt-row{position:relative;margin-bottom:8px;}
+  .opt-btn{width:100%;text-align:left;background:#FFF6EA;border-radius:12px;padding:11px 14px;font-weight:600;
+    color:var(--ink);position:relative;overflow:hidden;display:flex;justify-content:space-between;gap:10px;font-size:14px;}
+  .opt-btn .bar{position:absolute;left:0;top:0;bottom:0;background:rgba(168,62,30,.15);width:0;transition:width .7s var(--ease);}
+  .opt-btn span{position:relative;}
+  .opt-btn.mine{outline:2px solid var(--terracotta);}
+  .prep-list{list-style:none;margin:12px 0 0;padding:0;font-size:14px;}
+  .prep-list li{padding:6px 0;border-bottom:1px solid var(--line);}
+  .prep-list li:last-child{border-bottom:none;}
+  .prep-list .who{opacity:.55;font-size:12px;}
+  .rsvp-choices{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .rsvp-choices button{background:#FFF6EA;color:var(--ink);border-radius:12px;padding:10px 6px;font-size:13px;}
+  .rsvp-choices button.sel{background:var(--terracotta);color:#fff;}
+  .prep-body form{box-shadow:none;background:transparent;padding:0;margin-top:6px;}
+
+  /* ===== APP-TABS ===== */
+  html{scroll-behavior:auto;}
+  body{padding-bottom:92px;transition:background .4s var(--ease);}
+  body[data-tab="abend"]{background:var(--dark);}
+  body[data-tab="gaeste"]{background:#E4F0FF;}
+  body[data-tab="etappen"], body[data-tab="ablauf"]{background:#FFE8CF;}
+  .tab{display:none;}
+  .tab.active{display:block;animation:tabIn .5s var(--ease) both;}
+  @keyframes tabIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  #tab-start .hero{min-height:calc(100svh - 92px);display:flex;align-items:center;justify-content:center;flex-direction:column;}
+  #tab-start .hero .wrap{width:100%;}
+  .tab-foot{text-align:center;font-size:12px;opacity:.55;margin-top:26px;}
+  #tab-gaeste .section-guest, #tab-etappen .section-prep, #tab-mini .light{min-height:calc(100svh - 92px);}
+  #tab-abend .night{min-height:calc(100svh - 160px);}
+
+  .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;justify-content:center;
+    padding:8px 10px calc(8px + env(safe-area-inset-bottom));pointer-events:none;}
+  .tabbar-inner{pointer-events:auto;display:grid;grid-template-columns:repeat(6,1fr);gap:2px;width:100%;max-width:560px;
+    background:rgba(255,255,255,.85);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+    border-radius:24px;padding:6px;box-shadow:0 2px 6px rgba(59,36,21,.08),0 12px 32px rgba(59,36,21,.18);
+    transition:background .4s var(--ease);}
+  .tabbtn{background:transparent;color:var(--ink);padding:7px 2px 6px;border-radius:18px;display:flex;flex-direction:column;
+    align-items:center;gap:3px;font-size:10px;font-weight:600;opacity:.6;position:relative;}
+  .tabbtn i{font-style:normal;font-size:20px;line-height:1;}
+  .tabbtn.active{opacity:1;background:rgba(168,62,30,.12);color:var(--terracotta);}
+  .tabbtn .tdot{position:absolute;top:3px;left:calc(50% + 6px);width:10px;height:10px;border-radius:50%;
+    background:var(--pink);border:2px solid #fff;display:none;}
+  .tabbtn.has-new .tdot{display:block;}
+  body[data-tab="abend"] .tabbar-inner{background:rgba(24,24,24,.88);}
+  body[data-tab="abend"] .tabbtn{color:#EDEAE2;}
+  body[data-tab="abend"] .tabbtn.active{background:rgba(255,62,154,.18);color:var(--pink);}
+  body[data-tab="abend"] .tabbtn .tdot{border-color:#181818;}
+  .disco-roll{display:flex;align-items:center;gap:10px;background:#FFF6EA;border-radius:12px;padding:8px 10px 8px 14px;}
+  .disco-name{flex:1;font-family:'Fraunces',serif;font-weight:700;color:var(--terracotta);font-size:17px;}
+  .disco-roll .btn-outline-warm{padding:8px 16px;font-size:13px;}
+  .tag-row{display:flex;gap:10px;align-items:center;}
+  .tag-row .btn-outline-warm{padding:10px 16px;font-size:13px;flex:none;}
+  .tag-preview,.tag-chip{font-family:'Audiowide',sans-serif;background:#0E0E0E;color:#EAF2FF;text-transform:uppercase;letter-spacing:.08em;
+    text-shadow:0 0 6px #FF3E9A,0 0 16px #3E7BFF;}
+  .tag-preview{border-radius:12px;padding:14px;text-align:center;font-size:18px;word-break:break-word;}
+  .tag-cloud{display:flex;flex-wrap:wrap;gap:8px;}
+  .tag-cloud li{border:none !important;padding:0 !important;}
+  .tag-chip{display:inline-block;border-radius:10px;padding:7px 12px;font-size:12px;}
+  .tag-chip small{display:block;font-family:'Inter',sans-serif;text-shadow:none;letter-spacing:0;text-transform:none;opacity:.6;font-size:10px;margin-top:2px;}
+
+  /* ===== ABLAUF ===== */
+  .section-plan{padding:44px 0;background:linear-gradient(180deg,#FFF6EA 0%,#FFE8CF 100%);min-height:calc(100svh - 92px);}
+  .section-plan h2{font-size:24px;color:var(--terracotta);}
+  .tl{position:relative;padding-left:38px;margin-top:22px;}
+  .tl::before{content:"";position:absolute;left:11px;top:6px;bottom:6px;width:2px;background:linear-gradient(180deg,var(--terracotta),var(--pink),var(--blue));opacity:.5;}
+  .tl-item{position:relative;margin-bottom:16px;}
+  .tl-item::before{content:"";position:absolute;left:-34px;top:20px;width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--terracotta);}
+  .tl-item.night::before{border-color:var(--pink);background:var(--dark);}
+  .tl-item.swap::before{border-color:var(--blue);}
+  .tl-card{background:var(--card);border-radius:16px;padding:16px 18px;box-shadow:0 1px 2px rgba(59,36,21,.04),0 8px 22px rgba(59,36,21,.08);}
+  .tl-time{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--terracotta);margin-bottom:4px;}
+  .tl-card h3{font-size:18px;margin:0 0 6px;color:var(--ink);}
+  .tl-card p{margin:0;font-size:14px;opacity:.82;}
+  .tl-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .tl-chips span{background:#FFF6EA;border-radius:999px;padding:5px 11px;font-size:12px;font-weight:600;}
+  .tl-item.swap .tl-card{background:rgba(255,255,255,.6);border:1px dashed var(--line);box-shadow:none;}
+  .tl-item.swap .tl-time{color:var(--blue);}
+  .tl-item.night .tl-card{background:var(--dark);color:#EDEAE2;box-shadow:0 10px 30px rgba(255,62,154,.25);}
+  .tl-item.night .tl-time{color:var(--pink);}
+  .tl-item.night h3{color:var(--chrome);font-family:'Audiowide',sans-serif;letter-spacing:.04em;}
+  .tl-item.night .tl-chips span{background:rgba(255,255,255,.1);color:#EDEAE2;}
+  .tl-item.night .btn-neon{margin-top:14px;padding:10px 18px;font-size:13px;}
+  .extra-row{display:flex;gap:8px;margin:6px 0 10px;}
+  .guest-card .extra-row input[type="text"]{margin:0;flex:1;min-width:0;}
+  .extra-row select{width:auto;flex:none;}
+  .extra-row .btn-outline-warm{padding:8px 16px;font-size:18px;line-height:1;flex:none;}
+  .extra-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px;min-height:0;}
+  .extra-chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 6px 5px 12px;font-size:13px;font-weight:600;}
+  .extra-chip button{background:rgba(59,36,21,.08);color:var(--ink);width:20px;height:20px;padding:0;border-radius:50%;font-size:12px;line-height:20px;}
+  .guest-chip .with{opacity:.6;font-weight:400;}
+  .mini-tag{font-family:'Audiowide',sans-serif;font-size:9px;letter-spacing:.06em;text-transform:uppercase;background:#0E0E0E;color:#EAF2FF;text-shadow:0 0 5px #FF3E9A;border-radius:6px;padding:2px 6px;}
+  .my-team{background:#fff;border-radius:18px;padding:18px;margin-bottom:16px;box-shadow:0 2px 6px rgba(59,36,21,.05),0 12px 26px rgba(59,36,21,.1);}
+  .mt-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#D93B72;margin-bottom:8px;}
+  .mt-tag{font-size:16px;padding:12px;margin-bottom:12px;}
+  .mt-name{font-size:15px;}
+  .mt-when{opacity:.6;font-size:13px;margin-left:6px;}
+  .mt-members{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px;}
+  .mt-members span{background:rgba(59,36,21,.06);border-radius:999px;padding:4px 11px;font-size:13px;font-weight:600;}
+  .mt-food{margin-top:14px;border-top:1px solid var(--line);padding-top:12px;}
+  .mt-food h4{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;opacity:.6;}
+  .mt-food ul{list-style:none;margin:0 0 8px;padding:0;font-size:14px;}
+  .mt-food li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0;}
+  .mt-food li button{background:rgba(59,36,21,.08);color:var(--ink);width:24px;height:24px;padding:0;border-radius:50%;font-size:13px;line-height:24px;}
+  .mt-food .empty{opacity:.5;font-style:italic;}
+  .mt-add{font-size:13px;font-weight:700;color:var(--terracotta);text-decoration:none;}
+  .mt-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+  .mt-actions .btn-outline-warm{padding:9px 16px;font-size:13px;}
 </style>
 </head>
 <body>
 
+<main class="tab active" id="tab-start">
   <div class="hero">
     <div class="wrap">
       <div class="ball"></div>
@@ -250,9 +394,24 @@
           <span class="label">Dance Moves an</span>
         </a>
       </div>
+      <div class="countdown">
+        <div class="cd-label" id="cdLabel">Noch</div>
+        <div class="cd-boxes" id="cdBoxes">
+          <div class="cd-box"><b id="cdD">--</b><span>Tage</span></div>
+          <div class="cd-box"><b id="cdH">--</b><span>Std</span></div>
+          <div class="cd-box"><b id="cdM">--</b><span>Min</span></div>
+          <div class="cd-box"><b id="cdS">--</b><span>Sek</span></div>
+        </div>
+        <div class="cd-next" id="cdNext"></div>
+      </div>
+      <div class="tab-foot">bei uns im Partykeller &middot; Familie Plastrotmann</div>
     </div>
   </div>
 
+  
+</main>
+
+<main class="tab" id="tab-gaeste">
   <section class="section-guest">
     <div class="confetti-bg">
       <span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span>
@@ -262,11 +421,22 @@
     </div>
     <div class="wrap">
       <h2>Wer kommt?</h2>
-      <p class="sub">Trag dich in die Gästeliste ein &mdash; kommst du nachmittags, abends oder zu beidem?</p>
+      <p class="sub">Trag dich in die G&auml;steliste ein &mdash; kommst du nachmittags, abends oder zu beidem? Ihr kommt als Familie? Dann tr&auml;gst du alle auf einmal ein.</p>
 
       <div class="guest-card reveal" id="guestFormWrap">
         <label for="guestName">Dein Name</label>
         <input id="guestName" type="text" placeholder="z. B. Fabian">
+
+        <label>Wer kommt noch mit? <span style="font-weight:400;opacity:.7">(Partner/in, Kinder &ndash; optional)</span></label>
+        <div class="extra-row">
+          <input id="extraName" type="text" placeholder="Name" maxlength="30">
+          <select id="extraType"><option value="erw">Erwachsen</option><option value="kind">Kind</option></select>
+          <button type="button" id="extraAdd" class="btn-outline-warm" aria-label="Person hinzuf&uuml;gen">+</button>
+        </div>
+        <div class="extra-chips" id="extraChips"></div>
+
+        <label for="guestTag">Euer Team-Tag <span style="font-weight:400;opacity:.7">(optional &ndash; sp&auml;ter &auml;nderbar)</span></label>
+        <input id="guestTag" type="text" maxlength="24" placeholder="z. B. Team Glitzerblitz">
 
         <div class="guest-options" id="guestOptions">
           <input type="radio" name="guestWhen" id="gw1" value="nachmittag">
@@ -281,18 +451,165 @@
         <span class="hint" id="guestStatus"></span>
       </div>
 
-      <div id="guestConfirm" class="guest-confirm" style="display:none;">
-        <span>Du bist eingetragen als <strong id="guestConfirmName"></strong> &middot; <span id="guestConfirmWhen"></span></span>
-        <span style="display:flex;gap:8px;flex-wrap:wrap;">
+      <div id="guestConfirm" class="my-team" style="display:none;">
+        <div class="mt-label">Mein Team</div>
+        <div class="tag-preview mt-tag" id="myTagBadge"></div>
+        <div class="mt-name"><strong id="guestConfirmName"></strong> <span class="mt-when" id="guestConfirmWhen"></span></div>
+        <div class="mt-members" id="myMembers"></div>
+        <div class="mt-food">
+          <h4>Das bringe ich mit</h4>
+          <ul id="myFoodList"></ul>
+          <a class="mt-add" href="#foodSection">+ Etwas eintragen</a>
+        </div>
+        <div class="mt-actions">
+          <button type="button" id="guestEdit" class="btn-outline-warm">Team bearbeiten</button>
           <button type="button" id="guestCalendarBtn" class="btn-outline-warm">In Kalender eintragen</button>
-          <button type="button" id="guestEdit" class="btn-outline-warm">Ändern</button>
-        </span>
+        </div>
       </div>
 
       <div class="food-groups guest-groups reveal" id="guestList"></div>
     </div>
   </section>
 
+</main>
+
+<main class="tab" id="tab-ablauf">
+  <section class="section-plan">
+    <div class="wrap">
+      <h2>So l&auml;uft der Tag</h2>
+      <p class="sub">Zwei Partys, ein Keller &mdash; nachmittags f&uuml;r die Kleinen, abends f&uuml;r uns.</p>
+      <div class="tl reveal">
+        <div class="tl-item"><div class="tl-card">
+          <div class="tl-time">15:00 &middot; Mini-Disco</div>
+          <h3>Ankommen &amp; Bauen</h3>
+          <p>Unten im Keller wird gebaut: Baukl&ouml;tze und Duplo f&uuml;r alle kleinen Baumeister, w&auml;hrend die Gro&szlig;en sich am Fingerfood bedienen.</p>
+          <div class="tl-chips"><span>&#129521; Baukl&ouml;tze &amp; Duplo</span><span>&#127860; Fingerfood</span></div>
+        </div></div>
+        <div class="tl-item"><div class="tl-card">
+          <div class="tl-time">Zwischendurch</div>
+          <h3>Leseecke</h3>
+          <p>Eine kleine Leseecke zum Durchatmen, B&uuml;cher gucken und Kuscheln, wenn die Kleinen eine Pause brauchen.</p>
+          <div class="tl-chips"><span>&#128218; B&uuml;cher</span><span>&#128564; Kuschelpause</span></div>
+        </div></div>
+        <div class="tl-item"><div class="tl-card">
+          <div class="tl-time">Das Herzst&uuml;ck</div>
+          <h3>Mini-Disco! &#129705;</h3>
+          <p>Im kleinen Raum wird getanzt, auch mit den ganz Kleinen. Mit einer kleinen Lichtmaschine und einer coolen Kinderplaylist machen wir daraus eine richtige Party.</p>
+          <div class="tl-chips"><span>&#128161; Lichtmaschine</span><span>&#127925; Kinder-Playlist</span><span>&#128378; Tanzen!</span></div>
+          <div class="tl-chips"><a class="btn-outline-warm" href="#foodSection" style="padding:7px 14px;font-size:12px;">Zur Mini-Disco</a></div>
+        </div></div>
+        <div class="tl-item"><div class="tl-card">
+          <div class="tl-time">Geplant</div>
+          <h3>Mini-Turniere</h3>
+          <p>Als Eltern-Kind-Team gibt es Stopptanz und ein Turmbau-Duell. Anmelden k&ouml;nnt ihr euch in den Etappen.</p>
+        </div></div>
+        <div class="tl-item swap"><div class="tl-card">
+          <div class="tl-time">18:00 &ndash; 20:00 &middot; Umbau</div>
+          <h3>Vom Kinderparadies zum Club</h3>
+          <p>Die Kinder gehen nach Hause, wir bauen um: Beer-Pong-Tisch aufbauen, Pizza bestellen, Nebelmaschine aufstellen und die Musikrichtung komplett drehen.</p>
+          <div class="tl-chips"><span>&#127866; Beer-Pong-Tisch</span><span>&#127829; Pizza bestellen</span><span>&#127787;&#65039; Nebel</span></div>
+        </div></div>
+        <div class="tl-item night"><div class="tl-card">
+          <div class="tl-time">ab 20:00 &middot; Erwachsenen-Disco</div>
+          <h3>Dance Moves an</h3>
+          <p>Lichterkinder aus, Calvin Harris an. Es gibt Pizza, Beer Pong, eine Chill-Lounge und Nebel, und getanzt wird, so lange man mag.</p>
+          <div class="tl-chips"><span>&#127829; Pizza</span><span>&#127866; Beer Pong</span><span>&#128716; Chill-Lounge</span><span>&#127925; Songw&uuml;nsche</span></div>
+          <a class="btn-neon" href="#nightPlaylist">Zum Abend</a>
+        </div></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<main class="tab" id="tab-etappen">
+  <section class="section-prep" id="prep">
+    <div class="wrap">
+      <h2>Wir machen uns bereit</h2>
+      <p class="sub">Vier Etappen bis zur Party &mdash; jede Woche schaltet sich eine neue Frage frei.</p>
+      <div class="prep-track" id="prepTrack"></div>
+
+      <div class="prep-card locked reveal" id="ph0" data-opens="2026-10-31T00:00:00+01:00">
+        <div class="prep-head"><span class="prep-ico">&#128640;</span>
+          <div><h3>Etappe 1 &middot; Euer Team-Tag</h3><small>Ab heute</small></div></div>
+        <div class="prep-lock" id="lock0"></div>
+        <div class="prep-body">
+          <p>Jede Familie oder Freundesgruppe bekommt ein Team-Tag, also einen Namen im Disco-Style. Er steht in der G&auml;steliste, ist automatisch euer Teamname bei den Turnieren (Etappe 3) &mdash; und so erkennen wir uns am Party-Tag wieder. Kein Plan? W&uuml;rfeln!</p>
+          <form id="startForm">
+            <input id="startName" type="text" placeholder="Dein Name" required>
+            <div class="tag-row">
+              <input id="startTag" type="text" maxlength="24" placeholder="Euer Tag, z. B. Team Glitzerblitz" required>
+              <button type="button" class="btn-outline-warm" id="tagRoll">W&uuml;rfeln</button>
+            </div>
+            <div class="tag-preview" id="tagPreview">TEAM ?</div>
+            <input id="startAllergy" type="text" placeholder="Allergien? (optional, nur f&uuml;r Fabi sichtbar)">
+            <button type="submit" class="btn-warm">Eintragen</button>
+            <span class="hint" id="startStatus"></span>
+          </form>
+          <ul class="prep-list tag-cloud" id="startList"></ul>
+        </div>
+      </div>
+
+      <div class="prep-card locked reveal" id="ph1" data-opens="2026-11-06T08:00:00+01:00">
+        <div class="prep-head"><span class="prep-ico">&#129409;</span>
+          <div><h3>Etappe 2 &middot; Kinder-Verkleidung</h3><small>3 Wochen vorher</small></div></div>
+        <div class="prep-lock" id="lock1"></div>
+        <div class="prep-body">
+          <p>Als was kommen die Kleinen zur Mini-Disco? Ein Klick pro Familie, du kannst jederzeit umentscheiden. Die Erwachsenen d&uuml;rfen, m&uuml;ssen aber nicht.</p>
+          <div id="mottoOpts"></div>
+        </div>
+      </div>
+
+      <div class="prep-card locked reveal" id="ph2" data-opens="2026-11-13T08:00:00+01:00">
+        <div class="prep-head"><span class="prep-ico">&#127942;</span>
+          <div><h3>Etappe 3 &middot; Mini-Turniere</h3><small>2 Wochen vorher</small></div></div>
+        <div class="prep-lock" id="lock2"></div>
+        <div class="prep-body">
+          <p>Drei Disziplinen, such dir aus, wo du mitmachst. Stopptanz und Turmbau laufen am Nachmittag als Eltern-Kind-Team, Beer Pong abends als Zweier-Team.</p>
+          <form id="bpForm">
+            <select id="bpGame" required>
+              <option value="stopp">&#128378; Stopptanz (nachmittags)</option>
+              <option value="turm">&#129521; Turmbau-Duell (nachmittags)</option>
+              <option value="beer">&#127866; Beer Pong (abends)</option>
+            </select>
+            <input id="bpTeam" type="text" placeholder="Teamname (dein Team-Tag aus Etappe 1)" required>
+            <input id="bpPlayers" type="text" placeholder="Wer spielt? (z. B. Romi &amp; Fabi)" required>
+            <button type="submit" class="btn-warm">Team anmelden</button>
+            <span class="hint" id="bpStatus"></span>
+          </form>
+          <ul class="prep-list" id="bpList"></ul>
+        </div>
+      </div>
+
+      <div class="prep-card locked reveal" id="ph3" data-opens="2026-11-20T08:00:00+01:00">
+        <div class="prep-head"><span class="prep-ico">&#9989;</span>
+          <div><h3>Etappe 4 &middot; Letzter Check</h3><small>1 Woche vorher</small></div></div>
+        <div class="prep-lock" id="lock3"></div>
+        <div class="prep-body">
+          <p>Steht dein Plan? Sag kurz verbindlich Bescheid und was du abends trinkst.</p>
+          <form id="rsvpForm">
+            <input id="rsvpName" type="text" placeholder="Dein Name" required>
+            <div class="rsvp-choices" id="rsvpChoices">
+              <button type="button" data-v="dabei">Bin dabei &#127881;</button>
+              <button type="button" data-v="wackelt">Wackelt noch</button>
+              <button type="button" data-v="nein">Leider nicht</button>
+            </div>
+            <select id="rsvpDrink">
+              <option value="">Abends trinke ich&hellip; (optional)</option>
+              <option>Bier</option><option>Wein / Sekt</option>
+              <option>Cocktail / Mixgetränk</option><option>Alkoholfrei</option>
+            </select>
+            <button type="submit" class="btn-warm">Absenden</button>
+            <span class="hint" id="rsvpStatus"></span>
+          </form>
+          <p id="rsvpCount" style="margin:12px 0 0;font-weight:600;opacity:.9;"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<main class="tab" id="tab-mini">
   <section class="light" id="foodSection">
     <div class="wrap">
       <h2>Wer bringt was mit?</h2>
@@ -337,6 +654,9 @@
     </div>
   </section>
 
+</main>
+
+<main class="tab" id="tab-abend">
   <div class="divider">
     <svg viewBox="0 0 800 60" preserveAspectRatio="none"><path d="M0,30 C100,60 300,0 400,30 C500,60 700,0 800,30 L800,60 L0,60 Z" fill="#0E0E0E"/></svg>
   </div>
@@ -387,14 +707,25 @@
   </div>
 
   <footer>bei uns im Partykeller &middot; Familie Plastrotmann</footer>
+</main>
+
+<nav class="tabbar" aria-label="Navigation"><div class="tabbar-inner">
+  <button class="tabbtn active" data-tab="start"><i>&#127968;</i>Start</button>
+  <button class="tabbtn" data-tab="gaeste"><i>&#128101;</i>G&auml;ste</button>
+  <button class="tabbtn" data-tab="ablauf"><i>&#128467;&#65039;</i>Ablauf</button>
+  <button class="tabbtn" data-tab="etappen"><span class="tdot"></span><i>&#128197;</i>Etappen</button>
+  <button class="tabbtn" data-tab="mini"><i>&#129528;</i>Mini-Disco</button>
+  <button class="tabbtn" data-tab="abend"><i>&#129705;</i>Abend</button>
+</div></nav>
 
 <script>
   // ===== TODO: hier eintragen =====
   const SUPABASE_URL = "https://wqmdjrczvirpmpcyavvs.supabase.co"; // gleiche Instanz wie Happy Cornelius
-  const SUPABASE_ANON_KEY = "sb_publishable_Ck-GOya77QX93-dLxTYuYw_Ldb8VkAv"; // aus index.html / punkte.html kopieren
-  const SPOTIFY_PLAYLIST_URL = "https://open.spotify.com/playlist/6OGiIFaTT8jClmO2IZWFBi?si=efFyQCoeSKCeBOdMyDy3lg&utm_source=copy-link";
-  const KIDS_PLAYLIST_URL = "https://open.spotify.com/playlist/2SnyXpqvasiZ38VvButbFW?si=w73AKg45T76J4al36SlSWw&utm_source=copy-link&pt=4389caf35c3be4ee1cdc9d3b23d6a19f&pi=RN7d-L0pT2-cm";
-  const PARTY_ADDRESS = "Corneliusstr. 62, 51107 Köln"; // hier eure echte Adresse eintragen
+  const SUPABASE_ANON_KEY = "DEIN_SUPABASE_ANON_KEY"; // aus index.html / punkte.html kopieren
+  const SPOTIFY_PLAYLIST_URL = "https://open.spotify.com/playlist/DEINE_PLAYLIST_ID";
+  const KIDS_PLAYLIST_URL = "https://open.spotify.com/playlist/DEINE_KIDS_PLAYLIST_ID";
+  const UNLOCK_ALL = false; // true = alle Etappen sofort offen (Vorschau). Vor dem Verschicken auf false setzen!
+  const PARTY_ADDRESS = "EURE STRASSE 12, PLZ ORT"; // hier eure echte Adresse eintragen
   // =================================
 
   document.getElementById('playlistLink').href = SPOTIFY_PLAYLIST_URL;
@@ -429,6 +760,8 @@
 
   async function renderFood(){
     const items = await listByPrefix('party:fingerfood:');
+    const guests = {};
+    (await listByPrefix('party:guest:')).forEach(g => guests[g._key] = g);
     const container = document.getElementById('foodGroups');
     container.innerHTML = '';
     CATEGORIES.forEach(cat => {
@@ -437,7 +770,7 @@
       div.className = 'food-group';
       div.innerHTML = `<h4>${cat}</h4><ul>${
         group.length
-          ? group.map(g => `<li><strong>${g.item}</strong> &mdash; ${g.name}</li>`).join('')
+          ? group.map(g => { const gu = g.gid && guests[g.gid]; return `<li><strong>${escHtml(g.item)}</strong> &mdash; ${escHtml(gu ? gu.name : g.name)}${gu && gu.tag ? ` <span class="mini-tag">${escHtml(gu.tag)}</span>` : ''}</li>`; }).join('')
           : '<li class="empty">Noch nichts eingetragen</li>'
       }</ul>`;
       container.appendChild(div);
@@ -452,9 +785,10 @@
     if(!name || !category || !item) return;
     const status = document.getElementById('foodStatus');
     status.textContent = 'Speichert…';
-    const ok = await upsert('party:fingerfood:' + uid(), { name, category, item });
+    const gid = (myGuestEntry && name.toLowerCase() === myGuestEntry.name.trim().toLowerCase()) ? myGuestEntry.key : null;
+    const ok = await upsert('party:fingerfood:' + uid(), { name, category, item, gid });
     status.textContent = ok ? 'Danke! Eingetragen ✓' : 'Hat nicht geklappt, bitte nochmal.';
-    if(ok){ e.target.reset(); renderFood(); }
+    if(ok){ e.target.reset(); document.getElementById('foodName').value = myGuestEntry ? myGuestEntry.name : ''; renderFood(); renderMyFood(); }
   });
 
   // ---- Songs ----
@@ -528,6 +862,32 @@
   const WHEN_ORDER = ['nachmittag','abend','beides'];
   let myGuestEntry = JSON.parse(localStorage.getItem('myGuestEntry') || 'null'); // {key,name,when}
 
+  function escHtml(t){ return String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  // Personenzahl pro Eintrag: neue Einträge mit extras, alte Einträge aus dem Namensfeld geschätzt
+  function headcount(g){
+    if(g.extras) return 1 + g.extras.length;
+    const parts = String(g.name).split(/\s*(?:,|&|\bund\b|\bmit\b|\+)\s*/i).filter(x => x.trim());
+    return Math.max(1, parts.length);
+  }
+  let guestExtras = [];
+  let guestEditing = false;
+  function renderExtras(){
+    document.getElementById('extraChips').innerHTML = guestExtras.map((x, i) =>
+      `<span class="extra-chip">${x.kid ? '🧒' : '🧑'} ${escHtml(x.name)}<button type="button" data-i="${i}" aria-label="Entfernen">&times;</button></span>`).join('');
+    document.querySelectorAll('#extraChips button').forEach(b => b.addEventListener('click', () => {
+      guestExtras.splice(+b.dataset.i, 1); renderExtras();
+    }));
+  }
+  function addExtra(){
+    const inp = document.getElementById('extraName');
+    const name = inp.value.trim();
+    if(!name) return;
+    guestExtras.push({ name, kid: document.getElementById('extraType').value === 'kind' });
+    inp.value = ''; renderExtras(); inp.focus();
+  }
+  document.getElementById('extraAdd').addEventListener('click', addExtra);
+  document.getElementById('extraName').addEventListener('keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); addExtra(); } });
+
   async function renderGuests(){
     const container = document.getElementById('guestList');
     if(!myGuestEntry){
@@ -535,14 +895,18 @@
       return;
     }
     const items = await listByPrefix('party:guest:');
+    const tags = {};
+    (await listByPrefix('party:start:')).forEach(t => { if(t.disco && t.name) tags[t.name.trim().toLowerCase()] = t.disco; });
     container.innerHTML = '';
     WHEN_ORDER.forEach(when => {
       const group = items.filter(i => i.when === when);
+      const persons = group.reduce((sum, g) => sum + headcount(g), 0);
       const div = document.createElement('div');
       div.className = 'food-group group-' + when;
-      div.innerHTML = `<h4>${WHEN_LABEL[when]} <span class="guest-count">${group.length}</span></h4><div class="guest-chip-list">${
+      div.innerHTML = `<h4>${WHEN_LABEL[when]} <span class="guest-count">${persons}</span></h4><div class="guest-chip-list">${
         group.length
-          ? group.map(g => `<span class="guest-chip"><span class="dot badge-${when}"></span>${g.name}</span>`).join('')
+          ? group.map(g => `<span class="guest-chip"><span class="dot badge-${when}"></span>${escHtml(g.name)}${(g.tag || tags[String(g.name).trim().toLowerCase()]) ? ` <span class="mini-tag">${escHtml(g.tag || tags[String(g.name).trim().toLowerCase()])}</span>` : ''}${
+              g.extras && g.extras.length ? ` <span class="with">+ ${g.extras.map(x => (x.kid ? '🧒 ' : '') + escHtml(x.name)).join(', ')}</span>` : ''}</span>`).join('')
           : '<span class="guest-chip-empty">Noch niemand</span>'
       }</div>`;
       container.appendChild(div);
@@ -552,10 +916,16 @@
   function updateGuestFormUI(){
     const wrap = document.getElementById('guestFormWrap');
     const confirm = document.getElementById('guestConfirm');
-    if(myGuestEntry){
+    if(myGuestEntry && !guestEditing){
       wrap.style.display = 'none';
-      confirm.style.display = 'flex';
+      confirm.style.display = 'block';
       document.getElementById('guestConfirmName').textContent = myGuestEntry.name;
+      const tg = myGuestEntry.tag || '';
+      const badge = document.getElementById('myTagBadge');
+      badge.textContent = tg || 'KEIN TEAM-TAG'; badge.style.opacity = tg ? 1 : .45;
+      document.getElementById('myMembers').innerHTML = (myGuestEntry.extras || []).map(x => `<span>${x.kid ? '🧒' : '🧑'} ${escHtml(x.name)}</span>`).join('');
+      ['foodName','pizzaName','startName','rsvpName'].forEach(id => { const el = document.getElementById(id); if(el && !el.value) el.value = myGuestEntry.name; });
+      renderMyFood();
       document.getElementById('guestConfirmWhen').textContent = WHEN_LABEL[myGuestEntry.when];
     } else {
       wrap.style.display = 'block';
@@ -565,19 +935,26 @@
 
   document.getElementById('guestSubmit').addEventListener('click', async () => {
     const name = document.getElementById('guestName').value.trim();
+    addExtra();
     const selected = document.querySelector('input[name="guestWhen"]:checked');
     if(!name || !selected){ alert('Bitte Namen eintragen und auswählen, wann du kommst.'); return; }
     const status = document.getElementById('guestStatus');
     status.textContent = 'Speichert…';
-    const key = 'party:guest:' + uid();
+    const key = (guestEditing && myGuestEntry) ? myGuestEntry.key : 'party:guest:' + uid();
     const when = selected.value;
-    const ok = await upsert(key, { name, when });
+    const extras = guestExtras.slice();
+    const tag = document.getElementById('guestTag').value.trim();
+    const ok = await upsert(key, { name, when, extras, tag });
     status.textContent = ok ? 'Danke! ✓' : 'Hat nicht geklappt, bitte nochmal.';
     if(ok){
-      myGuestEntry = { key, name, when };
+      myGuestEntry = { key, name, when, extras, tag };
+      guestEditing = false;
+      try{ if(tag) localStorage.setItem('myDisco', tag); }catch(e){}
+      syncTagFields(tag);
+      document.getElementById('guestSubmit').textContent = 'Ich bin dabei!';
       localStorage.setItem('myGuestEntry', JSON.stringify(myGuestEntry));
       updateGuestFormUI();
-      renderGuests();
+      renderGuests(); renderFood(); renderStart();
     }
   });
 
@@ -585,17 +962,40 @@
     if(myGuestEntry) downloadICS(myGuestEntry.when);
   });
 
-  document.getElementById('guestEdit').addEventListener('click', async () => {
+  document.getElementById('guestEdit').addEventListener('click', () => {
     if(!myGuestEntry) return;
-    await sb.from('storage').delete().eq('key', myGuestEntry.key);
-    myGuestEntry = null;
-    localStorage.removeItem('myGuestEntry');
-    document.getElementById('guestName').value = '';
-    document.querySelectorAll('input[name="guestWhen"]').forEach(r => r.checked = false);
+    document.getElementById('guestName').value = myGuestEntry.name;
+    document.getElementById('guestTag').value = myGuestEntry.tag || '';
+    const r = document.querySelector('input[name="guestWhen"][value="' + myGuestEntry.when + '"]'); if(r) r.checked = true;
+    guestExtras = (myGuestEntry.extras || []).slice(); renderExtras();
     document.getElementById('guestStatus').textContent = '';
+    document.getElementById('guestSubmit').textContent = 'Änderungen speichern';
+    guestEditing = true;
     updateGuestFormUI();
-    renderGuests();
   });
+
+  // Team-Tag in allen Feldern angleichen (Gäste, Etappe 1, Turniere)
+  function syncTagFields(tag){
+    if(!tag) return;
+    const a = document.getElementById('startTag'); if(a) a.value = tag;
+    const b = document.getElementById('bpTeam'); if(b) b.value = tag;
+    if(typeof showTag === 'function') showTag();
+  }
+
+  // "Das bringe ich mit": eigene Fingerfood-Einträge
+  async function renderMyFood(){
+    const ul = document.getElementById('myFoodList');
+    if(!myGuestEntry){ ul.innerHTML = ''; return; }
+    const items = await listByPrefix('party:fingerfood:');
+    const mine = items.filter(i => i.gid === myGuestEntry.key || (!i.gid && String(i.name).trim().toLowerCase() === myGuestEntry.name.trim().toLowerCase()));
+    ul.innerHTML = mine.length
+      ? mine.map(i => `<li><span><strong>${escHtml(i.item)}</strong> <span style="opacity:.55">&middot; ${escHtml(i.category)}</span></span><button type="button" data-k="${escHtml(i._key)}" aria-label="Entfernen">&times;</button></li>`).join('')
+      : '<li class="empty">Noch nichts eingetragen</li>';
+    ul.querySelectorAll('button').forEach(b => b.addEventListener('click', async () => {
+      await sb.from('storage').delete().eq('key', b.dataset.k);
+      renderMyFood(); renderFood();
+    }));
+  }
 
   updateGuestFormUI();
   renderGuests();
@@ -700,6 +1100,241 @@
 
   renderPizza();
   renderPizzaWishes();
+
+
+  // ===== Countdown & Etappen =====
+  let openPhaseCount = 0;
+  const PARTY_KIDS = new Date('2026-11-27T15:00:00+01:00');
+  const PARTY_NIGHT = new Date('2026-11-27T20:00:00+01:00');
+  const PARTY_END = new Date('2026-11-28T02:00:00+01:00');
+  const nowParam = new URLSearchParams(location.search).get('now'); // Test: ?now=2026-11-14
+  const clockOffset = nowParam ? (new Date(nowParam + 'T12:00:00+01:00') - Date.now()) : 0;
+  const nowD = () => new Date(Date.now() + clockOffset);
+  const esc = (t) => String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const DE_DAY = new Intl.DateTimeFormat('de-DE', { weekday:'long', day:'numeric', month:'long' });
+
+  function deviceId(){
+    try{
+      let d = localStorage.getItem('partyDeviceId');
+      if(!d){ d = uid(); localStorage.setItem('partyDeviceId', d); }
+      return d;
+    }catch(e){ return uid(); }
+  }
+  function myGuestName(){
+    try{ return (JSON.parse(localStorage.getItem('myGuestEntry')||'null')||{}).name || ''; }catch(e){ return ''; }
+  }
+
+  function tickCountdown(){
+    const n = nowD();
+    let target, label;
+    if(n < PARTY_KIDS){ target = PARTY_KIDS; label = 'Noch bis zur Mini-Disco'; }
+    else if(n < PARTY_NIGHT){ target = PARTY_NIGHT; label = 'Noch bis Dance Moves an'; }
+    else { target = null; label = n < PARTY_END ? 'Es läuft! Lichterkinder aus. 🪩' : 'Danke fürs Mitfeiern! 💛'; }
+    document.getElementById('cdLabel').textContent = label;
+    const boxes = document.getElementById('cdBoxes');
+    if(!target){ boxes.style.display = 'none'; return; }
+    boxes.style.display = '';
+    let diff = Math.max(0, Math.floor((target - n) / 1000));
+    const d = Math.floor(diff/86400); diff -= d*86400;
+    const h = Math.floor(diff/3600); diff -= h*3600;
+    const m = Math.floor(diff/60); const sec = diff - m*60;
+    document.getElementById('cdD').textContent = d;
+    document.getElementById('cdH').textContent = pad(h);
+    document.getElementById('cdM').textContent = pad(m);
+    document.getElementById('cdS').textContent = pad(sec);
+  }
+
+  const PHASE_NAMES = ['Team-Tag', 'Kinder-Verkleidung', 'Mini-Turniere', 'Letzter Check'];
+  const PHASE_COUNT = PHASE_NAMES.length;
+  function updatePhases(){
+    const n = nowD();
+    const cards = PHASE_NAMES.map((_, i) => document.getElementById('ph' + i));
+    let openCount = 0, nextIdx = -1;
+    cards.forEach((c, i) => {
+      const opens = new Date(c.dataset.opens);
+      const isOpen = UNLOCK_ALL || n >= opens;
+      c.classList.toggle('locked', !isOpen);
+      document.getElementById('lock' + i).textContent = '🔒 Öffnet am ' + DE_DAY.format(opens);
+      if(isOpen) openCount++; else if(nextIdx < 0) nextIdx = i;
+      const head = c.querySelector('.prep-head');
+      const old = head.querySelector('.prep-badge');
+      if(old) old.remove();
+      if(!UNLOCK_ALL && isOpen && n < PARTY_KIDS && (i === PHASE_COUNT - 1 || n < new Date(cards[i+1].dataset.opens))){
+        const b = document.createElement('span'); b.className = 'prep-badge'; b.textContent = 'Jetzt';
+        head.appendChild(b);
+      }
+    });
+    openPhaseCount = openCount; if(typeof refreshBadge === 'function') refreshBadge();
+    const track = document.getElementById('prepTrack');
+    let html = '';
+    for(let i = 0; i < PHASE_COUNT; i++){
+      html += `<span class="prep-dot ${i < openCount ? 'on' : ''}"></span><span class="prep-line ${i < openCount ? 'on' : ''}"></span>`;
+    }
+    html += `<span class="prep-dot ${n >= PARTY_KIDS ? 'on' : ''}"></span>`;
+    track.innerHTML = html;
+    const nx = document.getElementById('cdNext');
+    const daysTo = (d) => Math.ceil((d - n) / 86400000);
+    if(n >= PARTY_KIDS){ nx.innerHTML = ''; }
+    else if(nextIdx >= 0){
+      const dd = daysTo(new Date(cards[nextIdx].dataset.opens));
+      nx.innerHTML = `<a href="#ph${openCount-1}">Jetzt offen: ${PHASE_NAMES[openCount-1]}</a> &middot; nächste Etappe in ${dd} ${dd === 1 ? 'Tag' : 'Tagen'}`;
+    } else {
+      nx.innerHTML = `<a href="#ph${PHASE_COUNT-1}">Alle Etappen offen &mdash; mach noch mit!</a>`;
+    }
+  }
+
+  // ---- Etappe 1: Startschuss ----
+  const DISCO_A = ['Glitzer','Turbo','Funkel','Neon','Disco','Konfetti','Bass','Zucker','Laser','Samba'];
+  const DISCO_B = ['blitz','panda','bär','rakete','einhorn','flamingo','löwe','käfer','fuchs','wirbel'];
+  const tagInput = document.getElementById('startTag');
+  try{ tagInput.value = (myGuestEntry && myGuestEntry.tag) || localStorage.getItem('myDisco') || ''; }catch(e){}
+  function showTag(){ document.getElementById('tagPreview').textContent = tagInput.value.trim() || 'TEAM ?'; }
+  tagInput.addEventListener('input', showTag);
+  document.getElementById('tagRoll').addEventListener('click', () => {
+    const pick = (a) => a[Math.floor(Math.random() * a.length)];
+    tagInput.value = 'Team ' + pick(DISCO_A) + pick(DISCO_B);
+    showTag();
+  });
+  document.getElementById('startName').value = myGuestName();
+  showTag();
+  try{ if(myGuestEntry) document.getElementById('foodName').value = myGuestEntry.name; const pn = document.getElementById('pizzaName'); if(pn && myGuestEntry) pn.value = myGuestEntry.name; }catch(e){}
+  async function renderStart(){
+    const items = await listByPrefix('party:start:');
+    const fromGuests = (await listByPrefix('party:guest:')).filter(g => g.tag).map(g => ({ disco: g.tag, name: g.name }));
+    const seen = new Set(fromGuests.map(g => g.disco.toLowerCase()));
+    const named = fromGuests.concat(items.filter(i => i.disco && !seen.has(i.disco.toLowerCase())));
+    document.getElementById('startList').innerHTML = named
+      .map(i => `<li><span class="tag-chip">${esc(i.disco)}<small>${esc(i.name)}</small></span></li>`).join('');
+  }
+  document.getElementById('startForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('startName').value.trim();
+    const tag = tagInput.value.trim();
+    const st = document.getElementById('startStatus');
+    if(!name || !tag) return;
+    st.textContent = 'Speichert…';
+    const ok = await upsert('party:start:' + deviceId(), { name, disco: tag, allergy: document.getElementById('startAllergy').value.trim() });
+    st.textContent = ok ? 'Dein Tag steht: ' + tag + ' ✓' : 'Hat nicht geklappt, bitte nochmal.';
+    if(ok){
+      try{ localStorage.setItem('myDisco', tag); }catch(e){}
+      const bt = document.getElementById('bpTeam'); if(bt) bt.value = tag;
+      if(myGuestEntry){
+        myGuestEntry = Object.assign({}, myGuestEntry, { tag });
+        localStorage.setItem('myGuestEntry', JSON.stringify(myGuestEntry));
+        await upsert(myGuestEntry.key, { name: myGuestEntry.name, when: myGuestEntry.when, extras: myGuestEntry.extras || [], tag });
+        updateGuestFormUI();
+      }
+      renderStart(); renderGuests(); renderFood();
+    }
+  });
+
+  // ---- Etappe 2: Motto (Kinder-Verkleidung) ----
+  const MOTTOS = ['Disco-Tiere (Löwe, Hase, Marienkäfer …)', 'Superhelden & Feen', 'Alles, was glitzert', 'Kein Kostüm, einfach bequem'];
+  let myMotto = null;
+  try{ myMotto = localStorage.getItem('myMotto'); }catch(e){}
+  async function renderMotto(){
+    const items = await listByPrefix('party:motto:');
+    const counts = {}; MOTTOS.forEach(m => counts[m] = 0);
+    items.forEach(i => { if(counts[i.choice] !== undefined) counts[i.choice]++; });
+    const max = Math.max(1, ...Object.values(counts));
+    const box = document.getElementById('mottoOpts');
+    box.innerHTML = MOTTOS.map((m, idx) => `
+      <div class="opt-row"><button class="opt-btn ${myMotto === m ? 'mine' : ''}" data-i="${idx}">
+        <i class="bar" style="width:${counts[m]/max*100}%"></i><span>${esc(m)}</span><span>${counts[m]}</span></button></div>`).join('');
+    box.querySelectorAll('.opt-btn').forEach(b => b.addEventListener('click', async () => {
+      const choice = MOTTOS[+b.dataset.i];
+      const ok = await upsert('party:motto:' + deviceId(), { name: myGuestName(), choice });
+      if(ok){ myMotto = choice; try{ localStorage.setItem('myMotto', choice); }catch(e){} renderMotto(); }
+    }));
+  }
+
+  // ---- Etappe 3: Turniere ----
+  const GAMES = { stopp:'🕺 Stopptanz', turm:'🧱 Turmbau-Duell', beer:'🍺 Beer Pong' };
+  try{ const t = localStorage.getItem('myDisco'); if(t) document.getElementById('bpTeam').value = t; }catch(e){}
+  async function renderBP(){
+    const items = await listByPrefix('party:bp:');
+    const html = Object.keys(GAMES).map(g => {
+      const rows = items.filter(t => (t.game || 'beer') === g);
+      if(!rows.length) return '';
+      return `<li><strong>${GAMES[g]}</strong> <span class="who">(${rows.length})</span>` +
+        rows.map(t => `<div class="who">${esc(t.team)} &mdash; ${esc(t.players)}</div>`).join('') + '</li>';
+    }).join('');
+    document.getElementById('bpList').innerHTML = html || '<li style="opacity:.5;font-style:italic;">Noch kein Team angemeldet</li>';
+  }
+  document.getElementById('bpForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const game = document.getElementById('bpGame').value;
+    const team = document.getElementById('bpTeam').value.trim();
+    const players = document.getElementById('bpPlayers').value.trim();
+    if(!team || !players) return;
+    const st = document.getElementById('bpStatus');
+    st.textContent = 'Speichert…';
+    const ok = await upsert('party:bp:' + uid(), { game, team, players });
+    st.textContent = ok ? 'Team ist drin! ✓' : 'Hat nicht geklappt, bitte nochmal.';
+    if(ok){ document.getElementById('bpPlayers').value = ''; renderBP(); }
+  });
+
+  // ---- Etappe 4: Letzter Check ----
+  let rsvpChoice = null;
+  document.getElementById('rsvpName').value = myGuestName();
+  document.querySelectorAll('#rsvpChoices button').forEach(b => b.addEventListener('click', () => {
+    rsvpChoice = b.dataset.v;
+    document.querySelectorAll('#rsvpChoices button').forEach(x => x.classList.toggle('sel', x === b));
+  }));
+  async function renderRSVP(){
+    const items = await listByPrefix('party:rsvp:');
+    const yes = items.filter(i => i.status === 'dabei').length;
+    document.getElementById('rsvpCount').textContent = yes ? `${yes} ${yes === 1 ? 'Zusage' : 'Zusagen'} bisher 🎉` : '';
+  }
+  document.getElementById('rsvpForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const st = document.getElementById('rsvpStatus');
+    const name = document.getElementById('rsvpName').value.trim();
+    if(!name || !rsvpChoice){ st.textContent = 'Bitte Name und Auswahl angeben.'; return; }
+    st.textContent = 'Speichert…';
+    const ok = await upsert('party:rsvp:' + deviceId(), { name, status: rsvpChoice, drink: document.getElementById('rsvpDrink').value });
+    st.textContent = ok ? 'Danke, ist notiert! ✓' : 'Hat nicht geklappt, bitte nochmal.';
+    if(ok) renderRSVP();
+  });
+
+  tickCountdown(); setInterval(tickCountdown, 1000);
+  updatePhases(); setInterval(updatePhases, 60000);
+  renderStart(); renderMotto(); renderBP(); renderRSVP();
+
+
+  // ===== App-Tabs =====
+  const TABS = ['start','gaeste','ablauf','etappen','mini','abend'];
+  const ALIAS = { foodSection:'mini', nightPlaylist:'abend', prep:'etappen', ph0:'etappen', ph1:'etappen', ph2:'etappen', ph3:'etappen' };
+  function seenPhases(){ try{ return +localStorage.getItem('seenPhases') || 0; }catch(e){ return 0; } }
+  function refreshBadge(){
+    document.querySelector('.tabbtn[data-tab="etappen"]').classList.toggle('has-new', openPhaseCount > seenPhases());
+  }
+  function showTab(name, scrollId){
+    if(!TABS.includes(name)) name = 'start';
+    TABS.forEach(t => document.getElementById('tab-' + t).classList.toggle('active', t === name));
+    document.querySelectorAll('.tabbtn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+    document.body.dataset.tab = name;
+    if(name === 'etappen'){ try{ localStorage.setItem('seenPhases', openPhaseCount); }catch(e){} }
+    refreshBadge();
+    const target = scrollId && document.getElementById(scrollId);
+    if(target && !TABS.includes(scrollId)){
+      requestAnimationFrame(() => target.scrollIntoView({ behavior:'smooth', block:'start' }));
+    } else { window.scrollTo(0, 0); }
+    try{ history.replaceState(null, '', '#' + name); }catch(e){}
+  }
+  document.querySelectorAll('.tabbtn').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href^="#"]');
+    if(!a) return;
+    const id = a.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    const tab = ALIAS[id] || (TABS.includes(id) ? id : (el && el.closest('.tab') ? el.closest('.tab').id.replace('tab-','') : null));
+    if(!tab) return;
+    e.preventDefault();
+    showTab(tab, ALIAS[id] && /^ph\d$/.test(id) ? id : null);
+  });
+  openPhaseCount = [0,1,2,3].filter(i => UNLOCK_ALL || nowD() >= new Date(document.getElementById('ph' + i).dataset.opens)).length;
+  showTab((location.hash || '#start').slice(1).replace(/^(foodSection|nightPlaylist|prep)$/, m => ALIAS[m]));
 
   // ---- Scroll-Reveal ----
   const revealObserver = new IntersectionObserver((entries) => {
