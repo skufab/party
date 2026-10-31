@@ -393,6 +393,16 @@
   .night .gate form{margin-top:6px;}
   .food-group .when{font-size:12px;opacity:.55;}
   .adm-x{background:#b00020;color:#fff;width:20px;height:20px;padding:0;border-radius:50%;font-size:12px;line-height:20px;margin-left:6px;vertical-align:middle;}
+  .adm-bar{display:inline-flex;gap:4px;margin-left:6px;vertical-align:middle;}
+  .adm-bar button{width:22px;height:22px;padding:0;border-radius:50%;font-size:12px;line-height:22px;color:#fff;}
+  .adm-bar .adm-e{background:#3E7BFF;}
+  .adm-bar .adm-x{background:#b00020;margin-left:0;}
+  .adm-overlay{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto;}
+  .adm-modal{background:#fff;color:var(--ink);border-radius:18px;padding:20px;width:100%;max-width:420px;display:grid;gap:8px;margin:0;}
+  .adm-modal h3{margin:0 0 4px;color:var(--terracotta);}
+  .adm-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;}
+  .mt-join-note{font-size:13px;margin:8px 0 0;}
+  .join-btn{align-self:flex-start;padding:7px 16px !important;font-size:13px !important;}
 </style>
 </head>
 <body>
@@ -475,6 +485,7 @@
         <div class="tag-preview mt-tag" id="myTagBadge"></div>
         <div class="mt-name"><strong id="guestConfirmName"></strong> <span class="mt-when" id="guestConfirmWhen"></span></div>
         <div class="mt-members" id="myMembers"></div>
+        <div class="mt-joined" id="myJoined"></div>
         <div class="mt-food">
           <h4>Das bringe ich mit</h4>
           <ul id="myFoodList"></ul>
@@ -819,6 +830,7 @@
 
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+  const ITEM_CACHE = {};
   async function listByPrefix(prefix){
     const { data, error } = await sb
       .from('storage')
@@ -826,7 +838,7 @@
       .like('key', prefix + '%')
       .order('updated_at', { ascending: true });
     if(error){ console.error(error); return []; }
-    return data.map(row => ({ ...JSON.parse(row.value), _key: row.key }));
+    return data.map(row => { const o = { ...JSON.parse(row.value), _key: row.key }; ITEM_CACHE[row.key] = o; return o; });
   }
 
   async function upsert(key, valueObj){
@@ -871,7 +883,7 @@
       div.className = 'food-group';
       div.innerHTML = `<h4>${cat}</h4><ul>${
         group.length
-          ? group.map(g => { const gu = g.gid && guests[g.gid]; return `<li><strong>${escHtml(g.item)}</strong> &mdash; ${escHtml(gu ? gu.name : g.name)}${gu && gu.tag ? ` <span class="mini-tag">${escHtml(shortTag(gu.tag))}</span>` : ''}${g.when ? ` <span class="when">${g.when === 'abend' ? '🌙 Abend' : '☀️ Nachmittag'}</span>` : ''}${isAdmin ? ` <button class="adm-x" data-del="${escHtml(g._key)}" data-label="${escHtml(g.item)}">&times;</button>` : ''}</li>`; }).join('')
+          ? group.map(g => { const gu = g.gid && guests[g.gid]; return `<li><strong>${escHtml(g.item)}</strong> &mdash; ${escHtml(gu ? gu.name : g.name)}${gu && gu.tag ? ` <span class="mini-tag">${escHtml(shortTag(gu.tag))}</span>` : ''}${g.when ? ` <span class="when">${g.when === 'abend' ? '🌙 Abend' : '☀️ Nachmittag'}</span>` : ''}${adm(g, g.item)}</li>`; }).join('')
           : '<li class="empty">Noch nichts eingetragen</li>'
       }</ul>`;
       container.appendChild(div);
@@ -899,7 +911,7 @@
     const items = await listByPrefix('party:song:');
     const list = document.getElementById('songList');
     list.innerHTML = items.slice().reverse().map(i =>
-      `<li>${i.title}</li>`
+      `<li>${escHtml(i.title)}${adm(i, i.title)}</li>`
     ).join('');
   }
 
@@ -965,14 +977,24 @@
   const WHEN_ORDER = ['nachmittag','abend','beides'];
   let myGuestEntry = JSON.parse(localStorage.getItem('myGuestEntry') || 'null'); // {key,name,when}
 
-  function shortTag(t){ return String(t).replace(/^team\s+/i, ''); }
-  function bindAdmin(root){
-    root.querySelectorAll('.adm-x').forEach(b => b.addEventListener('click', async () => {
-      if(!confirm('Wirklich löschen: ' + b.dataset.label + '?')) return;
-      await sb.from('storage').delete().eq('key', b.dataset.del);
-      renderGuests(); renderFood(); renderMyFood();
-    }));
+  function leadersOf(items){
+    const keys = new Set(items.map(i => i._key));
+    const leaders = items.filter(i => !(i.joinedTo && keys.has(i.joinedTo)));
+    leaders.forEach(l => { l.members = items.filter(i => i.joinedTo === l._key); });
+    return leaders;
   }
+  function teamCount(l){ return headcount(l) + (l.members || []).reduce((n, m) => n + headcount(m), 0); }
+  function withList(g){
+    const parts = (g.extras || []).map(x => (x.kid ? '🧒 ' : '') + escHtml(x.name))
+      .concat((g.members || []).map(m => escHtml(m.name) + (m.extras && m.extras.length ? ' (+' + m.extras.length + ')' : '') + adm(m, m.name)));
+    return parts.length ? ` <span class="with">+ ${parts.join(', ')}</span>` : '';
+  }
+  function adm(item, label){
+    if(!isAdmin || !item || !item._key) return '';
+    return `<span class="adm-bar"><button type="button" class="adm-e" data-key="${escHtml(item._key)}" aria-label="Bearbeiten">&#9998;</button><button type="button" class="adm-x" data-del="${escHtml(item._key)}" data-label="${escHtml(label)}" aria-label="Löschen">&times;</button></span>`;
+  }
+  function shortTag(t){ return String(t).replace(/^team\s+/i, ''); }
+  function bindAdmin(){ /* Klicks laufen über Delegation, siehe unten */ }
   function escHtml(t){ return String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
   // Personenzahl pro Eintrag: neue Einträge mit extras, alte Einträge aus dem Namensfeld geschätzt
   function headcount(g){
@@ -1006,13 +1028,22 @@
       list.innerHTML = '<div class="team-card"><span class="who">Trag dich zuerst im Tab „Gäste“ ein, dann siehst du hier die Teams.</span></div>';
       return;
     }
-    const kids = items.filter(g => g.when === 'nachmittag' || g.when === 'beides');
-    const persons = kids.reduce((n, g) => n + headcount(g), 0);
+    const leaders = leadersOf(items);
+    const kids = leaders.filter(g => g.when === 'nachmittag' || g.when === 'beides');
+    const persons = kids.reduce((n, g) => n + teamCount(g), 0);
     cnt.textContent = kids.length + (kids.length === 1 ? ' Team' : ' Teams') + ' · ' + persons + ' Personen am Nachmittag';
+    const meHasMembers = myGuestEntry && items.some(i => i.joinedTo === myGuestEntry.key);
     list.innerHTML = kids.length ? kids.map(g => {
-      const members = [g.name].concat((g.extras || []).map(x => (x.kid ? '🧒 ' : '') + x.name));
+      const members = [g.name].concat((g.extras || []).map(x => (x.kid ? '🧒 ' : '') + x.name)).concat((g.members || []).map(m => m.name));
       const tagHtml = g.tag ? `<span class="tag-chip">${escHtml(shortTag(g.tag))}</span>` : '';
-      return `<div class="team-card">${tagHtml}<div class="who">${members.map(escHtml).join(', ')}</div>${g.when === 'beides' ? '<div class="tmeta">auch abends dabei</div>' : ''}</div>`;
+      const mine = myGuestEntry && g._key === myGuestEntry.key;
+      const imMember = myGuestEntry && (g.members || []).some(m => m._key === myGuestEntry.key);
+      const canJoin = myGuestEntry && !myGuestEntry.joinedTo && !mine && !meHasMembers;
+      return `<div class="team-card">${tagHtml}<div class="who">${members.map(escHtml).join(', ')}</div>` +
+        (g.when === 'beides' ? '<div class="tmeta">auch abends dabei</div>' : '') +
+        (mine ? '<div class="tmeta">Dein Team</div>' : '') + (imMember ? '<div class="tmeta">Du bist dabei</div>' : '') +
+        (canJoin ? `<button type="button" class="btn-outline-warm join-btn" data-join="${escHtml(g._key)}">Beitreten</button>` : '') +
+        adm(g, g.name) + '</div>';
     }).join('') : '<div class="team-card"><span class="who">Noch niemand eingetragen</span></div>';
   }
 
@@ -1024,19 +1055,21 @@
       return;
     }
     const items = await listByPrefix('party:guest:');
+    leadersOf(items);
     renderTeams(items);
+    const leaders = leadersOf(items);
     const tags = {};
     (await listByPrefix('party:start:')).forEach(t => { if(t.disco && t.name) tags[t.name.trim().toLowerCase()] = t.disco; });
     container.innerHTML = '';
     WHEN_ORDER.forEach(when => {
-      const group = items.filter(i => i.when === when);
-      const persons = group.reduce((sum, g) => sum + headcount(g), 0);
+      const group = leaders.filter(i => i.when === when);
+      const persons = group.reduce((sum, g) => sum + teamCount(g), 0);
       const div = document.createElement('div');
       div.className = 'food-group group-' + when;
       div.innerHTML = `<h4>${WHEN_LABEL[when]} <span class="guest-count">${persons}</span></h4><div class="guest-chip-list">${
         group.length
           ? group.map(g => `<span class="guest-chip"><span class="dot badge-${when}"></span>${escHtml(g.name)}${(g.tag || tags[String(g.name).trim().toLowerCase()]) ? ` <span class="mini-tag">${escHtml(shortTag(g.tag || tags[String(g.name).trim().toLowerCase()]))}</span>` : ''}${
-              g.extras && g.extras.length ? ` <span class="with">+ ${g.extras.map(x => (x.kid ? '🧒 ' : '') + escHtml(x.name)).join(', ')}</span>` : ''}${isAdmin ? ` <button class="adm-x" data-del="${escHtml(g._key)}" data-label="${escHtml(g.name)}">&times;</button>` : ''}</span>`).join('')
+              withList(g)}${adm(g, g.name)}</span>`).join('')
           : '<span class="guest-chip-empty">Noch niemand</span>'
       }</div>`;
       container.appendChild(div);
@@ -1056,7 +1089,7 @@
       badge.textContent = tg || 'KEIN TEAM-TAG'; badge.style.opacity = tg ? 1 : .45;
       document.getElementById('myMembers').innerHTML = (myGuestEntry.extras || []).map(x => `<span>${x.kid ? '🧒' : '🧑'} ${escHtml(x.name)}</span>`).join('');
       ['foodName','pizzaName','startName','rsvpName'].forEach(id => { const el = document.getElementById(id); if(el && !el.value) el.value = myGuestEntry.name; });
-      renderMyFood();
+      renderMyFood(); renderMyJoin();
       document.getElementById('guestConfirmWhen').textContent = WHEN_LABEL[myGuestEntry.when];
     } else {
       wrap.style.display = 'block';
@@ -1075,10 +1108,11 @@
     const when = selected.value;
     const extras = guestExtras.slice();
     const tag = document.getElementById('guestTag').value.trim();
-    const ok = await upsert(key, { name, when, extras, tag });
+    const joinedTo = (guestEditing && myGuestEntry) ? (myGuestEntry.joinedTo || null) : null;
+    const ok = await upsert(key, { name, when, extras, tag, joinedTo });
     status.textContent = ok ? 'Danke! ✓' : 'Hat nicht geklappt, bitte nochmal.';
     if(ok){
-      myGuestEntry = { key, name, when, extras, tag };
+      myGuestEntry = { key, name, when, extras, tag, joinedTo };
       guestEditing = false;
       try{ if(tag) localStorage.setItem('myDisco', tag); }catch(e){}
       syncTagFields(tag);
@@ -1113,6 +1147,100 @@
     if(typeof showTag === 'function') showTag();
   }
 
+  async function renderMyJoin(){
+    const box = document.getElementById('myJoined');
+    if(!myGuestEntry){ box.innerHTML = ''; return; }
+    const items = await listByPrefix('party:guest:');
+    const leader = myGuestEntry.joinedTo && items.find(i => i._key === myGuestEntry.joinedTo);
+    if(myGuestEntry.joinedTo && !leader){ myGuestEntry.joinedTo = null; localStorage.setItem('myGuestEntry', JSON.stringify(myGuestEntry)); }
+    const joined = items.filter(i => i.joinedTo === myGuestEntry.key);
+    let html = '';
+    if(leader) html += `<div class="mt-join-note">Du gehörst zum Team <strong>${escHtml(leader.tag ? shortTag(leader.tag) : leader.name)}</strong> <button type="button" id="leaveTeam" class="btn-outline-warm" style="padding:5px 12px;font-size:12px;">verlassen</button></div>`;
+    if(joined.length) html += `<div class="mt-join-note">Beigetreten: ${joined.map(m => escHtml(m.name)).join(', ')}</div>`;
+    else if(!leader) html += '<a class="mt-add" href="#mini">Lieber einem anderen Team beitreten?</a>';
+    box.innerHTML = html;
+  }
+
+  async function saveMyEntry(patch){
+    myGuestEntry = Object.assign({}, myGuestEntry, patch);
+    localStorage.setItem('myGuestEntry', JSON.stringify(myGuestEntry));
+    const e = myGuestEntry;
+    await upsert(e.key, { name: e.name, when: e.when, extras: e.extras || [], tag: e.tag || '', joinedTo: e.joinedTo || null });
+  }
+
+  function refreshAll(){
+    renderGuests(); renderFood(); renderMyFood(); renderGames(); renderSongs(); renderKidsSongs(); renderPizzaWishes(); renderStart();
+    if(myGuestEntry){ updateGuestFormUI(); }
+  }
+
+  // ---- Admin-Editor ----
+  const EDIT_FIELDS = {
+    guest: [['name','Name'],['when','Kommt','select',{nachmittag:'Nachmittag',abend:'Abend',beides:'Beides'}],['tag','Team-Tag'],['extrasText','Mitgäste (Komma getrennt, Kinder mit „(Kind)“)'],['joinedTo','Gehört zu Team','guest']],
+    fingerfood: [['name','Name'],['item','Was'],['category','Kategorie','select',{'Süß':'Süß','Herzhaft':'Herzhaft','Vegan/Vegetarisch':'Vegan/Vegetarisch','Getränke':'Getränke'}],['when','Wann','select',{nachmittag:'Nachmittag',abend:'Abend'}]],
+    bp: [['game','Disziplin','select',{stopp:'Stopptanz',turm:'Turmbau-Duell',beer:'Beer Pong'}],['team','Teamname'],['players','Spieler']],
+    song: [['title','Songwunsch']], kidsong: [['title','Songwunsch']],
+    pizzawish: [['name','Name'],['suggestion','Vorschlag']],
+    start: [['name','Name'],['disco','Team-Tag'],['allergy','Allergien']]
+  };
+  function openEditor(key){
+    const item = ITEM_CACHE[key]; if(!item) return;
+    const kind = key.split(':')[1];
+    const fields = EDIT_FIELDS[kind]; if(!fields) return;
+    const vals = Object.assign({}, item);
+    if(kind === 'guest') vals.extrasText = (item.extras || []).map(x => x.name + (x.kid ? ' (Kind)' : '')).join(', ');
+    if(kind === 'bp' && !vals.game) vals.game = 'beer';
+    const guests = Object.values(ITEM_CACHE).filter(o => o._key && o._key.indexOf('party:guest:') === 0 && o._key !== key);
+    const ov = document.createElement('div');
+    ov.className = 'adm-overlay';
+    ov.innerHTML = '<form class="adm-modal"><h3>Bearbeiten</h3>' + fields.map(([k, label, type, opts]) => {
+      let input;
+      if(type === 'select') input = `<select name="${k}">${Object.entries(opts).map(([v, t]) => `<option value="${escHtml(v)}" ${vals[k] === v ? 'selected' : ''}>${escHtml(t)}</option>`).join('')}</select>`;
+      else if(type === 'guest') input = `<select name="${k}"><option value="">– keins –</option>${guests.map(g => `<option value="${escHtml(g._key)}" ${vals[k] === g._key ? 'selected' : ''}>${escHtml(g.name)}${g.tag ? ' · ' + escHtml(g.tag) : ''}</option>`).join('')}</select>`;
+      else input = `<input type="text" name="${k}" value="${escHtml(vals[k] == null ? '' : vals[k])}">`;
+      return `<label>${escHtml(label)}</label>${input}`;
+    }).join('') + '<div class="adm-actions"><button type="button" class="btn-outline-warm" data-cancel>Abbrechen</button><button type="submit" class="btn-warm">Speichern</button></div></form>';
+    document.body.appendChild(ov);
+    ov.querySelector('[data-cancel]').addEventListener('click', () => ov.remove());
+    ov.addEventListener('click', (e) => { if(e.target === ov) ov.remove(); });
+    ov.querySelector('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const out = Object.assign({}, item); delete out._key; delete out.members;
+      fields.forEach(([k]) => { out[k] = (fd.get(k) || '').toString().trim(); });
+      if(kind === 'guest'){
+        out.extras = out.extrasText.split(',').map(x => x.trim()).filter(Boolean).map(x => ({ name: x.replace(/\s*\(kind\)\s*$/i, ''), kid: /\(kind\)\s*$/i.test(x) }));
+        delete out.extrasText;
+        out.joinedTo = out.joinedTo || null;
+      }
+      await upsert(key, out);
+      if(myGuestEntry && myGuestEntry.key === key){ myGuestEntry = Object.assign({}, myGuestEntry, out, { key }); localStorage.setItem('myGuestEntry', JSON.stringify(myGuestEntry)); }
+      ov.remove(); refreshAll();
+    });
+  }
+
+  document.addEventListener('click', async (e) => {
+    const x = e.target.closest('.adm-x');
+    if(x){
+      if(!confirm('Wirklich löschen: ' + x.dataset.label + '?')) return;
+      await sb.from('storage').delete().eq('key', x.dataset.del);
+      if(myGuestEntry && x.dataset.del === myGuestEntry.key){ /* eigener Eintrag gelöscht */ }
+      refreshAll(); return;
+    }
+    const ed = e.target.closest('.adm-e');
+    if(ed){ openEditor(ed.dataset.key); return; }
+    const jb = e.target.closest('.join-btn');
+    if(jb && myGuestEntry){
+      const leader = ITEM_CACHE[jb.dataset.join]; if(!leader) return;
+      if(!confirm('Dem Team „' + (leader.tag ? shortTag(leader.tag) : leader.name) + '“ beitreten? Du kommst dann so wie das Team (' + WHEN_LABEL[leader.when] + ').')) return;
+      await saveMyEntry({ when: leader.when, joinedTo: leader._key });
+      refreshAll(); return;
+    }
+    if(e.target.closest('#leaveTeam')){
+      await saveMyEntry({ joinedTo: null });
+      refreshAll();
+    }
+  });
+
   // "Das bringe ich mit": eigene Fingerfood-Einträge
   async function renderMyFood(){
     const ul = document.getElementById('myFoodList');
@@ -1138,7 +1266,7 @@
   async function renderKidsSongs(){
     const items = await listByPrefix('party:kidsong:');
     const list = document.getElementById('kidsSongList');
-    list.innerHTML = items.slice().reverse().map(i => `<li>${i.title}</li>`).join('');
+    list.innerHTML = items.slice().reverse().map(i => `<li>${escHtml(i.title)}${adm(i, i.title)}</li>`).join('');
   }
 
   document.getElementById('kidsSongForm').addEventListener('submit', async (e) => {
@@ -1214,7 +1342,7 @@
     const items = await listByPrefix('party:pizzawish:');
     const list = document.getElementById('pizzaWishList');
     list.innerHTML = items.slice().reverse().map(i =>
-      `<li>${i.suggestion}<div class="who">von ${i.name || 'Anonym'}</div></li>`
+      `<li>${escHtml(i.suggestion)}<div class="who">von ${escHtml(i.name || 'Anonym')}</div>${adm(i, i.suggestion)}</li>`
     ).join('');
   }
 
@@ -1341,7 +1469,7 @@
     const seen = new Set(fromGuests.map(g => g.disco.toLowerCase()));
     const named = fromGuests.concat(items.filter(i => i.disco && !seen.has(i.disco.toLowerCase())));
     document.getElementById('startList').innerHTML = named
-      .map(i => `<li><span class="tag-chip">${esc(shortTag(i.disco))}<small>${esc(i.name)}</small></span></li>`).join('');
+      .map(i => `<li><span class="tag-chip">${esc(shortTag(i.disco))}<small>${esc(i.name)}</small></span>${adm(i, i.disco)}</li>`).join('');
   }
   document.getElementById('startForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -1358,7 +1486,7 @@
       if(myGuestEntry){
         myGuestEntry = Object.assign({}, myGuestEntry, { tag });
         localStorage.setItem('myGuestEntry', JSON.stringify(myGuestEntry));
-        await upsert(myGuestEntry.key, { name: myGuestEntry.name, when: myGuestEntry.when, extras: myGuestEntry.extras || [], tag });
+        await upsert(myGuestEntry.key, { name: myGuestEntry.name, when: myGuestEntry.when, extras: myGuestEntry.extras || [], tag, joinedTo: myGuestEntry.joinedTo || null });
         updateGuestFormUI();
       }
       renderStart(); renderGuests(); renderFood();
@@ -1397,7 +1525,7 @@
     const block = (games) => games.map(g => {
       const rows = items.filter(t => (t.game || 'beer') === g);
       return `<li><strong>${GAMES[g]}</strong> <span class="who">(${rows.length})</span>` +
-        (rows.length ? rows.map(t => `<div class="who">${esc(t.team)} &mdash; ${esc(t.players)}</div>`).join('')
+        (rows.length ? rows.map(t => `<div class="who">${esc(t.team)} &mdash; ${esc(t.players)}${adm(t, t.team)}</div>`).join('')
                      : '<div class="who">Noch kein Team angemeldet</div>') + '</li>';
     }).join('');
     document.getElementById('gameKidsList').innerHTML = block(['stopp','turm']);
