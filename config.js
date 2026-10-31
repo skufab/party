@@ -6,5 +6,6 @@ window.PARTY_CONFIG = {
   SPOTIFY_PLAYLIST_URL: "https://open.spotify.com/playlist/6OGiIFaTT8jClmO2IZWFBi?si=efFyQCoeSKCeBOdMyDy3lg&utm_source=copy-link",
   KIDS_PLAYLIST_URL: "https://open.spotify.com/playlist/2SnyXpqvasiZ38VvButbFW?si=w73AKg45T76J4al36SlSWw&utm_source=copy-link&pt=4389caf35c3be4ee1cdc9d3b23d6a19f&pi=RN7d-L0pT2-cm",
   PARTY_ADDRESS: "Corneliusstr. 62, 51107 Köln",
+  ADMIN_PIN: "fabi-admin",   // Admin-Modus: Seite einmal mit ?admin=fabi-admin öffnen. PIN gern ändern!
   UNLOCK_ALL: false   // true = alle Etappen zur Vorschau offen
 };

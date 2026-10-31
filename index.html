@@ -392,6 +392,7 @@
   .night .gate-lock{color:#C9C4D8;}
   .night .gate form{margin-top:6px;}
   .food-group .when{font-size:12px;opacity:.55;}
+  .adm-x{background:#b00020;color:#fff;width:20px;height:20px;padding:0;border-radius:50%;font-size:12px;line-height:20px;margin-left:6px;vertical-align:middle;}
 </style>
 </head>
 <body>
@@ -783,6 +784,15 @@
   // Die persönlichen Werte stehen in config.js (liegt neben index.html im Repo).
   // So bleiben sie erhalten, wenn index.html ersetzt wird.
   const CFG = window.PARTY_CONFIG || {};
+  // Admin-Modus (nur Fabi): einmal die Seite mit ?admin=PIN öffnen, danach bleibt er auf diesem Gerät aktiv.
+  const ADMIN_PIN = CFG.ADMIN_PIN || 'fabi-admin';
+  let isAdmin = false;
+  try{
+    const q = new URLSearchParams(location.search).get('admin');
+    if(q === ADMIN_PIN) localStorage.setItem('partyAdmin', '1');
+    if(q === 'off') localStorage.removeItem('partyAdmin');
+    isAdmin = localStorage.getItem('partyAdmin') === '1';
+  }catch(e){}
   const SUPABASE_URL = CFG.SUPABASE_URL || "https://wqmdjrczvirpmpcyavvs.supabase.co";
   const SUPABASE_ANON_KEY = CFG.SUPABASE_ANON_KEY || "DEIN_SUPABASE_ANON_KEY";
   const SPOTIFY_PLAYLIST_URL = CFG.SPOTIFY_PLAYLIST_URL || "https://open.spotify.com/playlist/DEINE_PLAYLIST_ID";
@@ -790,6 +800,13 @@
   const UNLOCK_ALL = !!CFG.UNLOCK_ALL; // true = alle Etappen sofort offen (nur Vorschau)
   const PARTY_ADDRESS = CFG.PARTY_ADDRESS || "EURE STRASSE 12, PLZ ORT";
 
+  if(isAdmin){
+    const ab = document.createElement('a');
+    ab.href = '?admin=off';
+    ab.textContent = '🔧 Admin-Modus · beenden';
+    ab.style.cssText = 'position:fixed;top:8px;left:8px;z-index:70;background:#b00020;color:#fff;font:600 11px Inter,sans-serif;padding:6px 10px;border-radius:999px;text-decoration:none;opacity:.9;';
+    document.body.appendChild(ab);
+  }
   if(SUPABASE_ANON_KEY.indexOf('DEIN_') === 0){
     const bar = document.createElement('div');
     bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:70;background:#b00020;color:#fff;font:600 13px/1.4 Inter,sans-serif;padding:10px 14px;text-align:center;';
@@ -854,11 +871,12 @@
       div.className = 'food-group';
       div.innerHTML = `<h4>${cat}</h4><ul>${
         group.length
-          ? group.map(g => { const gu = g.gid && guests[g.gid]; return `<li><strong>${escHtml(g.item)}</strong> &mdash; ${escHtml(gu ? gu.name : g.name)}${gu && gu.tag ? ` <span class="mini-tag">${escHtml(gu.tag)}</span>` : ''}${g.when ? ` <span class="when">${g.when === 'abend' ? '🌙 Abend' : '☀️ Nachmittag'}</span>` : ''}</li>`; }).join('')
+          ? group.map(g => { const gu = g.gid && guests[g.gid]; return `<li><strong>${escHtml(g.item)}</strong> &mdash; ${escHtml(gu ? gu.name : g.name)}${gu && gu.tag ? ` <span class="mini-tag">${escHtml(shortTag(gu.tag))}</span>` : ''}${g.when ? ` <span class="when">${g.when === 'abend' ? '🌙 Abend' : '☀️ Nachmittag'}</span>` : ''}${isAdmin ? ` <button class="adm-x" data-del="${escHtml(g._key)}" data-label="${escHtml(g.item)}">&times;</button>` : ''}</li>`; }).join('')
           : '<li class="empty">Noch nichts eingetragen</li>'
       }</ul>`;
       container.appendChild(div);
     });
+    bindAdmin(container);
   }
 
   document.getElementById('foodForm').addEventListener('submit', async (e) => {
@@ -947,6 +965,14 @@
   const WHEN_ORDER = ['nachmittag','abend','beides'];
   let myGuestEntry = JSON.parse(localStorage.getItem('myGuestEntry') || 'null'); // {key,name,when}
 
+  function shortTag(t){ return String(t).replace(/^team\s+/i, ''); }
+  function bindAdmin(root){
+    root.querySelectorAll('.adm-x').forEach(b => b.addEventListener('click', async () => {
+      if(!confirm('Wirklich löschen: ' + b.dataset.label + '?')) return;
+      await sb.from('storage').delete().eq('key', b.dataset.del);
+      renderGuests(); renderFood(); renderMyFood();
+    }));
+  }
   function escHtml(t){ return String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
   // Personenzahl pro Eintrag: neue Einträge mit extras, alte Einträge aus dem Namensfeld geschätzt
   function headcount(g){
@@ -985,7 +1011,7 @@
     cnt.textContent = kids.length + (kids.length === 1 ? ' Team' : ' Teams') + ' · ' + persons + ' Personen am Nachmittag';
     list.innerHTML = kids.length ? kids.map(g => {
       const members = [g.name].concat((g.extras || []).map(x => (x.kid ? '🧒 ' : '') + x.name));
-      const tagHtml = g.tag ? `<span class="tag-chip">${escHtml(g.tag)}</span>` : '';
+      const tagHtml = g.tag ? `<span class="tag-chip">${escHtml(shortTag(g.tag))}</span>` : '';
       return `<div class="team-card">${tagHtml}<div class="who">${members.map(escHtml).join(', ')}</div>${g.when === 'beides' ? '<div class="tmeta">auch abends dabei</div>' : ''}</div>`;
     }).join('') : '<div class="team-card"><span class="who">Noch niemand eingetragen</span></div>';
   }
@@ -1009,12 +1035,13 @@
       div.className = 'food-group group-' + when;
       div.innerHTML = `<h4>${WHEN_LABEL[when]} <span class="guest-count">${persons}</span></h4><div class="guest-chip-list">${
         group.length
-          ? group.map(g => `<span class="guest-chip"><span class="dot badge-${when}"></span>${escHtml(g.name)}${(g.tag || tags[String(g.name).trim().toLowerCase()]) ? ` <span class="mini-tag">${escHtml(g.tag || tags[String(g.name).trim().toLowerCase()])}</span>` : ''}${
-              g.extras && g.extras.length ? ` <span class="with">+ ${g.extras.map(x => (x.kid ? '🧒 ' : '') + escHtml(x.name)).join(', ')}</span>` : ''}</span>`).join('')
+          ? group.map(g => `<span class="guest-chip"><span class="dot badge-${when}"></span>${escHtml(g.name)}${(g.tag || tags[String(g.name).trim().toLowerCase()]) ? ` <span class="mini-tag">${escHtml(shortTag(g.tag || tags[String(g.name).trim().toLowerCase()]))}</span>` : ''}${
+              g.extras && g.extras.length ? ` <span class="with">+ ${g.extras.map(x => (x.kid ? '🧒 ' : '') + escHtml(x.name)).join(', ')}</span>` : ''}${isAdmin ? ` <button class="adm-x" data-del="${escHtml(g._key)}" data-label="${escHtml(g.name)}">&times;</button>` : ''}</span>`).join('')
           : '<span class="guest-chip-empty">Noch niemand</span>'
       }</div>`;
       container.appendChild(div);
     });
+    bindAdmin(container);
   }
 
   function updateGuestFormUI(){
@@ -1314,7 +1341,7 @@
     const seen = new Set(fromGuests.map(g => g.disco.toLowerCase()));
     const named = fromGuests.concat(items.filter(i => i.disco && !seen.has(i.disco.toLowerCase())));
     document.getElementById('startList').innerHTML = named
-      .map(i => `<li><span class="tag-chip">${esc(i.disco)}<small>${esc(i.name)}</small></span></li>`).join('');
+      .map(i => `<li><span class="tag-chip">${esc(shortTag(i.disco))}<small>${esc(i.name)}</small></span></li>`).join('');
   }
   document.getElementById('startForm').addEventListener('submit', async (e) => {
     e.preventDefault();
