@@ -374,6 +374,24 @@
   .mt-add{font-size:13px;font-weight:700;color:var(--terracotta);text-decoration:none;}
   .mt-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
   .mt-actions .btn-outline-warm{padding:9px 16px;font-size:13px;}
+  #foodSection{background:var(--cream);padding-bottom:50px;}
+  .mini-h{font-size:19px;color:var(--terracotta);margin:26px 0 8px;}
+  .mini-count{font-size:13px;opacity:.65;margin:0 0 10px;}
+  .team-grid{display:grid;gap:10px;}
+  .team-card{background:var(--card);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:7px;
+    box-shadow:0 1px 2px rgba(59,36,21,.04),0 6px 16px rgba(59,36,21,.07);}
+  .team-card .tag-chip{align-self:flex-start;}
+  .team-card .who{font-size:14px;}
+  .team-card .tmeta{font-size:12px;opacity:.55;}
+  .gate.locked .gate-body{display:none;}
+  .gate-lock{display:none;font-size:13px;opacity:.7;padding:10px 0;}
+  .gate.locked .gate-lock{display:block;}
+  .game-list{margin-top:14px;}
+  .game-list li strong{color:var(--terracotta);}
+  .game-list .who{font-size:13px;opacity:.75;}
+  .night .gate-lock{color:#C9C4D8;}
+  .night .gate form{margin-top:6px;}
+  .food-group .when{font-size:12px;opacity:.55;}
 </style>
 </head>
 <body>
@@ -385,7 +403,7 @@
       <h1>Fabi feiert doppelt</h1>
       <div class="date">Freitag, 27. November 2026 &middot; bei uns im Partykeller</div>
       <div class="timecards">
-        <a href="#foodSection" class="timecard">
+        <a href="#mini" class="timecard">
           <span class="time">15:00&ndash;18:00</span>
           <span class="label">Mini-Disco</span>
         </a>
@@ -471,6 +489,44 @@
     </div>
   </section>
 
+  <section class="light" id="foodSection">
+    <div class="wrap">
+      <h2>Wer bringt was mit?</h2>
+      <p class="sub">Ob am Nachmittag oder erst am Abend &mdash; trag ein, was du mitbringst. Die Liste ist live f&uuml;r alle sichtbar.</p>
+
+      <div class="food-groups reveal" id="foodGroups"></div>
+
+      <form id="foodForm">
+        <div>
+          <label for="foodName">Dein Name</label>
+          <input id="foodName" type="text" placeholder="z. B. Romi" required>
+        </div>
+        <div>
+          <label for="foodWhen">Wann bringst du es mit?</label>
+          <select id="foodWhen" required>
+            <option value="nachmittag">&#9728;&#65039; Nachmittag (Mini-Disco)</option>
+            <option value="abend">&#127769; Abend (Dance Moves an)</option>
+          </select>
+        </div>
+        <div>
+          <label for="foodCategory">Kategorie</label>
+          <select id="foodCategory" required>
+            <option value="">Bitte w&auml;hlen</option>
+            <option value="Süß">Süß</option>
+            <option value="Herzhaft">Herzhaft</option>
+            <option value="Vegan/Vegetarisch">Vegan/Vegetarisch</option>
+            <option value="Getränke">Getränke</option>
+          </select>
+        </div>
+        <div>
+          <label for="foodItem">Was bringst du mit?</label>
+          <input id="foodItem" type="text" placeholder="z. B. Obstspie&szlig;e" required>
+        </div>
+        <button type="submit" class="btn-warm">Eintragen</button>
+        <span class="hint" id="foodStatus"></span>
+      </form>
+    </div>
+  </section>
 </main>
 
 <main class="tab" id="tab-ablauf">
@@ -496,12 +552,12 @@
           <h3>Mini-Disco! &#129705;</h3>
           <p>Im kleinen Raum wird getanzt, auch mit den ganz Kleinen. Mit einer kleinen Lichtmaschine und einer coolen Kinderplaylist machen wir daraus eine richtige Party.</p>
           <div class="tl-chips"><span>&#128161; Lichtmaschine</span><span>&#127925; Kinder-Playlist</span><span>&#128378; Tanzen!</span></div>
-          <div class="tl-chips"><a class="btn-outline-warm" href="#foodSection" style="padding:7px 14px;font-size:12px;">Zur Mini-Disco</a></div>
+          <div class="tl-chips"><a class="btn-outline-warm" href="#mini" style="padding:7px 14px;font-size:12px;">Zur Mini-Disco</a></div>
         </div></div>
         <div class="tl-item"><div class="tl-card">
           <div class="tl-time">Geplant</div>
           <h3>Mini-Turniere</h3>
-          <p>Als Eltern-Kind-Team gibt es Stopptanz und ein Turmbau-Duell. Anmelden k&ouml;nnt ihr euch in den Etappen.</p>
+          <p>Als Eltern-Kind-Team gibt es Stopptanz und ein Turmbau-Duell. Anmelden k&ouml;nnt ihr euch ab dem 13.11. im Tab Mini-Disco.</p>
         </div></div>
         <div class="tl-item swap"><div class="tl-card">
           <div class="tl-time">18:00 &ndash; 20:00 &middot; Umbau</div>
@@ -564,19 +620,11 @@
           <div><h3>Etappe 3 &middot; Mini-Turniere</h3><small>2 Wochen vorher</small></div></div>
         <div class="prep-lock" id="lock2"></div>
         <div class="prep-body">
-          <p>Drei Disziplinen, such dir aus, wo du mitmachst. Stopptanz und Turmbau laufen am Nachmittag als Eltern-Kind-Team, Beer Pong abends als Zweier-Team.</p>
-          <form id="bpForm">
-            <select id="bpGame" required>
-              <option value="stopp">&#128378; Stopptanz (nachmittags)</option>
-              <option value="turm">&#129521; Turmbau-Duell (nachmittags)</option>
-              <option value="beer">&#127866; Beer Pong (abends)</option>
-            </select>
-            <input id="bpTeam" type="text" placeholder="Teamname (dein Team-Tag aus Etappe 1)" required>
-            <input id="bpPlayers" type="text" placeholder="Wer spielt? (z. B. Romi &amp; Fabi)" required>
-            <button type="submit" class="btn-warm">Team anmelden</button>
-            <span class="hint" id="bpStatus"></span>
-          </form>
-          <ul class="prep-list" id="bpList"></ul>
+          <p>Die Anmeldung l&auml;uft direkt dort, wo gespielt wird: Stopptanz und Turmbau am Nachmittag, Beer Pong abends. Dein Team-Tag ist schon eingetragen.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <a class="btn-outline-warm" href="#mini" style="padding:9px 16px;font-size:13px;">&#128378; Stopptanz &amp; Turmbau</a>
+            <a class="btn-outline-warm" href="#abend" style="padding:9px 16px;font-size:13px;">&#127866; Beer Pong</a>
+          </div>
         </div>
       </div>
 
@@ -610,39 +658,37 @@
 </main>
 
 <main class="tab" id="tab-mini">
-  <section class="light" id="foodSection">
+  <section class="light" id="miniSection">
     <div class="wrap">
-      <h2>Wer bringt was mit?</h2>
-      <p class="sub">Trag dich ein, damit wir nicht zehnmal Muffins haben &mdash; die Liste ist live für alle sichtbar.</p>
+      <h2>Mini-Disco &middot; 15&ndash;18 Uhr</h2>
+      <p class="sub">Wer dabei ist, was gespielt wird &mdash; und unsere Kids-Playlist.</p>
 
-      <div class="food-groups reveal" id="foodGroups"></div>
+      <h3 class="mini-h">Die Teams</h3>
+      <p class="mini-count" id="teamCount"></p>
+      <div class="team-grid" id="teamList"></div>
 
-      <form id="foodForm">
-        <div>
-          <label for="foodName">Dein Name</label>
-          <input id="foodName" type="text" placeholder="z. B. Romi" required>
+      <h3 class="mini-h">Wettbewerbe</h3>
+      <p class="sub" style="margin-top:0;">Stopptanz und Turmbau-Duell, jeweils als Eltern-Kind-Team.</p>
+      <div class="gate" data-opens="2026-11-13T08:00:00+01:00">
+        <div class="gate-lock"></div>
+        <div class="gate-body">
+          <form id="gameKidsForm">
+            <select id="gameKidsType" required>
+              <option value="stopp">&#128378; Stopptanz</option>
+              <option value="turm">&#129521; Turmbau-Duell</option>
+            </select>
+            <input id="gameKidsTeam" type="text" placeholder="Teamname (dein Team-Tag)" required>
+            <input id="gameKidsPlayers" type="text" placeholder="Wer spielt? (z. B. Romi &amp; Fabi)" required>
+            <button type="submit" class="btn-warm">Team anmelden</button>
+            <span class="hint" id="gameKidsStatus"></span>
+          </form>
         </div>
-        <div>
-          <label for="foodCategory">Kategorie</label>
-          <select id="foodCategory" required>
-            <option value="">Bitte wählen</option>
-            <option value="Süß">Süß</option>
-            <option value="Herzhaft">Herzhaft</option>
-            <option value="Vegan/Vegetarisch">Vegan/Vegetarisch</option>
-            <option value="Getränke">Getränke</option>
-          </select>
-        </div>
-        <div>
-          <label for="foodItem">Was bringst du mit?</label>
-          <input id="foodItem" type="text" placeholder="z. B. Obstspieße" required>
-        </div>
-        <button type="submit" class="btn-warm">Eintragen</button>
-        <span class="hint" id="foodStatus"></span>
-      </form>
+      </div>
+      <ul class="prep-list game-list" id="gameKidsList"></ul>
 
       <div class="playlist-card-light reveal">
-        <p>Für die Mini-Disco haben wir eine Kids-Playlist &mdash; Wünsche gerne direkt dort adden:</p>
-        <a class="btn-outline-warm" id="kidsPlaylistLink" href="#" target="_blank" rel="noopener">Kids-Playlist öffnen</a>
+        <p>F&uuml;r die Mini-Disco haben wir eine Kids-Playlist &mdash; W&uuml;nsche gerne direkt dort adden:</p>
+        <a class="btn-outline-warm" id="kidsPlaylistLink" href="#" target="_blank" rel="noopener">Kids-Playlist &ouml;ffnen</a>
 
         <form id="kidsSongForm" style="margin-top:16px;box-shadow:none;background:transparent;padding:0;">
           <input id="kidsSongTitle" type="text" placeholder="Songwunsch (Titel &amp; Interpret)" required>
@@ -653,7 +699,6 @@
       </div>
     </div>
   </section>
-
 </main>
 
 <main class="tab" id="tab-abend">
@@ -703,6 +748,21 @@
         <span class="hint" id="pizzaWishStatus" style="color:#9C93C4;"></span>
       </div>
       <ul class="song-list" id="pizzaWishList"></ul>
+
+      <h2 style="margin-top:34px;">Beer-Pong-Turnier</h2>
+      <p class="sub">Als Zweier-Team. Kein Partner? Schreib &bdquo;sucht Partner&ldquo; &mdash; wir finden jemanden.</p>
+      <div class="gate" data-opens="2026-11-13T08:00:00+01:00">
+        <div class="gate-lock"></div>
+        <div class="gate-body">
+          <form id="gameNightForm">
+            <input id="gameNightTeam" type="text" placeholder="Teamname (dein Team-Tag)" required>
+            <input id="gameNightPlayers" type="text" placeholder="Wer spielt? (z. B. Fabi &amp; Elena)" required>
+            <button type="submit" class="btn-neon-sm">Team anmelden</button>
+            <span class="hint" id="gameNightStatus" style="color:#9C93C4;"></span>
+          </form>
+        </div>
+      </div>
+      <ul class="song-list" id="gameNightList"></ul>
     </div>
   </div>
 
@@ -794,7 +854,7 @@
       div.className = 'food-group';
       div.innerHTML = `<h4>${cat}</h4><ul>${
         group.length
-          ? group.map(g => { const gu = g.gid && guests[g.gid]; return `<li><strong>${escHtml(g.item)}</strong> &mdash; ${escHtml(gu ? gu.name : g.name)}${gu && gu.tag ? ` <span class="mini-tag">${escHtml(gu.tag)}</span>` : ''}</li>`; }).join('')
+          ? group.map(g => { const gu = g.gid && guests[g.gid]; return `<li><strong>${escHtml(g.item)}</strong> &mdash; ${escHtml(gu ? gu.name : g.name)}${gu && gu.tag ? ` <span class="mini-tag">${escHtml(gu.tag)}</span>` : ''}${g.when ? ` <span class="when">${g.when === 'abend' ? '🌙 Abend' : '☀️ Nachmittag'}</span>` : ''}</li>`; }).join('')
           : '<li class="empty">Noch nichts eingetragen</li>'
       }</ul>`;
       container.appendChild(div);
@@ -810,7 +870,8 @@
     const status = document.getElementById('foodStatus');
     status.textContent = 'Speichert…';
     const gid = (myGuestEntry && name.toLowerCase() === myGuestEntry.name.trim().toLowerCase()) ? myGuestEntry.key : null;
-    const ok = await upsert('party:fingerfood:' + uid(), { name, category, item, gid });
+    const when = document.getElementById('foodWhen').value;
+    const ok = await upsert('party:fingerfood:' + uid(), { name, category, item, gid, when });
     status.textContent = ok ? 'Danke! Eingetragen ✓' : 'Hat nicht geklappt, bitte nochmal.';
     if(ok){ e.target.reset(); document.getElementById('foodName').value = myGuestEntry ? myGuestEntry.name : ''; renderFood(); renderMyFood(); }
   });
@@ -912,13 +973,32 @@
   document.getElementById('extraAdd').addEventListener('click', addExtra);
   document.getElementById('extraName').addEventListener('keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); addExtra(); } });
 
+  function renderTeams(items){
+    const list = document.getElementById('teamList'), cnt = document.getElementById('teamCount');
+    if(!items){
+      cnt.textContent = '';
+      list.innerHTML = '<div class="team-card"><span class="who">Trag dich zuerst im Tab „Gäste“ ein, dann siehst du hier die Teams.</span></div>';
+      return;
+    }
+    const kids = items.filter(g => g.when === 'nachmittag' || g.when === 'beides');
+    const persons = kids.reduce((n, g) => n + headcount(g), 0);
+    cnt.textContent = kids.length + (kids.length === 1 ? ' Team' : ' Teams') + ' · ' + persons + ' Personen am Nachmittag';
+    list.innerHTML = kids.length ? kids.map(g => {
+      const members = [g.name].concat((g.extras || []).map(x => (x.kid ? '🧒 ' : '') + x.name));
+      const tagHtml = g.tag ? `<span class="tag-chip">${escHtml(g.tag)}</span>` : '';
+      return `<div class="team-card">${tagHtml}<div class="who">${members.map(escHtml).join(', ')}</div>${g.when === 'beides' ? '<div class="tmeta">auch abends dabei</div>' : ''}</div>`;
+    }).join('') : '<div class="team-card"><span class="who">Noch niemand eingetragen</span></div>';
+  }
+
   async function renderGuests(){
     const container = document.getElementById('guestList');
     if(!myGuestEntry){
       container.innerHTML = '';
+      renderTeams(null);
       return;
     }
     const items = await listByPrefix('party:guest:');
+    renderTeams(items);
     const tags = {};
     (await listByPrefix('party:start:')).forEach(t => { if(t.disco && t.name) tags[t.name.trim().toLowerCase()] = t.disco; });
     container.innerHTML = '';
@@ -1002,7 +1082,7 @@
   function syncTagFields(tag){
     if(!tag) return;
     const a = document.getElementById('startTag'); if(a) a.value = tag;
-    const b = document.getElementById('bpTeam'); if(b) b.value = tag;
+    setTeamTag(tag);
     if(typeof showTag === 'function') showTag();
   }
 
@@ -1188,6 +1268,12 @@
         head.appendChild(b);
       }
     });
+    document.querySelectorAll('.gate').forEach(g => {
+      const opens = new Date(g.dataset.opens);
+      const open = UNLOCK_ALL || n >= opens;
+      g.classList.toggle('locked', !open);
+      g.querySelector('.gate-lock').textContent = '🔒 Anmeldung öffnet am ' + DE_DAY.format(opens);
+    });
     openPhaseCount = openCount; if(typeof refreshBadge === 'function') refreshBadge();
     const track = document.getElementById('prepTrack');
     let html = '';
@@ -1241,7 +1327,7 @@
     st.textContent = ok ? 'Dein Tag steht: ' + tag + ' ✓' : 'Hat nicht geklappt, bitte nochmal.';
     if(ok){
       try{ localStorage.setItem('myDisco', tag); }catch(e){}
-      const bt = document.getElementById('bpTeam'); if(bt) bt.value = tag;
+      setTeamTag(tag);
       if(myGuestEntry){
         myGuestEntry = Object.assign({}, myGuestEntry, { tag });
         localStorage.setItem('myGuestEntry', JSON.stringify(myGuestEntry));
@@ -1274,29 +1360,37 @@
 
   // ---- Etappe 3: Turniere ----
   const GAMES = { stopp:'🕺 Stopptanz', turm:'🧱 Turmbau-Duell', beer:'🍺 Beer Pong' };
-  try{ const t = localStorage.getItem('myDisco'); if(t) document.getElementById('bpTeam').value = t; }catch(e){}
-  async function renderBP(){
-    const items = await listByPrefix('party:bp:');
-    const html = Object.keys(GAMES).map(g => {
-      const rows = items.filter(t => (t.game || 'beer') === g);
-      if(!rows.length) return '';
-      return `<li><strong>${GAMES[g]}</strong> <span class="who">(${rows.length})</span>` +
-        rows.map(t => `<div class="who">${esc(t.team)} &mdash; ${esc(t.players)}</div>`).join('') + '</li>';
-    }).join('');
-    document.getElementById('bpList').innerHTML = html || '<li style="opacity:.5;font-style:italic;">Noch kein Team angemeldet</li>';
+  function setTeamTag(tag){
+    ['gameKidsTeam','gameNightTeam'].forEach(id => { const el = document.getElementById(id); if(el && tag) el.value = tag; });
   }
-  document.getElementById('bpForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const game = document.getElementById('bpGame').value;
-    const team = document.getElementById('bpTeam').value.trim();
-    const players = document.getElementById('bpPlayers').value.trim();
-    if(!team || !players) return;
-    const st = document.getElementById('bpStatus');
-    st.textContent = 'Speichert…';
-    const ok = await upsert('party:bp:' + uid(), { game, team, players });
-    st.textContent = ok ? 'Team ist drin! ✓' : 'Hat nicht geklappt, bitte nochmal.';
-    if(ok){ document.getElementById('bpPlayers').value = ''; renderBP(); }
-  });
+  try{ setTeamTag(localStorage.getItem('myDisco') || (myGuestEntry && myGuestEntry.tag) || ''); }catch(e){}
+
+  async function renderGames(){
+    const items = await listByPrefix('party:bp:');
+    const block = (games) => games.map(g => {
+      const rows = items.filter(t => (t.game || 'beer') === g);
+      return `<li><strong>${GAMES[g]}</strong> <span class="who">(${rows.length})</span>` +
+        (rows.length ? rows.map(t => `<div class="who">${esc(t.team)} &mdash; ${esc(t.players)}</div>`).join('')
+                     : '<div class="who">Noch kein Team angemeldet</div>') + '</li>';
+    }).join('');
+    document.getElementById('gameKidsList').innerHTML = block(['stopp','turm']);
+    document.getElementById('gameNightList').innerHTML = block(['beer']);
+  }
+  function bindGameForm(formId, getGame, teamId, playersId, statusId){
+    document.getElementById(formId).addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const team = document.getElementById(teamId).value.trim();
+      const players = document.getElementById(playersId).value.trim();
+      if(!team || !players) return;
+      const st = document.getElementById(statusId);
+      st.textContent = 'Speichert…';
+      const ok = await upsert('party:bp:' + uid(), { game: getGame(), team, players });
+      st.textContent = ok ? 'Team ist drin! ✓' : 'Hat nicht geklappt, bitte nochmal.';
+      if(ok){ document.getElementById(playersId).value = ''; renderGames(); }
+    });
+  }
+  bindGameForm('gameKidsForm', () => document.getElementById('gameKidsType').value, 'gameKidsTeam', 'gameKidsPlayers', 'gameKidsStatus');
+  bindGameForm('gameNightForm', () => 'beer', 'gameNightTeam', 'gameNightPlayers', 'gameNightStatus');
 
   // ---- Etappe 4: Letzter Check ----
   let rsvpChoice = null;
@@ -1323,12 +1417,12 @@
 
   tickCountdown(); setInterval(tickCountdown, 1000);
   updatePhases(); setInterval(updatePhases, 60000);
-  renderStart(); renderMotto(); renderBP(); renderRSVP();
+  renderStart(); renderMotto(); renderGames(); renderRSVP();
 
 
   // ===== App-Tabs =====
   const TABS = ['start','gaeste','ablauf','etappen','mini','abend'];
-  const ALIAS = { foodSection:'mini', nightPlaylist:'abend', prep:'etappen', ph0:'etappen', ph1:'etappen', ph2:'etappen', ph3:'etappen' };
+  const ALIAS = { foodSection:'gaeste', nightPlaylist:'abend', prep:'etappen', ph0:'etappen', ph1:'etappen', ph2:'etappen', ph3:'etappen' };
   function seenPhases(){ try{ return +localStorage.getItem('seenPhases') || 0; }catch(e){ return 0; } }
   function refreshBadge(){
     document.querySelector('.tabbtn[data-tab="etappen"]').classList.toggle('has-new', openPhaseCount > seenPhases());
@@ -1355,7 +1449,7 @@
     const tab = ALIAS[id] || (TABS.includes(id) ? id : (el && el.closest('.tab') ? el.closest('.tab').id.replace('tab-','') : null));
     if(!tab) return;
     e.preventDefault();
-    showTab(tab, ALIAS[id] && /^ph\d$/.test(id) ? id : null);
+    showTab(tab, (/^ph\d$/.test(id) || id === 'foodSection') ? id : null);
   });
   openPhaseCount = [0,1,2,3].filter(i => UNLOCK_ALL || nowD() >= new Date(document.getElementById('ph' + i).dataset.opens)).length;
   showTab((location.hash || '#start').slice(1).replace(/^(foodSection|nightPlaylist|prep)$/, m => ALIAS[m]));
