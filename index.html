@@ -883,7 +883,7 @@
       div.className = 'food-group';
       div.innerHTML = `<h4>${cat}</h4><ul>${
         group.length
-          ? group.map(g => { const gu = g.gid && guests[g.gid]; return `<li><strong>${escHtml(g.item)}</strong> &mdash; ${escHtml(gu ? gu.name : g.name)}${gu && gu.tag ? ` <span class="mini-tag">${escHtml(shortTag(gu.tag))}</span>` : ''}${g.when ? ` <span class="when">${g.when === 'abend' ? '🌙 Abend' : '☀️ Nachmittag'}</span>` : ''}${adm(g, g.item)}</li>`; }).join('')
+          ? group.map(g => { const gu = g.gid && guests[g.gid]; return `<li><strong>${escHtml(g.item)}</strong> &mdash; ${escHtml(gu ? gu.name : g.name)}${g.when ? ` <span class="when">${g.when === 'abend' ? '🌙 Abend' : '☀️ Nachmittag'}</span>` : ''}${adm(g, g.item)}</li>`; }).join('')
           : '<li class="empty">Noch nichts eingetragen</li>'
       }</ul>`;
       container.appendChild(div);
