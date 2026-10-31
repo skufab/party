@@ -718,15 +718,24 @@
   <button class="tabbtn" data-tab="abend"><i>&#129705;</i>Abend</button>
 </div></nav>
 
+<script src="config.js"></script>
 <script>
-  // ===== TODO: hier eintragen =====
-  const SUPABASE_URL = "https://wqmdjrczvirpmpcyavvs.supabase.co"; // gleiche Instanz wie Happy Cornelius
-  const SUPABASE_ANON_KEY = "DEIN_SUPABASE_ANON_KEY"; // aus index.html / punkte.html kopieren
-  const SPOTIFY_PLAYLIST_URL = "https://open.spotify.com/playlist/DEINE_PLAYLIST_ID";
-  const KIDS_PLAYLIST_URL = "https://open.spotify.com/playlist/DEINE_KIDS_PLAYLIST_ID";
-  const UNLOCK_ALL = false; // true = alle Etappen sofort offen (Vorschau). Vor dem Verschicken auf false setzen!
-  const PARTY_ADDRESS = "EURE STRASSE 12, PLZ ORT"; // hier eure echte Adresse eintragen
-  // =================================
+  // Die persönlichen Werte stehen in config.js (liegt neben index.html im Repo).
+  // So bleiben sie erhalten, wenn index.html ersetzt wird.
+  const CFG = window.PARTY_CONFIG || {};
+  const SUPABASE_URL = CFG.SUPABASE_URL || "https://wqmdjrczvirpmpcyavvs.supabase.co";
+  const SUPABASE_ANON_KEY = CFG.SUPABASE_ANON_KEY || "DEIN_SUPABASE_ANON_KEY";
+  const SPOTIFY_PLAYLIST_URL = CFG.SPOTIFY_PLAYLIST_URL || "https://open.spotify.com/playlist/DEINE_PLAYLIST_ID";
+  const KIDS_PLAYLIST_URL = CFG.KIDS_PLAYLIST_URL || "https://open.spotify.com/playlist/DEINE_KIDS_PLAYLIST_ID";
+  const UNLOCK_ALL = !!CFG.UNLOCK_ALL; // true = alle Etappen sofort offen (nur Vorschau)
+  const PARTY_ADDRESS = CFG.PARTY_ADDRESS || "EURE STRASSE 12, PLZ ORT";
+
+  if(SUPABASE_ANON_KEY.indexOf('DEIN_') === 0){
+    const bar = document.createElement('div');
+    bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:70;background:#b00020;color:#fff;font:600 13px/1.4 Inter,sans-serif;padding:10px 14px;text-align:center;';
+    bar.textContent = 'Konfiguration fehlt: config.js mit dem Supabase-Schlüssel liegt nicht im Repo.';
+    document.body.appendChild(bar);
+  }
 
   document.getElementById('playlistLink').href = SPOTIFY_PLAYLIST_URL;
   document.getElementById('kidsPlaylistLink').href = KIDS_PLAYLIST_URL;
@@ -748,7 +757,22 @@
       .from('storage')
       .upsert({ key, value: JSON.stringify(valueObj), updated_at: new Date().toISOString() },
                { onConflict: 'key' });
+    if(error){
+      console.error('Supabase-Fehler', error);
+      showErrorToast((error.message || 'Unbekannter Fehler') + (error.code ? ' [' + error.code + ']' : '') + ' · Eintrag: ' + key.split(':').slice(0, 2).join(':'));
+    }
     return !error;
+  }
+
+  function showErrorToast(msg){
+    let t = document.getElementById('errToast');
+    if(!t){
+      t = document.createElement('div'); t.id = 'errToast';
+      t.style.cssText = 'position:fixed;left:12px;right:12px;bottom:96px;z-index:60;background:#3B2415;color:#fff;border-radius:14px;padding:12px 14px;font-size:12px;line-height:1.4;box-shadow:0 10px 30px rgba(0,0,0,.35);';
+      t.addEventListener('click', () => t.remove());
+      document.body.appendChild(t);
+    }
+    t.textContent = 'Speichern fehlgeschlagen: ' + msg + '  (zum Schließen tippen)';
   }
 
   function uid(){
