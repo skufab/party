@@ -393,9 +393,18 @@
   .night .gate form{margin-top:6px;}
   .food-group .when{font-size:12px;opacity:.55;}
   .adm-x{background:#b00020;color:#fff;width:20px;height:20px;padding:0;border-radius:50%;font-size:12px;line-height:20px;margin-left:6px;vertical-align:middle;}
+  .claim-btn{margin-left:6px;padding:2px 9px;border-radius:999px;border:1px dashed #b5532f;background:transparent;color:#b5532f;font:inherit;font-size:.72rem;cursor:pointer;}
+  .claim-btn:hover{background:#b5532f;color:#fff;}
+  .guest-chip.is-me{outline:2px solid #b5532f;}
+  .me-tag{background:#b5532f;color:#fff;border-radius:999px;padding:1px 8px;font-size:.7rem;margin-left:4px;}
   .adm-bar{display:inline-flex;gap:4px;margin-left:6px;vertical-align:middle;}
   .adm-bar button{width:22px;height:22px;padding:0;border-radius:50%;font-size:12px;line-height:22px;color:#fff;}
   .adm-bar .adm-e{background:#3E7BFF;}
+  .adm-bar .adm-s{background:#8a5cf6;}
+  .split-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+  .split-row .sr-name{flex:1 1 100%;}
+  .split-row select{flex:1;width:auto;min-width:0;}
+  .split-row .sr-x{background:rgba(59,36,21,.1);color:var(--ink);width:30px;height:30px;padding:0;border-radius:50%;flex:none;}
   .adm-bar .adm-x{background:#b00020;margin-left:0;}
   .adm-overlay{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto;}
   .adm-modal{background:#fff;color:var(--ink);border-radius:18px;padding:20px;width:100%;max-width:420px;display:grid;gap:8px;margin:0;}
@@ -1153,7 +1162,8 @@
   }
   function adm(item, label){
     if(!isAdmin || !item || !item._key) return '';
-    return `<span class="adm-bar"><button type="button" class="adm-e" data-key="${escHtml(item._key)}" aria-label="Bearbeiten">&#9998;</button><button type="button" class="adm-x" data-del="${escHtml(item._key)}" data-label="${escHtml(label)}" aria-label="Löschen">&times;</button></span>`;
+    const split = item._key.indexOf('party:guest:') === 0 ? `<button type="button" class="adm-s" data-split="${escHtml(item._key)}" aria-label="Begleitung ordnen" title="Begleitung ordnen">&#8646;</button>` : '';
+    return `<span class="adm-bar"><button type="button" class="adm-e" data-key="${escHtml(item._key)}" aria-label="Bearbeiten">&#9998;</button>${split}<button type="button" class="adm-x" data-del="${escHtml(item._key)}" data-label="${escHtml(label)}" aria-label="Löschen">&times;</button></span>`;
   }
   function bindAdmin(){ /* Klicks laufen über Delegation, siehe unten */ }
   function escHtml(t){ return String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -1341,11 +1351,13 @@
 
   async function renderGuests(){
     const container = document.getElementById('guestList');
-    if(!myGuestEntry){
-      container.innerHTML = '';
-      return;
-    }
     const items = await listByPrefix('party:guest:');
+    const me = myGuestEntry ? items.find(i => i._key === myGuestEntry.key) : null;
+    if(me && !guestEditing){
+      myGuestEntry = Object.assign({}, myGuestEntry, { name: me.name, when: me.when, extras: me.extras || [], avatar: me.avatar || myGuestEntry.avatar, allergy: me.allergy || '', tag: me.tag || '', joinedTo: me.joinedTo || null });
+      try{ localStorage.setItem('myGuestEntry', JSON.stringify(myGuestEntry)); }catch(e){}
+      renderTicket();
+    }
     const leaders = leadersOf(items);
     container.innerHTML = '';
     WHEN_ORDER.forEach(when => {
@@ -1355,12 +1367,29 @@
       div.className = 'food-group group-' + when;
       div.innerHTML = `<h4>${WHEN_LABEL[when]} <span class="guest-count">${persons}</span></h4><div class="guest-chip-list">${
         group.length
-          ? group.map(g => `<span class="guest-chip"><span class="gav">${avatarOf(g)}</span>${escHtml(g.name)}${withList(g)}${isAdmin && g.allergy ? ' <span class="with" title="Allergie">⚠️ ' + escHtml(g.allergy) + '</span>' : ''}${adm(g, g.name)}</span>`).join('')
+          ? group.map(g => `<span class="guest-chip${myGuestEntry && g._key === myGuestEntry.key ? ' is-me' : ''}"><span class="gav">${avatarOf(g)}</span>${escHtml(g.name)}${withList(g)}${myGuestEntry && g._key === myGuestEntry.key ? ' <span class="me-tag">Du</span>' : (isAdmin ? '' : ' <button type="button" class="claim-btn" data-claim="' + escHtml(g._key) + '">Das bin ich</button>')}${isAdmin && g.allergy ? ' <span class="with" title="Allergie">⚠️ ' + escHtml(g.allergy) + '</span>' : ''}${adm(g, g.name)}</span>`).join('')
           : '<span class="guest-chip-empty">Noch niemand</span>'
       }</div>`;
       container.appendChild(div);
     });
     bindAdmin(container);
+    if(!container._claimBound){
+      container._claimBound = true;
+      container.addEventListener('click', async e => {
+        const b = e.target.closest('.claim-btn'); if(!b) return;
+        const key = b.dataset.claim;
+        const all = await listByPrefix('party:guest:');
+        const g = all.find(i => i._key === key); if(!g) return;
+        if(!confirm('Du bist „' + g.name + '“? Dieser Pass wird dann diesem Gerät zugeordnet.')) return;
+        myGuestEntry = { key, name: g.name, when: g.when, extras: g.extras || [], avatar: g.avatar || '', allergy: g.allergy || '', tag: g.tag || '', joinedTo: g.joinedTo || null };
+        guestEditing = false;
+        try{ localStorage.setItem('myGuestEntry', JSON.stringify(myGuestEntry)); }catch(err){}
+        ['foodName','pizzaName','rsvpName'].forEach(id => { const el = document.getElementById(id); if(el) el.value = g.name; });
+        refreshAll();
+        try{ burst(); }catch(err){}
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
   }
 
   function refreshAll(){
@@ -1418,6 +1447,92 @@
     });
   }
 
+  // ---- Admin: Begleitung ordnen (aufteilen / zusammenfügen) ----
+  const ROLE_LABEL = { main:'Hauptperson', erw:'Begleitung (Erwachsene/r)', kind:'Begleitung (Kind)', baby:'Begleitung (Baby)', own:'Eigener Eintrag' };
+  function splitNames(str){
+    return String(str || '').split(/\s*(?:,|&|\bund\b|\bmit\b|\+)\s*/i).map(x => x.trim()).filter(Boolean);
+  }
+  function rowsFromGuest(g, asCompanion){
+    const rows = [];
+    const toks = (g.extras && g.extras.length) ? [String(g.name).trim()] : splitNames(g.name);
+    toks.forEach((n, i) => rows.push({ name: n, role: (!asCompanion && i === 0) ? 'main' : 'erw' }));
+    (g.extras || []).forEach(x => rows.push({ name: x.name, role: typeOf(x) }));
+    return rows;
+  }
+  function openSplitter(key){
+    const item = ITEM_CACHE[key]; if(!item) return;
+    let rows = rowsFromGuest(item, false);
+    if(!rows.length) rows = [{ name: item.name, role: 'main' }];
+    const mergeKeys = [];
+    const others = () => Object.values(ITEM_CACHE).filter(o => o._key && o._key.indexOf('party:guest:') === 0 && o._key !== key && mergeKeys.indexOf(o._key) < 0);
+    const ov = document.createElement('div');
+    ov.className = 'adm-overlay';
+    function draw(){
+      const opts = others().map(o => `<option value="${escHtml(o._key)}">${escHtml(o.name)}${o.extras && o.extras.length ? ' (+' + o.extras.length + ')' : ''} · ${escHtml(WHEN_LABEL[o.when] || '')}</option>`).join('');
+      ov.innerHTML = `<form class="adm-modal"><h3>Begleitung ordnen</h3>
+        <p class="hint" style="opacity:.8;margin:0;">Jede Zeile ist eine Person. Wähle eine Hauptperson, Begleitungen oder „Eigener Eintrag“ (wird zu einem separaten Gast).</p>
+        ${rows.map((r, i) => `<div class="split-row" data-i="${i}">
+          <input type="text" class="sr-name" value="${escHtml(r.name)}" aria-label="Name">
+          <select class="sr-role">${Object.entries(ROLE_LABEL).map(([v, l]) => `<option value="${v}" ${r.role === v ? 'selected' : ''}>${l}</option>`).join('')}</select>
+          <button type="button" class="sr-x" aria-label="Zeile entfernen">&times;</button></div>`).join('')}
+        <button type="button" class="btn-outline-warm" id="srAdd" style="padding:7px 14px;font-size:13px;">+ Person</button>
+        <label style="margin-top:6px;">Kommt</label>
+        <select id="srWhen">${Object.entries(WHEN_LABEL).map(([v, l]) => `<option value="${v}" ${(ov.dataset.when || item.when) === v ? 'selected' : ''}>${l}</option>`).join('')}</select>
+        <label style="margin-top:6px;">Mit anderem Eintrag zusammenfügen</label>
+        <div class="split-row"><select id="srMerge"><option value="">– Eintrag wählen –</option>${opts}</select><button type="button" class="btn-outline-warm" id="srMergeBtn" style="padding:7px 14px;font-size:13px;">Hinzufügen</button></div>
+        ${mergeKeys.length ? `<p class="hint" style="margin:0;">Wird beim Speichern zusammengeführt (der alte Eintrag wird gelöscht): ${mergeKeys.map(k => escHtml((ITEM_CACHE[k] || {}).name || '')).join(', ')}</p>` : ''}
+        <div class="adm-actions"><button type="button" class="btn-outline-warm" data-cancel>Abbrechen</button><button type="submit" class="btn-warm">Speichern</button></div></form>`;
+    }
+    function readRows(){
+      ov.querySelectorAll('.split-row[data-i]').forEach(el => {
+        const i = +el.dataset.i;
+        rows[i].name = el.querySelector('.sr-name').value;
+        rows[i].role = el.querySelector('.sr-role').value;
+      });
+      const w = ov.querySelector('#srWhen'); if(w) ov.dataset.when = w.value;
+    }
+    draw();
+    document.body.appendChild(ov);
+    ov.addEventListener('click', (e) => {
+      if(e.target === ov || e.target.closest('[data-cancel]')){ ov.remove(); return; }
+      if(e.target.closest('.sr-x')){ readRows(); rows.splice(+e.target.closest('.split-row').dataset.i, 1); draw(); return; }
+      if(e.target.closest('#srAdd')){ readRows(); rows.push({ name: '', role: 'erw' }); draw(); return; }
+      if(e.target.closest('#srMergeBtn')){
+        readRows();
+        const k = ov.querySelector('#srMerge').value; if(!k) return;
+        mergeKeys.push(k);
+        rowsFromGuest(ITEM_CACHE[k], true).forEach(r => rows.push(r));
+        draw(); return;
+      }
+    });
+    ov.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      readRows();
+      const clean = rows.map(r => ({ name: r.name.trim(), role: r.role })).filter(r => r.name);
+      let main = clean.find(r => r.role === 'main');
+      if(!main){ main = clean.find(r => r.role !== 'own'); if(main) main.role = 'main'; }
+      if(!main){ alert('Bitte mindestens eine Hauptperson angeben.'); return; }
+      const when = ov.querySelector('#srWhen').value;
+      const companions = clean.filter(r => ['erw','kind','baby'].indexOf(r.role) >= 0).map(r => ({ name: r.name, age: r.role, kid: r.role !== 'erw' }));
+      const owns = clean.filter(r => r.role === 'own');
+      const extraMain = clean.filter(r => r.role === 'main' && r !== main);   // weitere "Hauptpersonen" = eigene Einträge
+      const summary = main.name + (companions.length ? ' + ' + companions.map(c => c.name).join(', ') : '') +
+        (owns.concat(extraMain).length ? '\nEigene Einträge: ' + owns.concat(extraMain).map(o => o.name).join(', ') : '') +
+        (mergeKeys.length ? '\nGelöscht (zusammengeführt): ' + mergeKeys.map(k => (ITEM_CACHE[k] || {}).name).join(', ') : '');
+      if(!confirm('So speichern?\n\n' + summary)) return;
+      const out = Object.assign({}, item); delete out._key; delete out.members;
+      out.name = main.name; out.extras = companions; out.when = when;
+      if(out.joinedTo && mergeKeys.indexOf(out.joinedTo) >= 0) out.joinedTo = null;
+      await upsert(key, out);
+      for(const o of owns.concat(extraMain)){
+        await upsert('party:guest:' + uid(), { name: o.name, when, extras: [], avatar: '', allergy: '', tag: '', joinedTo: null });
+      }
+      for(const k of mergeKeys){ await sb.from('storage').delete().eq('key', k); }
+      if(myGuestEntry && myGuestEntry.key === key){ myGuestEntry = Object.assign({}, myGuestEntry, out, { key }); try{ localStorage.setItem('myGuestEntry', JSON.stringify(myGuestEntry)); }catch(err){} }
+      ov.remove(); refreshAll();
+    });
+  }
+
   document.addEventListener('click', async (e) => {
     const x = e.target.closest('.adm-x');
     if(x){
@@ -1428,6 +1543,8 @@
     }
     const ed = e.target.closest('.adm-e');
     if(ed){ openEditor(ed.dataset.key); return; }
+    const sp = e.target.closest('.adm-s');
+    if(sp){ openSplitter(sp.dataset.split); return; }
   });
 
   // "Das bringe ich mit": eigene Fingerfood-Einträge
