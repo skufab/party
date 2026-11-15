@@ -209,7 +209,7 @@
     background:repeating-conic-gradient(rgba(0,0,0,0.35) 0deg 1.5deg, transparent 1.5deg 45deg);}
   .pizza-badge{position:absolute;top:-6px;right:-6px;background:linear-gradient(90deg,var(--pink),var(--blue));
     color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;z-index:1;}
-  .pizza-card .pname{font-weight:600;font-size:15px;margin-bottom:2px;}
+  .pizza-card .pname{font-weight:600;font-size:15px;margin-bottom:2px;overflow-wrap:anywhere;}
   .pizza-card .pcount{font-size:12px;opacity:.6;margin-bottom:10px;}
   .pizza-card button{width:100%;padding:9px;font-size:13px;
     background:linear-gradient(90deg,var(--pink),var(--blue));color:#fff;}
@@ -851,7 +851,7 @@
       <ul class="song-list" id="songList"></ul>
 
       <h2 style="margin-top:34px;">Pizza-Bestellung</h2>
-      <p class="sub">Ein Klick = 2 Stück für dich. Bei jeder Sorte kannst du einmal mitmachen &mdash; falls du dich verklickst, in der Kachel rückgängig machen.</p>
+      <p class="sub">Ein Klick = 2 Stück für dich. Bei jeder Sorte kannst du einmal mitmachen &mdash; falls du dich verklickst, in der Kachel rückgängig machen. Du vermisst eine Sorte? Schlag sie unten vor, sie wird sofort zur eigenen Kachel.</p>
 
       <label for="pizzaName">Dein Name</label>
       <input id="pizzaName" type="text" placeholder="z. B. Romi" style="margin-bottom:14px;">
@@ -859,12 +859,11 @@
       <div class="pizza-grid reveal" id="pizzaGrid"></div>
 
       <div class="pizza-wish">
-        <label for="pizzaWishText">Eigener Pizza-Vorschlag</label>
-        <input id="pizzaWishText" type="text" placeholder="z. B. Pizza Hawaii">
-        <button type="button" id="pizzaWishBtn" class="btn-neon-sm">Vorschlag senden</button>
+        <label for="pizzaWishText">Neue Pizza vorschlagen</label>
+        <input id="pizzaWishText" type="text" maxlength="40" placeholder="z. B. Hawaii">
+        <button type="button" id="pizzaWishBtn" class="btn-neon-sm">Pizza hinzufügen</button>
         <span class="hint" id="pizzaWishStatus" style="color:#9C93C4;"></span>
       </div>
-      <ul class="song-list" id="pizzaWishList"></ul>
 
       <h2 style="margin-top:34px;">Beer-Pong-Turnier</h2>
       <p class="sub">Als Zweier-Duo. Kein Partner? Schreib &bdquo;sucht Partner&ldquo; &mdash; wir finden jemanden.</p>
@@ -1378,7 +1377,7 @@
     fingerfood: [['name','Name'],['item','Was'],['category','Kategorie','select',{'Süß':'Süß','Herzhaft':'Herzhaft','Vegan/Vegetarisch':'Vegan/Vegetarisch','Getränke':'Getränke'}],['when','Wann','select',{nachmittag:'Nachmittag',abend:'Abend'}]],
     bp: [['game','Disziplin','select',{stopp:'Stopptanz',turm:'Turmbau-Duell',beer:'Beer Pong'}],['team','Duo-Name'],['players','Spieler']],
     song: [['title','Songwunsch']], kidsong: [['title','Songwunsch']],
-    pizzawish: [['name','Name'],['suggestion','Vorschlag']],
+    pizzawish: [['name','Idee von'],['suggestion','Pizza-Name']],
     start: [['name','Name'],['disco','Team-Tag'],['allergy','Allergien']]
   };
   function openEditor(key){
@@ -1473,15 +1472,26 @@
   renderKidsSongs();
 
   // ---- Pizza ----
+  // Vorschläge (party:pizzawish:) werden direkt zu einer eigenen Pizza-Kachel. Alte Vorschläge erscheinen automatisch mit.
   const PIZZAS = ["Margherita","Thunfisch","Döner","Veggie"];
-  let myPizzaOrders = JSON.parse(localStorage.getItem('myPizzaOrders') || '{}'); // {pizza: key}
+  let myPizzaOrders = {};
+  try{ myPizzaOrders = JSON.parse(localStorage.getItem('myPizzaOrders') || '{}'); }catch(e){}
+  const pnorm = (s) => String(s || '').trim().toLowerCase().replace(/^pizza\s+/, '');
+  const pcap = (s) => { s = String(s).trim(); return s.charAt(0).toUpperCase() + s.slice(1); };
 
   async function renderPizza(){
     const items = await listByPrefix('party:pizza:');
+    const wishes = await listByPrefix('party:pizzawish:');
+    const list = PIZZAS.map(name => ({ name, wish: null }));
+    wishes.forEach(w => {
+      const nm = pcap(w.suggestion || '');
+      if(!nm || list.some(x => pnorm(x.name) === pnorm(nm))) return;
+      list.push({ name: nm, wish: w });
+    });
     const grid = document.getElementById('pizzaGrid');
     grid.innerHTML = '';
-    PIZZAS.forEach(pizza => {
-      const count = items.filter(i => i.pizza === pizza).length;
+    list.forEach(({ name: pizza, wish }) => {
+      const count = items.filter(i => pnorm(i.pizza) === pnorm(pizza)).length;
       const totalSlices = count * 2;
       const wholePizzas = Math.floor(totalSlices / 8);
       const remainder = totalSlices % 8;
@@ -1491,11 +1501,11 @@
       div.className = 'pizza-card';
       div.innerHTML = `
         <div class="pizza-wheel" style="--fill:${pct}">${wholePizzas > 0 ? `<span class="pizza-badge">&times;${wholePizzas}</span>` : ''}</div>
-        <div class="pname">${pizza}</div>
-        <div class="pcount">${remainder}/8 Stück${wholePizzas > 0 ? ' im Rest' : ''}</div>
+        <div class="pname">${escHtml(pizza)}${wish ? adm(wish, pizza) : ''}</div>
+        <div class="pcount">${remainder}/8 Stück${wholePizzas > 0 ? ' im Rest' : ''}${wish && wish.name && wish.name !== 'Anonym' ? ` &middot; Idee von ${escHtml(wish.name)}` : ''}</div>
         ${mine
-          ? `<button type="button" class="btn-undo-card" data-pizza="${pizza}" data-mode="undo">Rückgängig</button>`
-          : `<button type="button" data-pizza="${pizza}" data-mode="order">+2 Stück für mich</button>`}
+          ? `<button type="button" class="btn-undo-card" data-pizza="${escHtml(pizza)}" data-mode="undo">Rückgängig</button>`
+          : `<button type="button" data-pizza="${escHtml(pizza)}" data-mode="order">+2 Stück für mich</button>`}
       `;
       grid.appendChild(div);
     });
@@ -1528,27 +1538,23 @@
     renderPizza();
   }
 
-  async function renderPizzaWishes(){
-    const items = await listByPrefix('party:pizzawish:');
-    const list = document.getElementById('pizzaWishList');
-    list.innerHTML = items.slice().reverse().map(i =>
-      `<li>${escHtml(i.suggestion)}<div class="who">von ${escHtml(i.name || 'Anonym')}</div>${adm(i, i.suggestion)}</li>`
-    ).join('');
-  }
+  function renderPizzaWishes(){ return renderPizza(); }
 
   document.getElementById('pizzaWishBtn').addEventListener('click', async () => {
     const name = document.getElementById('pizzaName').value.trim();
-    const suggestion = document.getElementById('pizzaWishText').value.trim();
+    const suggestion = pcap(document.getElementById('pizzaWishText').value);
     if(!suggestion) return;
     const status = document.getElementById('pizzaWishStatus');
+    const exists = PIZZAS.some(x => pnorm(x) === pnorm(suggestion)) ||
+      Array.from(document.querySelectorAll('#pizzaGrid .pname')).some(e => pnorm(e.firstChild ? e.firstChild.textContent : '') === pnorm(suggestion));
+    if(exists){ status.textContent = 'Die gibt es schon, such sie oben in den Kacheln. 🍕'; return; }
     status.textContent = 'Speichert…';
     const ok = await upsert('party:pizzawish:' + uid(), { name: name || 'Anonym', suggestion });
-    status.textContent = ok ? 'Danke! ✓' : 'Hat nicht geklappt.';
-    if(ok){ document.getElementById('pizzaWishText').value = ''; renderPizzaWishes(); }
+    status.textContent = ok ? 'Neue Pizza ist dabei! 🍕' : 'Hat nicht geklappt.';
+    if(ok){ document.getElementById('pizzaWishText').value = ''; renderPizza(); }
   });
 
   renderPizza();
-  renderPizzaWishes();
 
 
   // ===== Countdown & Etappen =====
