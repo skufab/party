@@ -400,6 +400,17 @@
   .already-box{margin-top:14px;padding-top:10px;border-top:1px dashed #d9b99b;}
   .already-box button{border:1px dashed #b5532f;background:#fff;color:#b5532f;border-radius:999px;padding:5px 12px;font:inherit;font-size:.85rem;margin:3px 4px 3px 0;cursor:pointer;}
   .extra-chip .cyc{border:0;background:none;padding:0 2px;font-size:1rem;cursor:pointer;}
+  .board-block{margin-top:22px;padding-top:16px;border-top:1px dashed #d9b99b;}
+  .board-game{margin:12px 0;}
+  .board-game h5{margin:0 0 6px;font-size:1rem;}
+  .board-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(0,0,0,.07);flex-wrap:wrap;}
+  .board-row .bn{flex:1;min-width:120px;}
+  .board-row input{width:84px;padding:6px 8px;border-radius:10px;border:1px solid #d9b99b;font:inherit;}
+  .board-row .bs{font-weight:700;}
+  .gbadges{margin-left:4px;font-size:.85rem;}
+  .adm-game-add{margin:6px 0;list-style:none;}
+  .pick-list{display:grid;gap:4px;max-height:40vh;overflow:auto;}
+  .pick-list label{display:flex;gap:8px;align-items:center;}
   .adm-bar{display:inline-flex;gap:4px;margin-left:6px;vertical-align:middle;}
   .adm-bar button{width:22px;height:22px;padding:0;border-radius:50%;font-size:12px;line-height:22px;color:#fff;}
   .adm-bar .adm-e{background:#3E7BFF;}
@@ -776,6 +787,12 @@
             <span class="hint" id="rsvpStatus"></span>
           </form>
           <p id="rsvpCount" style="margin:12px 0 0;font-weight:600;opacity:.9;"></p>
+
+          <div class="board-block">
+            <h4 class="music-h">&#127942; Bestenliste</h4>
+            <p id="boardIntro"></p>
+            <div id="boardBox"></div>
+          </div>
 
           <div class="music-block">
             <h4 class="music-h">&#127926; Zum Schluss: Eure Musikw&uuml;nsche</h4>
@@ -1383,8 +1400,20 @@
     renderTicket();
   }
 
+  function gameBadges(g, bps){
+    const persons = rowsFromGuest(g, false).map(r => r.name.toLowerCase());
+    const firsts = persons.map(n => n.split(/\s+/)[0]);
+    const set = [];
+    bps.forEach(b => {
+      const game = b.game || 'beer';
+      const toks = splitNames(b.players).map(x => x.toLowerCase());
+      if(toks.some(x => persons.indexOf(x) >= 0 || firsts.indexOf(x) >= 0) && set.indexOf(game) < 0) set.push(game);
+    });
+    return set.length ? ' <span class="gbadges" title="Angemeldet: ' + escHtml(set.map(s => GAMES[s]).join(', ')) + '">' + set.map(s => GAMES[s].split(' ')[0]).join('') + '</span>' : '';
+  }
   async function renderGuests(){
     const container = document.getElementById('guestList');
+    const bps = await listByPrefix('party:bp:');
     const items = await listByPrefix('party:guest:');
     const me = myGuestEntry ? items.find(i => i._key === myGuestEntry.key) : null;
     if(me && !guestEditing){
@@ -1401,7 +1430,7 @@
       div.className = 'food-group group-' + when;
       div.innerHTML = `<h4>${WHEN_LABEL[when]} <span class="guest-count">${persons}</span></h4><div class="guest-chip-list">${
         group.length
-          ? group.map(g => `<span class="guest-chip${myGuestEntry && g._key === myGuestEntry.key ? ' is-me' : ''}"><span class="gav">${avatarOf(g)}</span>${escHtml(g.name)}${withList(g)}${myGuestEntry && g._key === myGuestEntry.key ? ' <span class="me-tag">Du</span>' : (isAdmin || myGuestEntry ? '' : ' <button type="button" class="claim-btn" data-claim="' + escHtml(g._key) + '">Das bin ich</button>')}${isAdmin && g.allergy ? ' <span class="with" title="Allergie">⚠️ ' + escHtml(g.allergy) + '</span>' : ''}${adm(g, g.name)}</span>`).join('')
+          ? group.map(g => `<span class="guest-chip${myGuestEntry && g._key === myGuestEntry.key ? ' is-me' : ''}"><span class="gav">${avatarOf(g)}</span>${escHtml(g.name)}${withList(g)}${gameBadges(g, bps)}${myGuestEntry && g._key === myGuestEntry.key ? ' <span class="me-tag">Du</span>' : (isAdmin || myGuestEntry ? '' : ' <button type="button" class="claim-btn" data-claim="' + escHtml(g._key) + '">Das bin ich</button>')}${isAdmin && g.allergy ? ' <span class="with" title="Allergie">⚠️ ' + escHtml(g.allergy) + '</span>' : ''}${adm(g, g.name)}</span>`).join('')
           : '<span class="guest-chip-empty">Noch niemand</span>'
       }</div>`;
       container.appendChild(div);
@@ -1427,7 +1456,7 @@
   }
 
   function refreshAll(){
-    renderGuests(); renderFood(); renderMyFood(); renderGames(); renderSongs(); renderKidsSongs(); renderPizzaWishes(); renderStart();
+    renderGuests(); renderFood(); renderMyFood(); renderGames(); renderSongs(); renderKidsSongs(); renderPizzaWishes(); renderStart(); renderBoard();
     if(myGuestEntry){ updateGuestFormUI(); }
   }
 
@@ -1860,9 +1889,73 @@
         }).join('')
                      : '<div class="who">Noch kein Duo angemeldet</div>') + '</li>';
     }).join('');
-    document.getElementById('gameKidsList').innerHTML = block(['stopp','turm']);
-    document.getElementById('gameNightList').innerHTML = block(['beer']);
+    const addBtn = (g) => isAdmin ? `<li class="adm-game-add"><button type="button" class="btn-outline-warm" data-gadd="${g}">＋ Gäste anmelden (Admin)</button></li>` : '';
+    document.getElementById('gameKidsList').innerHTML = block(['stopp','turm']) + addBtn('turm');
+    document.getElementById('gameNightList').innerHTML = block(['beer']) + addBtn('beer');
+    renderBoard();
   }
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-gadd]'); if(b) openGameAdd(b.dataset.gadd);
+  });
+  async function openGameAdd(game){
+    const guests = await listByPrefix('party:guest:');
+    const persons = [];
+    guests.forEach(g => rowsFromGuest(g, false).forEach(r => { if(r.name && persons.indexOf(r.name) < 0) persons.push(r.name); }));
+    const ov = document.createElement('div'); ov.className = 'adm-overlay';
+    ov.innerHTML = `<form class="adm-modal"><h3>Für Wettbewerb anmelden</h3>
+      <label>Disziplin</label><select name="game">${Object.entries(GAMES).map(([k, v]) => `<option value="${k}" ${k === game ? 'selected' : ''}>${escHtml(v)}</option>`).join('')}</select>
+      <label>Wer spielt zusammen? (Personen ankreuzen)</label>
+      <div class="pick-list">${persons.map(n => `<label><input type="checkbox" name="p" value="${escHtml(n)}"> ${escHtml(n)}</label>`).join('')}</div>
+      <label>Duo-Name (optional)</label><input type="text" name="team" maxlength="28">
+      <div class="adm-actions"><button type="button" class="btn-outline-warm" data-cancel>Abbrechen</button><button type="submit" class="btn-warm">Anmelden</button></div></form>`;
+    document.body.appendChild(ov);
+    ov.querySelector('[data-cancel]').addEventListener('click', () => ov.remove());
+    ov.addEventListener('click', (e) => { if(e.target === ov) ov.remove(); });
+    ov.querySelector('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const sel = fd.getAll('p'); if(!sel.length) return;
+      const players = sel.join(' & ');
+      const team = (fd.get('team') || '').toString().trim() || players;
+      await upsert('party:bp:' + uid(), { game: fd.get('game'), team, players });
+      ov.remove(); refreshAll();
+    });
+  }
+
+  // ---- Bestenliste ----
+  const BOARD_OPENS = new Date('2026-11-27T12:00:00+01:00');
+  const METRIC = { stopp:'Punkte', turm:'cm', beer:'Siege' };
+  async function renderBoard(){
+    const box = document.getElementById('boardBox'); if(!box) return;
+    const bps = await listByPrefix('party:bp:');
+    const scores = await listByPrefix('party:score:');
+    const canEnter = isAdmin || UNLOCK_ALL || nowD() >= BOARD_OPENS;
+    document.getElementById('boardIntro').textContent = canEnter
+      ? 'Am Partytag tragen wir hier die Ergebnisse ein. Höher ist besser.'
+      : 'Hier landen am 27.11. die Ergebnisse jedes Wettbewerbs. Bis dahin seht ihr, wer antritt.';
+    if(box.contains(document.activeElement) && document.activeElement.tagName === 'INPUT') return;
+    const medals = ['🥇','🥈','🥉'];
+    box.innerHTML = Object.keys(GAMES).map(g => {
+      const rows = bps.filter(b => (b.game || 'beer') === g).map(b => {
+        const sc = scores.find(s => s.ref === b._key);
+        return { b, v: sc && sc.value !== '' && sc.value != null ? Number(sc.value) : null };
+      }).sort((x, y) => (y.v == null ? -1e9 : y.v) - (x.v == null ? -1e9 : x.v));
+      let rank = 0;
+      return `<div class="board-game"><h5>${GAMES[g]}</h5>` + (rows.length ? rows.map(r => {
+        const m = r.v != null && rank < 3 ? medals[rank++] : '';
+        const label = (r.b.team && r.b.team !== r.b.players) ? r.b.team + ' (' + r.b.players + ')' : r.b.players;
+        return `<div class="board-row"><span>${m}</span><span class="bn">${esc(label)}</span>` +
+          (canEnter ? `<input type="number" step="any" inputmode="decimal" placeholder="${METRIC[g]}" value="${r.v == null ? '' : r.v}" data-bref="${esc(r.b._key)}" data-bgame="${g}">` : (r.v != null ? `<span class="bs">${r.v} ${METRIC[g]}</span>` : '')) + `</div>`;
+      }).join('') : '<div class="who">Noch niemand angemeldet</div>') + '</div>';
+    }).join('');
+  }
+  document.addEventListener('change', async (e) => {
+    const i = e.target.closest && e.target.closest('input[data-bref]'); if(!i) return;
+    const ref = i.dataset.bref;
+    const v = i.value === '' ? '' : Number(i.value);
+    await upsert('party:score:' + ref.split(':')[2], { ref, game: i.dataset.bgame, value: v });
+    i.blur(); renderBoard();
+  });
   function bindGameForm(formId, getGame, teamId, playersId, statusId){
     document.getElementById(formId).addEventListener('submit', async (e) => {
       e.preventDefault();
