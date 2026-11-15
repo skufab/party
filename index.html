@@ -403,6 +403,95 @@
   .adm-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;}
   .mt-join-note{font-size:13px;margin:8px 0 0;}
   .join-btn{align-self:flex-start;padding:7px 16px !important;font-size:13px !important;}
+
+  /* ===== PARTY-PASS & Anmelde-Wizard ===== */
+  .ticket{--tk:linear-gradient(135deg,#1a1033 0%,#4a1a66 52%,#10307a 100%);margin:0 0 20px;color:#fff;
+    filter:drop-shadow(0 14px 26px rgba(60,20,120,.3));}
+  .tk-top,.tk-bottom{background:var(--tk);}
+  .tk-top{border-radius:22px 22px 0 0;padding:20px 20px 22px;display:flex;gap:14px;align-items:center;
+    -webkit-mask:radial-gradient(circle 10px at 0 100%,#0000 9.5px,#000 10px) left top/51% 100% no-repeat,radial-gradient(circle 10px at 100% 100%,#0000 9.5px,#000 10px) right top/51% 100% no-repeat;
+    mask:radial-gradient(circle 10px at 0 100%,#0000 9.5px,#000 10px) left top/51% 100% no-repeat,radial-gradient(circle 10px at 100% 100%,#0000 9.5px,#000 10px) right top/51% 100% no-repeat;}
+  .tk-bottom{border-radius:0 0 22px 22px;padding:20px 20px 16px;margin-top:-1px;position:relative;
+    display:grid;grid-template-columns:1.4fr 1fr .8fr;gap:10px;
+    -webkit-mask:radial-gradient(circle 10px at 0 0,#0000 9.5px,#000 10px) left top/51% 100% no-repeat,radial-gradient(circle 10px at 100% 0,#0000 9.5px,#000 10px) right top/51% 100% no-repeat;
+    mask:radial-gradient(circle 10px at 0 0,#0000 9.5px,#000 10px) left top/51% 100% no-repeat,radial-gradient(circle 10px at 100% 0,#0000 9.5px,#000 10px) right top/51% 100% no-repeat;}
+  .tk-bottom::before{content:'';position:absolute;left:16px;right:16px;top:0;border-top:2px dashed rgba(255,255,255,.28);}
+  .tk-av{width:66px;height:66px;border-radius:50%;background:rgba(255,255,255,.14);display:grid;place-items:center;
+    font-size:38px;flex:none;box-shadow:inset 0 0 0 2px rgba(255,255,255,.25);}
+  .tk-main{min-width:0;}
+  .tk-eyebrow{font-family:'Audiowide',sans-serif;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    color:#ffb3d4;text-shadow:0 0 8px rgba(255,62,154,.7);margin-bottom:2px;}
+  .tk-name{font-family:'Fraunces',serif;font-size:26px;font-weight:700;line-height:1.1;word-break:break-word;}
+  .ticket.noname .tk-name{opacity:.45;}
+  .tk-crew{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+  .tk-crew span{background:rgba(255,255,255,.14);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600;}
+  .tk-crew .tk-solo{background:transparent;padding-left:0;opacity:.6;font-weight:400;}
+  .tk-bottom small{display:block;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;opacity:.6;margin-bottom:3px;}
+  .tk-bottom b{font-size:14px;}
+  .wiz-steps{display:flex;gap:6px;margin-bottom:20px;}
+  .wiz-steps span{flex:1;height:6px;border-radius:99px;background:rgba(59,36,21,.12);transition:background .3s;}
+  .wiz-steps span.on{background:linear-gradient(90deg,#FF6F91,#3E7BFF);}
+  .wiz-step{display:none;}
+  .wiz-step.active{display:block;animation:tabIn .35s var(--ease) both;}
+  .wiz-q{font-family:'Fraunces',serif;font-size:23px;font-weight:700;color:#D93B72;margin-bottom:12px;}
+  .wiz-q.small{font-family:'Inter',sans-serif;font-size:14px;color:var(--ink);opacity:.7;margin:2px 0 10px;}
+  .wiz-help{font-size:14px;opacity:.7;margin:-4px 0 14px;line-height:1.45;}
+  .guest-card.wiz input[type="text"]{margin-bottom:16px;}
+  .avatar-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px;}
+  .av-btn{aspect-ratio:1;font-size:26px;padding:0;border-radius:14px;background:#fff;border:2px solid var(--line);}
+  .av-btn.sel{border-color:transparent;background:linear-gradient(135deg,#FFD0DE,#CFE0FF);box-shadow:0 0 0 3px #FF6F91;transform:scale(1.08);}
+  .roll{padding:9px 16px !important;font-size:13px !important;}
+  .quick-add{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+  .quick-add button{background:#fff;border:2px dashed rgba(217,59,114,.4);color:var(--ink);border-radius:16px;
+    padding:14px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12.5px;}
+  .quick-add button i{font-style:normal;font-size:28px;line-height:1;}
+  .quick-add button.sel{border-style:solid;background:#FFF0F5;}
+  .guest-card.wiz .extra-row{margin:0 0 14px;}
+  .guest-card.wiz .extra-row .btn-warm{padding:10px 20px;flex:none;}
+  .guest-card.wiz .extra-chips{margin-bottom:6px;}
+  .wiz-nav{display:flex;gap:10px;margin-top:22px;align-items:center;}
+  .wiz-nav .btn-outline-warm{flex:none;padding:14px 20px;}
+  .wiz-nav .btn-guest{flex:1;}
+  .my-team .mt-food:first-child{border-top:none;margin-top:0;padding-top:0;}
+  .guest-chip .gav{font-size:16px;line-height:1;}
+  .crew-grid{display:grid;gap:10px;}
+  .crew-card{background:var(--card);border-radius:16px;padding:12px 14px;display:flex;gap:12px;align-items:center;
+    box-shadow:0 1px 2px rgba(59,36,21,.04),0 6px 16px rgba(59,36,21,.07);}
+  .crew-card .cav{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#FFE2EC,#DDE9FF);
+    display:grid;place-items:center;font-size:24px;flex:none;}
+  .crew-card .who{font-size:14px;line-height:1.35;}
+  .crew-card .tmeta{font-size:12px;opacity:.55;margin-top:2px;}
+  .start-done{display:flex;gap:12px;align-items:center;background:#FFF6EA;border-radius:14px;padding:12px 14px;margin-bottom:12px;}
+  .sd-av{font-size:32px;line-height:1;}
+  .start-done small{display:block;opacity:.6;font-size:12px;margin-top:2px;}
+  .start-cta{display:inline-block;text-decoration:none;padding:13px 24px;}
+  .adm-h{margin:14px 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#b00020;}
+  .dice{flex:none;padding:10px 14px !important;font-size:16px !important;}
+  @media(prefers-reduced-motion:reduce){.wiz-step.active{animation:none;}}
+  /* Buffet-Check */
+  .buffet-check{background:var(--card);border-radius:18px;padding:16px 16px 12px;margin-bottom:16px;
+    box-shadow:0 1px 2px rgba(59,36,21,.04),0 8px 22px rgba(59,36,21,.08);}
+  .bc-h{font-size:18px;margin:0 0 10px;color:var(--terracotta);}
+  .bc-row{margin-bottom:12px;}
+  .bc-label{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+  .bc-label small{font-weight:500;opacity:.6;font-size:12px;}
+  .bc-chips{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;}
+  .bc-chip{display:flex;justify-content:space-between;align-items:center;gap:6px;border-radius:12px;padding:9px 12px;
+    font-size:13px;font-weight:600;text-align:left;color:var(--ink);}
+  .bc-chip.gap{background:#FFEFD9;border:1.5px dashed var(--terracotta);}
+  .bc-chip.gap b{color:var(--terracotta);}
+  .bc-chip.ok{background:#E9F7EE;border:1.5px solid transparent;opacity:.85;}
+  .bc-chip.ok b{color:#2E8B57;}
+  .bc-hint{font-size:12px;opacity:.55;margin:0;}
+  /* Musik */
+  .music-block{margin-top:20px;padding-top:16px;border-top:1px dashed var(--line);}
+  .music-h{font-family:'Fraunces',serif;font-size:17px;margin:0 0 6px;color:var(--terracotta);}
+  .music-block form{display:flex;gap:8px;margin:0 0 8px;}
+  .music-block form input{flex:1;min-width:0;}
+  .music-block form .btn-warm{flex:none;padding:10px 16px;}
+  .embed-wrap{display:grid;gap:12px;margin-top:12px;}
+  .embed-label{font-size:12px;font-weight:700;opacity:.7;margin-bottom:4px;}
+  .embed-item iframe{border-radius:12px;border:0;}
 </style>
 </head>
 <body>
@@ -449,50 +538,66 @@
       <span class="dot d10"></span><span class="dot d11"></span><span class="dot d12"></span>
     </div>
     <div class="wrap">
-      <h2>Wer kommt?</h2>
-      <p class="sub">Trag dich in die G&auml;steliste ein &mdash; kommst du nachmittags, abends oder zu beidem? Ihr kommt als Familie? Dann tr&auml;gst du alle auf einmal ein.</p>
+      <h2 id="passH2">Hol dir deinen Party-Pass &#127903;&#65039;</h2>
+      <p class="sub" id="passSub">In drei kurzen Schritten bist du dabei. Ihr kommt zu mehreren? Dann tragt ihr alle zusammen ein, ein Pass f&uuml;r die ganze Crew.</p>
 
-      <div class="guest-card reveal" id="guestFormWrap">
-        <label for="guestName">Dein Name</label>
-        <input id="guestName" type="text" placeholder="z. B. Fabian">
+      <div id="passTicket"></div>
 
-        <label>Wer kommt noch mit? <span style="font-weight:400;opacity:.7">(Partner/in, Kinder &ndash; optional)</span></label>
-        <div class="extra-row">
-          <input id="extraName" type="text" placeholder="Name" maxlength="30">
-          <select id="extraType"><option value="erw">Erwachsen</option><option value="kind">Kind</option></select>
-          <button type="button" id="extraAdd" class="btn-outline-warm" aria-label="Person hinzuf&uuml;gen">+</button>
-        </div>
-        <div class="extra-chips" id="extraChips"></div>
+      <div class="guest-card wiz" id="guestFormWrap">
+        <div class="wiz-steps" id="wizSteps"><span class="on"></span><span></span><span></span></div>
 
-        <label for="guestTag">Euer Team-Tag <span style="font-weight:400;opacity:.7">(optional &ndash; sp&auml;ter &auml;nderbar)</span></label>
-        <input id="guestTag" type="text" maxlength="24" placeholder="z. B. Team Glitzerblitz">
-
-        <div class="guest-options" id="guestOptions">
-          <input type="radio" name="guestWhen" id="gw1" value="nachmittag">
-          <label for="gw1"><span class="emoji">&#9728;&#65039;</span><span>Nachmittag</span></label>
-          <input type="radio" name="guestWhen" id="gw2" value="abend">
-          <label for="gw2"><span class="emoji">&#127769;</span><span>Abend</span></label>
-          <input type="radio" name="guestWhen" id="gw3" value="beides">
-          <label for="gw3"><span class="emoji">&#10024;</span><span>Beides</span></label>
+        <div class="wiz-step active" data-step="1">
+          <div class="wiz-q">Wer bist du?</div>
+          <input id="guestName" type="text" placeholder="Dein Vorname" maxlength="30" autocomplete="given-name">
+          <div class="wiz-q small">Such dir ein Party-Tier aus</div>
+          <div class="avatar-grid" id="avatarGrid"></div>
+          <button type="button" class="btn-outline-warm roll" id="avatarRoll">&#127922; &Uuml;berrasch mich</button>
         </div>
 
-        <button type="button" id="guestSubmit" class="btn-guest">Ich bin dabei!</button>
+        <div class="wiz-step" data-step="2">
+          <div class="wiz-q">Wer kommt mit?</div>
+          <div class="wiz-help">Partner:in, Kinder, Babys: einfach antippen und den Namen eintragen. Alleine? Dann gleich weiter.</div>
+          <div class="quick-add" id="quickAdd">
+            <button type="button" data-t="erw"><i>&#129489;</i><span>Erwachsene/r</span></button>
+            <button type="button" data-t="kind"><i>&#129490;</i><span>Kind</span></button>
+            <button type="button" data-t="baby"><i>&#128118;</i><span>Baby</span></button>
+          </div>
+          <div class="extra-row" id="extraRow" style="display:none;">
+            <input id="extraName" type="text" maxlength="30" placeholder="Name">
+            <button type="button" id="extraAdd" class="btn-warm" aria-label="Person hinzuf&uuml;gen">OK</button>
+          </div>
+          <div class="extra-chips" id="extraChips"></div>
+        </div>
+
+        <div class="wiz-step" data-step="3">
+          <div class="wiz-q">Wann kommt ihr?</div>
+          <div class="guest-options" id="guestOptions">
+            <input type="radio" name="guestWhen" id="gw1" value="nachmittag">
+            <label for="gw1"><span class="emoji">&#9728;&#65039;</span><span>Nachmittag</span></label>
+            <input type="radio" name="guestWhen" id="gw2" value="abend">
+            <label for="gw2"><span class="emoji">&#127769;</span><span>Abend</span></label>
+            <input type="radio" name="guestWhen" id="gw3" value="beides">
+            <label for="gw3"><span class="emoji">&#10024;</span><span>Beides</span></label>
+          </div>
+          <label for="guestAllergy">Allergien oder W&uuml;nsche? <span style="font-weight:400;opacity:.7">(optional, nur f&uuml;r Fabi sichtbar)</span></label>
+          <input id="guestAllergy" type="text" maxlength="80" placeholder="z. B. Nussallergie, vegan">
+        </div>
+
+        <div class="wiz-nav">
+          <button type="button" id="wizBack" class="btn-outline-warm">Zur&uuml;ck</button>
+          <button type="button" id="wizNext" class="btn-guest">Weiter</button>
+        </div>
         <span class="hint" id="guestStatus"></span>
       </div>
 
       <div id="guestConfirm" class="my-team" style="display:none;">
-        <div class="mt-label">Mein Team</div>
-        <div class="tag-preview mt-tag" id="myTagBadge"></div>
-        <div class="mt-name"><strong id="guestConfirmName"></strong> <span class="mt-when" id="guestConfirmWhen"></span></div>
-        <div class="mt-members" id="myMembers"></div>
-        <div class="mt-joined" id="myJoined"></div>
         <div class="mt-food">
           <h4>Das bringe ich mit</h4>
           <ul id="myFoodList"></ul>
           <a class="mt-add" href="#foodSection">+ Etwas eintragen</a>
         </div>
         <div class="mt-actions">
-          <button type="button" id="guestEdit" class="btn-outline-warm">Team bearbeiten</button>
+          <button type="button" id="guestEdit" class="btn-outline-warm">Pass bearbeiten</button>
           <button type="button" id="guestCalendarBtn" class="btn-outline-warm">In Kalender eintragen</button>
         </div>
       </div>
@@ -505,6 +610,8 @@
     <div class="wrap">
       <h2>Wer bringt was mit?</h2>
       <p class="sub">Ob am Nachmittag oder erst am Abend &mdash; trag ein, was du mitbringst. Die Liste ist live f&uuml;r alle sichtbar.</p>
+
+      <div class="buffet-check" id="buffetCheck"></div>
 
       <div class="food-groups reveal" id="foodGroups"></div>
 
@@ -569,7 +676,7 @@
         <div class="tl-item"><div class="tl-card">
           <div class="tl-time">Geplant</div>
           <h3>Mini-Turniere</h3>
-          <p>Als Eltern-Kind-Team gibt es Stopptanz und ein Turmbau-Duell. Anmelden k&ouml;nnt ihr euch ab dem 13.11. im Tab Mini-Disco.</p>
+          <p>Als Eltern-Kind-Duo gibt es Stopptanz und ein Turmbau-Duell. Anmelden k&ouml;nnt ihr euch ab dem 13.11. im Tab Mini-Disco.</p>
         </div></div>
         <div class="tl-item swap"><div class="tl-card">
           <div class="tl-time">18:00 &ndash; 20:00 &middot; Umbau</div>
@@ -597,23 +704,13 @@
       <div class="prep-track" id="prepTrack"></div>
 
       <div class="prep-card locked reveal" id="ph0" data-opens="2026-10-31T00:00:00+01:00">
-        <div class="prep-head"><span class="prep-ico">&#128640;</span>
-          <div><h3>Etappe 1 &middot; Euer Team-Tag</h3><small>Ab heute</small></div></div>
+        <div class="prep-head"><span class="prep-ico">&#127903;&#65039;</span>
+          <div><h3>Etappe 1 &middot; Dein Party-Pass</h3><small>Ab heute</small></div></div>
         <div class="prep-lock" id="lock0"></div>
         <div class="prep-body">
-          <p>Jede Familie oder Freundesgruppe bekommt ein Team-Tag, also einen Namen im Disco-Style. Er steht in der G&auml;steliste, ist automatisch euer Teamname bei den Turnieren (Etappe 3) &mdash; und so erkennen wir uns am Party-Tag wieder. Kein Plan? W&uuml;rfeln!</p>
-          <form id="startForm">
-            <input id="startName" type="text" placeholder="Dein Name" required>
-            <div class="tag-row">
-              <input id="startTag" type="text" maxlength="24" placeholder="Euer Tag, z. B. Team Glitzerblitz" required>
-              <button type="button" class="btn-outline-warm" id="tagRoll">W&uuml;rfeln</button>
-            </div>
-            <div class="tag-preview" id="tagPreview">TEAM ?</div>
-            <input id="startAllergy" type="text" placeholder="Allergien? (optional, nur f&uuml;r Fabi sichtbar)">
-            <button type="submit" class="btn-warm">Eintragen</button>
-            <span class="hint" id="startStatus"></span>
-          </form>
-          <ul class="prep-list tag-cloud" id="startList"></ul>
+          <p>Ohne Pass kein Einlass! Hol dir in einer Minute deinen Pass, allein oder gleich f&uuml;r die ganze Familie. Du w&auml;hlst dein Party-Tier, tr&auml;gst deine Mitreisenden ein und sagst, wann ihr kommt.</p>
+          <div id="startPass"></div>
+          <div id="startAdm"></div>
         </div>
       </div>
 
@@ -632,7 +729,7 @@
           <div><h3>Etappe 3 &middot; Mini-Turniere</h3><small>2 Wochen vorher</small></div></div>
         <div class="prep-lock" id="lock2"></div>
         <div class="prep-body">
-          <p>Die Anmeldung l&auml;uft direkt dort, wo gespielt wird: Stopptanz und Turmbau am Nachmittag, Beer Pong abends. Dein Team-Tag ist schon eingetragen.</p>
+          <p>Die Anmeldung l&auml;uft direkt dort, wo gespielt wird: Stopptanz und Turmbau am Nachmittag, Beer Pong abends. Einen Duo-Namen k&ouml;nnt ihr euch w&uuml;rfeln.</p>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <a class="btn-outline-warm" href="#mini" style="padding:9px 16px;font-size:13px;">&#128378; Stopptanz &amp; Turmbau</a>
             <a class="btn-outline-warm" href="#abend" style="padding:9px 16px;font-size:13px;">&#127866; Beer Pong</a>
@@ -662,6 +759,15 @@
             <span class="hint" id="rsvpStatus"></span>
           </form>
           <p id="rsvpCount" style="margin:12px 0 0;font-weight:600;opacity:.9;"></p>
+
+          <div class="music-block">
+            <h4 class="music-h">&#127926; Zum Schluss: Eure Musikw&uuml;nsche</h4>
+            <p>Was darf auf keinen Fall fehlen? Schickt je einen Wunsch f&uuml;r die Mini-Disco und f&uuml;r Dance Moves an, oder packt ihn direkt in die Playlist.</p>
+            <form id="ph3KidSongForm"><input id="ph3KidSong" type="text" placeholder="&#129528; Mini-Disco: Songwunsch"><button type="submit" class="btn-warm">Senden</button></form>
+            <form id="ph3NightSongForm"><input id="ph3NightSong" type="text" placeholder="&#129705; Abend: Songwunsch"><button type="submit" class="btn-warm">Senden</button></form>
+            <span class="hint" id="ph3SongStatus"></span>
+            <div class="embed-wrap" id="spotEmbeds"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -673,14 +779,10 @@
   <section class="light" id="miniSection">
     <div class="wrap">
       <h2>Mini-Disco &middot; 15&ndash;18 Uhr</h2>
-      <p class="sub">Wer dabei ist, was gespielt wird &mdash; und unsere Kids-Playlist.</p>
-
-      <h3 class="mini-h">Die Teams</h3>
-      <p class="mini-count" id="teamCount"></p>
-      <div class="team-grid" id="teamList"></div>
+      <p class="sub">Wettbewerbe und unsere Kids-Playlist.</p>
 
       <h3 class="mini-h">Wettbewerbe</h3>
-      <p class="sub" style="margin-top:0;">Stopptanz und Turmbau-Duell, jeweils als Eltern-Kind-Team.</p>
+      <p class="sub" style="margin-top:0;">Stopptanz und Turmbau-Duell, jeweils als Eltern-Kind-Duo. Einen Duo-Namen k&ouml;nnt ihr euch w&uuml;rfeln lassen, oder ihr lasst ihn weg.</p>
       <div class="gate" data-opens="2026-11-13T08:00:00+01:00">
         <div class="gate-lock"></div>
         <div class="gate-body">
@@ -689,9 +791,12 @@
               <option value="stopp">&#128378; Stopptanz</option>
               <option value="turm">&#129521; Turmbau-Duell</option>
             </select>
-            <input id="gameKidsTeam" type="text" placeholder="Teamname (dein Team-Tag)" required>
             <input id="gameKidsPlayers" type="text" placeholder="Wer spielt? (z. B. Romi &amp; Fabi)" required>
-            <button type="submit" class="btn-warm">Team anmelden</button>
+            <div class="tag-row">
+              <input id="gameKidsTeam" type="text" maxlength="28" placeholder="Duo-Name (optional)">
+              <button type="button" class="btn-outline-warm dice" data-for="gameKidsTeam" aria-label="Duo-Namen würfeln">&#127922;</button>
+            </div>
+            <button type="submit" class="btn-warm">Duo anmelden</button>
             <span class="hint" id="gameKidsStatus"></span>
           </form>
         </div>
@@ -762,14 +867,17 @@
       <ul class="song-list" id="pizzaWishList"></ul>
 
       <h2 style="margin-top:34px;">Beer-Pong-Turnier</h2>
-      <p class="sub">Als Zweier-Team. Kein Partner? Schreib &bdquo;sucht Partner&ldquo; &mdash; wir finden jemanden.</p>
+      <p class="sub">Als Zweier-Duo. Kein Partner? Schreib &bdquo;sucht Partner&ldquo; &mdash; wir finden jemanden.</p>
       <div class="gate" data-opens="2026-11-13T08:00:00+01:00">
         <div class="gate-lock"></div>
         <div class="gate-body">
           <form id="gameNightForm">
-            <input id="gameNightTeam" type="text" placeholder="Teamname (dein Team-Tag)" required>
             <input id="gameNightPlayers" type="text" placeholder="Wer spielt? (z. B. Fabi &amp; Elena)" required>
-            <button type="submit" class="btn-neon-sm">Team anmelden</button>
+            <div class="tag-row">
+              <input id="gameNightTeam" type="text" maxlength="28" placeholder="Duo-Name (optional)">
+              <button type="button" class="btn-outline-warm dice" data-for="gameNightTeam" aria-label="Duo-Namen würfeln">&#127922;</button>
+            </div>
+            <button type="submit" class="btn-neon-sm">Duo anmelden</button>
             <span class="hint" id="gameNightStatus" style="color:#9C93C4;"></span>
           </form>
         </div>
@@ -870,11 +978,48 @@
 
   // ---- Fingerfood ----
   const CATEGORIES = ["Süß","Herzhaft","Vegan/Vegetarisch","Getränke"];
+  // Richtwerte: wie viele Mitbring-Sachen pro Kategorie wir uns wünschen (in config.js mit BUFFET_TARGET überschreibbar)
+  const BUFFET_TARGET = CFG.BUFFET_TARGET || {
+    nachmittag: { 'Süß': 4, 'Herzhaft': 4, 'Vegan/Vegetarisch': 2, 'Getränke': 3 },
+    abend:      { 'Süß': 2, 'Herzhaft': 3, 'Vegan/Vegetarisch': 1, 'Getränke': 5 }
+  };
+  const CAT_EMOJI = { 'Süß': '🍰', 'Herzhaft': '🥨', 'Vegan/Vegetarisch': '🥕', 'Getränke': '🥤' };
+  const CAT_SHORT = { 'Süß': 'Süß', 'Herzhaft': 'Herzhaft', 'Vegan/Vegetarisch': 'Veggie', 'Getränke': 'Getränke' };
+
+  function renderBuffetCheck(items){
+    const box = document.getElementById('buffetCheck');
+    if(!box) return;
+    const slots = [['nachmittag', '☀️ Nachmittag'], ['abend', '🌙 Abend']];
+    let html = '<h3 class="bc-h">Buffet-Check</h3>';
+    slots.forEach(([slot, label]) => {
+      let missingTotal = 0;
+      const chips = CATEGORIES.map(cat => {
+        const have = items.filter(i => i.category === cat && (i.when || 'nachmittag') === slot).length;
+        const want = (BUFFET_TARGET[slot] || {})[cat] || 0;
+        const missing = Math.max(0, want - have);
+        missingTotal += missing;
+        return `<button type="button" class="bc-chip ${missing ? 'gap' : 'ok'}" data-when="${slot}" data-cat="${escHtml(cat)}">` +
+          `<span>${CAT_EMOJI[cat]} ${CAT_SHORT[cat]}</span><b>${missing ? 'noch ' + missing : '✓'}</b></button>`;
+      }).join('');
+      html += `<div class="bc-row"><div class="bc-label">${label}<small>${missingTotal ? 'es fehlen noch ' + missingTotal : 'alles abgedeckt 🎉'}</small></div><div class="bc-chips">${chips}</div></div>`;
+    });
+    html += '<p class="bc-hint">Tipp auf eine Lücke, dann trägst du dort direkt etwas ein.</p>';
+    box.innerHTML = html;
+  }
+  document.getElementById('buffetCheck').addEventListener('click', (e) => {
+    const b = e.target.closest('.bc-chip'); if(!b) return;
+    document.getElementById('foodWhen').value = b.dataset.when;
+    document.getElementById('foodCategory').value = b.dataset.cat;
+    const form = document.getElementById('foodForm');
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => document.getElementById('foodItem').focus({ preventScroll: true }), 350);
+  });
 
   async function renderFood(){
     const items = await listByPrefix('party:fingerfood:');
     const guests = {};
     (await listByPrefix('party:guest:')).forEach(g => guests[g._key] = g);
+    renderBuffetCheck(items);
     const container = document.getElementById('foodGroups');
     container.innerHTML = '';
     CATEGORIES.forEach(cat => {
@@ -972,28 +1117,45 @@
     URL.revokeObjectURL(url);
   }
 
-  // ---- Gästeliste ----
+  // ---- Gästeliste & Party-Pass ----
   const WHEN_LABEL = { nachmittag:'Nachmittag', abend:'Abend', beides:'Beides' };
   const WHEN_ORDER = ['nachmittag','abend','beides'];
-  let myGuestEntry = JSON.parse(localStorage.getItem('myGuestEntry') || 'null'); // {key,name,when}
+  const WHEN_TICKET = { nachmittag:'☀️ 15–18 Uhr', abend:'🌙 ab 20 Uhr', beides:'✨ ganztägig' };
+  const AVATARS = ['🦁','🦄','🐼','🦊','🐸','🐙','🦩','🐯','🐨','🐰','🦖','🐝'];
+  const TYPE_EMOJI = { erw:'🧑', kind:'🧒', baby:'👶' };
+  const TYPE_PLACEHOLDER = { erw:'Name (z. B. Elena)', kind:'Name des Kindes', baby:'Name des Babys' };
+  let myGuestEntry = null;
+  try{ myGuestEntry = JSON.parse(localStorage.getItem('myGuestEntry') || 'null'); }catch(e){}
+  let guestExtras = [];
+  let guestEditing = false;
+  let wizStep = 1;
+  let pendingType = null;
+  let wizAvatar = AVATARS[Math.floor(Math.random() * AVATARS.length)];
 
+  const typeOf = (x) => x.age || (x.kid ? 'kind' : 'erw');
+  const emojiOf = (x) => TYPE_EMOJI[typeOf(x)] || '🧑';
+  const avatarOf = (g) => {
+    if(g && g.avatar) return g.avatar;
+    let h = 0; const s = String((g && g.name) || '');
+    for(let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+    return AVATARS[h % AVATARS.length];
+  };
+
+  // Früher gab es Team-Beitritte (joinedTo). In der Anzeige zählt jetzt jeder Eintrag für sich;
+  // die alten Felder (tag, joinedTo) bleiben unverändert in der Datenbank.
   function leadersOf(items){
-    const keys = new Set(items.map(i => i._key));
-    const leaders = items.filter(i => !(i.joinedTo && keys.has(i.joinedTo)));
-    leaders.forEach(l => { l.members = items.filter(i => i.joinedTo === l._key); });
-    return leaders;
+    items.forEach(i => { i.members = []; });
+    return items;
   }
-  function teamCount(l){ return headcount(l) + (l.members || []).reduce((n, m) => n + headcount(m), 0); }
+  function teamCount(l){ return headcount(l); }
   function withList(g){
-    const parts = (g.extras || []).map(x => (x.kid ? '🧒 ' : '') + escHtml(x.name))
-      .concat((g.members || []).map(m => escHtml(m.name) + (m.extras && m.extras.length ? ' (+' + m.extras.length + ')' : '') + adm(m, m.name)));
+    const parts = (g.extras || []).map(x => emojiOf(x) + ' ' + escHtml(x.name));
     return parts.length ? ` <span class="with">+ ${parts.join(', ')}</span>` : '';
   }
   function adm(item, label){
     if(!isAdmin || !item || !item._key) return '';
     return `<span class="adm-bar"><button type="button" class="adm-e" data-key="${escHtml(item._key)}" aria-label="Bearbeiten">&#9998;</button><button type="button" class="adm-x" data-del="${escHtml(item._key)}" data-label="${escHtml(label)}" aria-label="Löschen">&times;</button></span>`;
   }
-  function shortTag(t){ return String(t).replace(/^team\s+/i, ''); }
   function bindAdmin(){ /* Klicks laufen über Delegation, siehe unten */ }
   function escHtml(t){ return String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
   // Personenzahl pro Eintrag: neue Einträge mit extras, alte Einträge aus dem Namensfeld geschätzt
@@ -1002,126 +1164,147 @@
     const parts = String(g.name).split(/\s*(?:,|&|\bund\b|\bmit\b|\+)\s*/i).filter(x => x.trim());
     return Math.max(1, parts.length);
   }
-  let guestExtras = [];
-  let guestEditing = false;
+
+  // --- Der Pass (Vorschau live beim Ausfüllen, danach der echte Pass) ---
+  function ticketData(){
+    if(myGuestEntry && !guestEditing) return Object.assign({}, myGuestEntry, { avatar: avatarOf(myGuestEntry), state: 'mine' });
+    const sel = document.querySelector('input[name="guestWhen"]:checked');
+    return { name: document.getElementById('guestName').value.trim(), avatar: wizAvatar, extras: guestExtras, when: sel ? sel.value : '', state: 'draft' };
+  }
+  function renderTicket(){
+    const d = ticketData();
+    const crew = (d.extras || []).map(x => `<span>${emojiOf(x)} ${escHtml(x.name)}</span>`).join('');
+    const n = 1 + (d.extras || []).length;
+    document.getElementById('passTicket').innerHTML = `
+      <div class="ticket ${d.state}${d.name ? '' : ' noname'}">
+        <div class="tk-top">
+          <div class="tk-av">${d.avatar || '🪩'}</div>
+          <div class="tk-main">
+            <div class="tk-eyebrow">Party-Pass &middot; Fr 27.11.</div>
+            <div class="tk-name">${d.name ? escHtml(d.name) : 'Dein Name'}</div>
+            <div class="tk-crew">${crew || '<span class="tk-solo">kommt solo</span>'}</div>
+          </div>
+        </div>
+        <div class="tk-bottom">
+          <div><small>Wann</small><b>${d.when ? WHEN_TICKET[d.when] : '?'}</b></div>
+          <div><small>Wo</small><b>Partykeller</b></div>
+          <div><small>Personen</small><b>${n}</b></div>
+        </div>
+      </div>`;
+  }
+
+  // --- Konfetti-Knall ---
+  function burst(){
+    if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const cols = ['#FF6F91','#3E7BFF','#FFDA6B','#8CD9A8','#B07CFF'];
+    for(let i = 0; i < 56; i++){
+      const p = document.createElement('i');
+      p.style.cssText = `position:fixed;left:50%;top:36%;width:${6 + Math.random() * 7}px;height:${8 + Math.random() * 10}px;background:${cols[i % cols.length]};border-radius:${Math.random() < .4 ? '50%' : '2px'};z-index:90;pointer-events:none;`;
+      document.body.appendChild(p);
+      const ang = Math.random() * Math.PI * 2, dist = 110 + Math.random() * 230;
+      const dx = Math.cos(ang) * dist, dy = Math.sin(ang) * dist - 90;
+      const a = p.animate([
+        { transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
+        { transform: `translate(${dx}px,${dy + 320}px) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+      ], { duration: 1400 + Math.random() * 900, easing: 'cubic-bezier(.2,.7,.3,1)' });
+      a.onfinish = () => p.remove();
+    }
+  }
+
+  // --- Anmelde-Wizard ---
+  function renderAvatars(){
+    document.getElementById('avatarGrid').innerHTML = AVATARS.map(a =>
+      `<button type="button" class="av-btn ${a === wizAvatar ? 'sel' : ''}" data-a="${a}" aria-label="Party-Tier ${a}">${a}</button>`).join('');
+  }
+  document.getElementById('avatarGrid').addEventListener('click', (e) => {
+    const b = e.target.closest('.av-btn'); if(!b) return;
+    wizAvatar = b.dataset.a; renderAvatars(); renderTicket();
+  });
+  document.getElementById('avatarRoll').addEventListener('click', () => {
+    let a; do{ a = AVATARS[Math.floor(Math.random() * AVATARS.length)]; }while(a === wizAvatar);
+    wizAvatar = a; renderAvatars(); renderTicket();
+  });
+
   function renderExtras(){
     document.getElementById('extraChips').innerHTML = guestExtras.map((x, i) =>
-      `<span class="extra-chip">${x.kid ? '🧒' : '🧑'} ${escHtml(x.name)}<button type="button" data-i="${i}" aria-label="Entfernen">&times;</button></span>`).join('');
-    document.querySelectorAll('#extraChips button').forEach(b => b.addEventListener('click', () => {
-      guestExtras.splice(+b.dataset.i, 1); renderExtras();
-    }));
+      `<span class="extra-chip">${emojiOf(x)} ${escHtml(x.name)}<button type="button" data-i="${i}" aria-label="Entfernen">&times;</button></span>`).join('');
+    renderTicket();
   }
+  document.getElementById('extraChips').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-i]'); if(!b) return;
+    guestExtras.splice(+b.dataset.i, 1); renderExtras();
+  });
+  document.getElementById('quickAdd').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-t]'); if(!b) return;
+    pendingType = b.dataset.t;
+    const row = document.getElementById('extraRow'), inp = document.getElementById('extraName');
+    row.style.display = 'flex';
+    inp.placeholder = TYPE_PLACEHOLDER[pendingType];
+    document.querySelectorAll('#quickAdd button').forEach(x => x.classList.toggle('sel', x === b));
+    inp.focus();
+  });
   function addExtra(){
     const inp = document.getElementById('extraName');
     const name = inp.value.trim();
-    if(!name) return;
-    guestExtras.push({ name, kid: document.getElementById('extraType').value === 'kind' });
-    inp.value = ''; renderExtras(); inp.focus();
+    if(!name || !pendingType) return;
+    guestExtras.push({ name, age: pendingType, kid: pendingType !== 'erw' });
+    inp.value = '';
+    document.getElementById('extraRow').style.display = 'none';
+    document.querySelectorAll('#quickAdd button').forEach(x => x.classList.remove('sel'));
+    pendingType = null;
+    renderExtras();
   }
   document.getElementById('extraAdd').addEventListener('click', addExtra);
   document.getElementById('extraName').addEventListener('keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); addExtra(); } });
 
-  function renderTeams(items){
-    const list = document.getElementById('teamList'), cnt = document.getElementById('teamCount');
-    if(!items){
-      cnt.textContent = '';
-      list.innerHTML = '<div class="team-card"><span class="who">Trag dich zuerst im Tab „Gäste“ ein, dann siehst du hier die Teams.</span></div>';
-      return;
-    }
-    const leaders = leadersOf(items);
-    const kids = leaders.filter(g => g.when === 'nachmittag' || g.when === 'beides');
-    const persons = kids.reduce((n, g) => n + teamCount(g), 0);
-    cnt.textContent = kids.length + (kids.length === 1 ? ' Team' : ' Teams') + ' · ' + persons + ' Personen am Nachmittag';
-    const meHasMembers = myGuestEntry && items.some(i => i.joinedTo === myGuestEntry.key);
-    list.innerHTML = kids.length ? kids.map(g => {
-      const members = [g.name].concat((g.extras || []).map(x => (x.kid ? '🧒 ' : '') + x.name)).concat((g.members || []).map(m => m.name));
-      const tagHtml = g.tag ? `<span class="tag-chip">${escHtml(shortTag(g.tag))}</span>` : '';
-      const mine = myGuestEntry && g._key === myGuestEntry.key;
-      const imMember = myGuestEntry && (g.members || []).some(m => m._key === myGuestEntry.key);
-      const canJoin = myGuestEntry && !myGuestEntry.joinedTo && !mine && !meHasMembers;
-      return `<div class="team-card">${tagHtml}<div class="who">${members.map(escHtml).join(', ')}</div>` +
-        (g.when === 'beides' ? '<div class="tmeta">auch abends dabei</div>' : '') +
-        (mine ? '<div class="tmeta">Dein Team</div>' : '') + (imMember ? '<div class="tmeta">Du bist dabei</div>' : '') +
-        (canJoin ? `<button type="button" class="btn-outline-warm join-btn" data-join="${escHtml(g._key)}">Beitreten</button>` : '') +
-        adm(g, g.name) + '</div>';
-    }).join('') : '<div class="team-card"><span class="who">Noch niemand eingetragen</span></div>';
+  function showStep(n){
+    wizStep = n;
+    document.querySelectorAll('.wiz-step').forEach(s => s.classList.toggle('active', +s.dataset.step === n));
+    document.querySelectorAll('#wizSteps span').forEach((s, i) => s.classList.toggle('on', i < n));
+    document.getElementById('wizBack').style.display = n === 1 ? 'none' : '';
+    document.getElementById('wizNext').textContent = n < 3 ? 'Weiter' : (guestEditing ? 'Änderungen speichern' : 'Pass abholen 🎉');
+    document.getElementById('guestStatus').textContent = '';
   }
-
-  async function renderGuests(){
-    const container = document.getElementById('guestList');
-    if(!myGuestEntry){
-      container.innerHTML = '';
-      renderTeams(null);
-      return;
-    }
-    const items = await listByPrefix('party:guest:');
-    leadersOf(items);
-    renderTeams(items);
-    const leaders = leadersOf(items);
-    const tags = {};
-    (await listByPrefix('party:start:')).forEach(t => { if(t.disco && t.name) tags[t.name.trim().toLowerCase()] = t.disco; });
-    container.innerHTML = '';
-    WHEN_ORDER.forEach(when => {
-      const group = leaders.filter(i => i.when === when);
-      const persons = group.reduce((sum, g) => sum + teamCount(g), 0);
-      const div = document.createElement('div');
-      div.className = 'food-group group-' + when;
-      div.innerHTML = `<h4>${WHEN_LABEL[when]} <span class="guest-count">${persons}</span></h4><div class="guest-chip-list">${
-        group.length
-          ? group.map(g => `<span class="guest-chip"><span class="dot badge-${when}"></span>${escHtml(g.name)}${(g.tag || tags[String(g.name).trim().toLowerCase()]) ? ` <span class="mini-tag">${escHtml(shortTag(g.tag || tags[String(g.name).trim().toLowerCase()]))}</span>` : ''}${
-              withList(g)}${adm(g, g.name)}</span>`).join('')
-          : '<span class="guest-chip-empty">Noch niemand</span>'
-      }</div>`;
-      container.appendChild(div);
-    });
-    bindAdmin(container);
-  }
-
-  function updateGuestFormUI(){
-    const wrap = document.getElementById('guestFormWrap');
-    const confirm = document.getElementById('guestConfirm');
-    if(myGuestEntry && !guestEditing){
-      wrap.style.display = 'none';
-      confirm.style.display = 'block';
-      document.getElementById('guestConfirmName').textContent = myGuestEntry.name;
-      const tg = myGuestEntry.tag || '';
-      const badge = document.getElementById('myTagBadge');
-      badge.textContent = tg || 'KEIN TEAM-TAG'; badge.style.opacity = tg ? 1 : .45;
-      document.getElementById('myMembers').innerHTML = (myGuestEntry.extras || []).map(x => `<span>${x.kid ? '🧒' : '🧑'} ${escHtml(x.name)}</span>`).join('');
-      ['foodName','pizzaName','startName','rsvpName'].forEach(id => { const el = document.getElementById(id); if(el && !el.value) el.value = myGuestEntry.name; });
-      renderMyFood(); renderMyJoin();
-      document.getElementById('guestConfirmWhen').textContent = WHEN_LABEL[myGuestEntry.when];
-    } else {
-      wrap.style.display = 'block';
-      confirm.style.display = 'none';
-    }
-  }
-
-  document.getElementById('guestSubmit').addEventListener('click', async () => {
-    const name = document.getElementById('guestName').value.trim();
-    addExtra();
-    const selected = document.querySelector('input[name="guestWhen"]:checked');
-    if(!name || !selected){ alert('Bitte Namen eintragen und auswählen, wann du kommst.'); return; }
+  document.getElementById('guestName').addEventListener('input', renderTicket);
+  document.getElementById('guestName').addEventListener('keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); document.getElementById('wizNext').click(); } });
+  document.querySelectorAll('input[name="guestWhen"]').forEach(r => r.addEventListener('change', renderTicket));
+  document.getElementById('wizBack').addEventListener('click', () => { if(wizStep > 1) showStep(wizStep - 1); });
+  document.getElementById('wizNext').addEventListener('click', async () => {
     const status = document.getElementById('guestStatus');
-    status.textContent = 'Speichert…';
-    const key = (guestEditing && myGuestEntry) ? myGuestEntry.key : 'party:guest:' + uid();
-    const when = selected.value;
-    const extras = guestExtras.slice();
-    const tag = document.getElementById('guestTag').value.trim();
-    const joinedTo = (guestEditing && myGuestEntry) ? (myGuestEntry.joinedTo || null) : null;
-    const ok = await upsert(key, { name, when, extras, tag, joinedTo });
-    status.textContent = ok ? 'Danke! ✓' : 'Hat nicht geklappt, bitte nochmal.';
-    if(ok){
-      myGuestEntry = { key, name, when, extras, tag, joinedTo };
-      guestEditing = false;
-      try{ if(tag) localStorage.setItem('myDisco', tag); }catch(e){}
-      syncTagFields(tag);
-      document.getElementById('guestSubmit').textContent = 'Ich bin dabei!';
-      localStorage.setItem('myGuestEntry', JSON.stringify(myGuestEntry));
-      updateGuestFormUI();
-      renderGuests(); renderFood(); renderStart();
+    if(wizStep === 1){
+      if(!document.getElementById('guestName').value.trim()){ status.textContent = 'Wie heißt du?'; document.getElementById('guestName').focus(); return; }
+      showStep(2);
+    } else if(wizStep === 2){
+      addExtra(); showStep(3);
+    } else {
+      await submitGuest();
     }
   });
+
+  async function submitGuest(){
+    const status = document.getElementById('guestStatus');
+    const btn = document.getElementById('wizNext');
+    const name = document.getElementById('guestName').value.trim();
+    const sel = document.querySelector('input[name="guestWhen"]:checked');
+    if(!name){ showStep(1); status.textContent = 'Wie heißt du?'; return; }
+    if(!sel){ status.textContent = 'Bitte noch wählen, wann ihr kommt.'; return; }
+    btn.disabled = true; status.textContent = 'Dein Pass wird gedruckt…';
+    const wasEditing = guestEditing && !!myGuestEntry;
+    const old = wasEditing ? myGuestEntry : {};
+    const key = wasEditing ? myGuestEntry.key : 'party:guest:' + uid();
+    const entry = { name, when: sel.value, extras: guestExtras.slice(), avatar: wizAvatar,
+      allergy: document.getElementById('guestAllergy').value.trim(), tag: old.tag || '', joinedTo: old.joinedTo || null };
+    const ok = await upsert(key, entry);
+    btn.disabled = false;
+    if(!ok){ status.textContent = 'Hat nicht geklappt, bitte nochmal.'; return; }
+    myGuestEntry = Object.assign({ key }, entry);
+    guestEditing = false;
+    try{ localStorage.setItem('myGuestEntry', JSON.stringify(myGuestEntry)); }catch(e){}
+    updateGuestFormUI();
+    renderGuests(); renderFood(); renderStart();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if(!wasEditing) burst();
+  }
 
   document.getElementById('guestCalendarBtn').addEventListener('click', () => {
     if(myGuestEntry) downloadICS(myGuestEntry.when);
@@ -1130,42 +1313,55 @@
   document.getElementById('guestEdit').addEventListener('click', () => {
     if(!myGuestEntry) return;
     document.getElementById('guestName').value = myGuestEntry.name;
-    document.getElementById('guestTag').value = myGuestEntry.tag || '';
+    document.getElementById('guestAllergy').value = myGuestEntry.allergy || '';
+    wizAvatar = avatarOf(myGuestEntry);
     const r = document.querySelector('input[name="guestWhen"][value="' + myGuestEntry.when + '"]'); if(r) r.checked = true;
-    guestExtras = (myGuestEntry.extras || []).slice(); renderExtras();
-    document.getElementById('guestStatus').textContent = '';
-    document.getElementById('guestSubmit').textContent = 'Änderungen speichern';
+    guestExtras = (myGuestEntry.extras || []).map(x => Object.assign({}, x, { age: typeOf(x) }));
     guestEditing = true;
+    renderAvatars(); renderExtras(); showStep(1);
     updateGuestFormUI();
   });
 
-  // Team-Tag in allen Feldern angleichen (Gäste, Etappe 1, Turniere)
-  function syncTagFields(tag){
-    if(!tag) return;
-    const a = document.getElementById('startTag'); if(a) a.value = tag;
-    setTeamTag(tag);
-    if(typeof showTag === 'function') showTag();
+  function updateGuestFormUI(){
+    const wrap = document.getElementById('guestFormWrap');
+    const confirm = document.getElementById('guestConfirm');
+    if(myGuestEntry && !guestEditing){
+      wrap.style.display = 'none';
+      confirm.style.display = 'block';
+      ['foodName','pizzaName','rsvpName'].forEach(id => { const el = document.getElementById(id); if(el && !el.value) el.value = myGuestEntry.name; });
+      renderMyFood();
+    } else {
+      wrap.style.display = 'block';
+      confirm.style.display = 'none';
+    }
+    const done = !!(myGuestEntry && !guestEditing);
+    document.getElementById('passH2').innerHTML = done ? 'Dein Party-Pass &#127903;&#65039;' : 'Hol dir deinen Party-Pass &#127903;&#65039;';
+    document.getElementById('passSub').textContent = done ? 'Alles drin? Unten siehst du, wer sonst noch kommt.' : 'In drei kurzen Schritten bist du dabei. Ihr kommt zu mehreren? Dann tragt ihr alle zusammen ein, ein Pass für die ganze Crew.';
+    renderTicket();
   }
 
-  async function renderMyJoin(){
-    const box = document.getElementById('myJoined');
-    if(!myGuestEntry){ box.innerHTML = ''; return; }
+  async function renderGuests(){
+    const container = document.getElementById('guestList');
+    if(!myGuestEntry){
+      container.innerHTML = '';
+      return;
+    }
     const items = await listByPrefix('party:guest:');
-    const leader = myGuestEntry.joinedTo && items.find(i => i._key === myGuestEntry.joinedTo);
-    if(myGuestEntry.joinedTo && !leader){ myGuestEntry.joinedTo = null; localStorage.setItem('myGuestEntry', JSON.stringify(myGuestEntry)); }
-    const joined = items.filter(i => i.joinedTo === myGuestEntry.key);
-    let html = '';
-    if(leader) html += `<div class="mt-join-note">Du gehörst zum Team <strong>${escHtml(leader.tag ? shortTag(leader.tag) : leader.name)}</strong> <button type="button" id="leaveTeam" class="btn-outline-warm" style="padding:5px 12px;font-size:12px;">verlassen</button></div>`;
-    if(joined.length) html += `<div class="mt-join-note">Beigetreten: ${joined.map(m => escHtml(m.name)).join(', ')}</div>`;
-    else if(!leader) html += '<a class="mt-add" href="#mini">Lieber einem anderen Team beitreten?</a>';
-    box.innerHTML = html;
-  }
-
-  async function saveMyEntry(patch){
-    myGuestEntry = Object.assign({}, myGuestEntry, patch);
-    localStorage.setItem('myGuestEntry', JSON.stringify(myGuestEntry));
-    const e = myGuestEntry;
-    await upsert(e.key, { name: e.name, when: e.when, extras: e.extras || [], tag: e.tag || '', joinedTo: e.joinedTo || null });
+    const leaders = leadersOf(items);
+    container.innerHTML = '';
+    WHEN_ORDER.forEach(when => {
+      const group = leaders.filter(i => i.when === when);
+      const persons = group.reduce((sum, g) => sum + teamCount(g), 0);
+      const div = document.createElement('div');
+      div.className = 'food-group group-' + when;
+      div.innerHTML = `<h4>${WHEN_LABEL[when]} <span class="guest-count">${persons}</span></h4><div class="guest-chip-list">${
+        group.length
+          ? group.map(g => `<span class="guest-chip"><span class="gav">${avatarOf(g)}</span>${escHtml(g.name)}${withList(g)}${isAdmin && g.allergy ? ' <span class="with" title="Allergie">⚠️ ' + escHtml(g.allergy) + '</span>' : ''}${adm(g, g.name)}</span>`).join('')
+          : '<span class="guest-chip-empty">Noch niemand</span>'
+      }</div>`;
+      container.appendChild(div);
+    });
+    bindAdmin(container);
   }
 
   function refreshAll(){
@@ -1173,11 +1369,14 @@
     if(myGuestEntry){ updateGuestFormUI(); }
   }
 
+  renderAvatars(); renderExtras(); showStep(1);
+
+
   // ---- Admin-Editor ----
   const EDIT_FIELDS = {
-    guest: [['name','Name'],['when','Kommt','select',{nachmittag:'Nachmittag',abend:'Abend',beides:'Beides'}],['tag','Team-Tag'],['extrasText','Mitgäste (Komma getrennt, Kinder mit „(Kind)“)'],['joinedTo','Gehört zu Team','guest']],
+    guest: [['name','Name'],['when','Kommt','select',{nachmittag:'Nachmittag',abend:'Abend',beides:'Beides'}],['avatar','Party-Tier (Emoji)'],['extrasText','Mitgäste (Komma getrennt, Kinder mit „(Kind)“, Babys mit „(Baby)“)'],['allergy','Allergien / Wünsche']],
     fingerfood: [['name','Name'],['item','Was'],['category','Kategorie','select',{'Süß':'Süß','Herzhaft':'Herzhaft','Vegan/Vegetarisch':'Vegan/Vegetarisch','Getränke':'Getränke'}],['when','Wann','select',{nachmittag:'Nachmittag',abend:'Abend'}]],
-    bp: [['game','Disziplin','select',{stopp:'Stopptanz',turm:'Turmbau-Duell',beer:'Beer Pong'}],['team','Teamname'],['players','Spieler']],
+    bp: [['game','Disziplin','select',{stopp:'Stopptanz',turm:'Turmbau-Duell',beer:'Beer Pong'}],['team','Duo-Name'],['players','Spieler']],
     song: [['title','Songwunsch']], kidsong: [['title','Songwunsch']],
     pizzawish: [['name','Name'],['suggestion','Vorschlag']],
     start: [['name','Name'],['disco','Team-Tag'],['allergy','Allergien']]
@@ -1187,7 +1386,7 @@
     const kind = key.split(':')[1];
     const fields = EDIT_FIELDS[kind]; if(!fields) return;
     const vals = Object.assign({}, item);
-    if(kind === 'guest') vals.extrasText = (item.extras || []).map(x => x.name + (x.kid ? ' (Kind)' : '')).join(', ');
+    if(kind === 'guest') vals.extrasText = (item.extras || []).map(x => x.name + (typeOf(x) === 'kind' ? ' (Kind)' : typeOf(x) === 'baby' ? ' (Baby)' : '')).join(', ');
     if(kind === 'bp' && !vals.game) vals.game = 'beer';
     const guests = Object.values(ITEM_CACHE).filter(o => o._key && o._key.indexOf('party:guest:') === 0 && o._key !== key);
     const ov = document.createElement('div');
@@ -1208,9 +1407,11 @@
       const out = Object.assign({}, item); delete out._key; delete out.members;
       fields.forEach(([k]) => { out[k] = (fd.get(k) || '').toString().trim(); });
       if(kind === 'guest'){
-        out.extras = out.extrasText.split(',').map(x => x.trim()).filter(Boolean).map(x => ({ name: x.replace(/\s*\(kind\)\s*$/i, ''), kid: /\(kind\)\s*$/i.test(x) }));
+        out.extras = out.extrasText.split(',').map(x => x.trim()).filter(Boolean).map(x => {
+          const age = /\(baby\)\s*$/i.test(x) ? 'baby' : /\(kind\)\s*$/i.test(x) ? 'kind' : 'erw';
+          return { name: x.replace(/\s*\((kind|baby)\)\s*$/i, ''), age, kid: age !== 'erw' };
+        });
         delete out.extrasText;
-        out.joinedTo = out.joinedTo || null;
       }
       await upsert(key, out);
       if(myGuestEntry && myGuestEntry.key === key){ myGuestEntry = Object.assign({}, myGuestEntry, out, { key }); localStorage.setItem('myGuestEntry', JSON.stringify(myGuestEntry)); }
@@ -1228,17 +1429,6 @@
     }
     const ed = e.target.closest('.adm-e');
     if(ed){ openEditor(ed.dataset.key); return; }
-    const jb = e.target.closest('.join-btn');
-    if(jb && myGuestEntry){
-      const leader = ITEM_CACHE[jb.dataset.join]; if(!leader) return;
-      if(!confirm('Dem Team „' + (leader.tag ? shortTag(leader.tag) : leader.name) + '“ beitreten? Du kommst dann so wie das Team (' + WHEN_LABEL[leader.when] + ').')) return;
-      await saveMyEntry({ when: leader.when, joinedTo: leader._key });
-      refreshAll(); return;
-    }
-    if(e.target.closest('#leaveTeam')){
-      await saveMyEntry({ joinedTo: null });
-      refreshAll();
-    }
   });
 
   // "Das bringe ich mit": eigene Fingerfood-Einträge
@@ -1403,7 +1593,7 @@
     document.getElementById('cdS').textContent = pad(sec);
   }
 
-  const PHASE_NAMES = ['Team-Tag', 'Kinder-Verkleidung', 'Mini-Turniere', 'Letzter Check'];
+  const PHASE_NAMES = ['Party-Pass', 'Kinder-Verkleidung', 'Mini-Turniere', 'Letzter Check'];
   const PHASE_COUNT = PHASE_NAMES.length;
   function updatePhases(){
     const n = nowD();
@@ -1448,50 +1638,28 @@
     }
   }
 
-  // ---- Etappe 1: Startschuss ----
+  // ---- Etappe 1: Party-Pass ----
   const DISCO_A = ['Glitzer','Turbo','Funkel','Neon','Disco','Konfetti','Bass','Zucker','Laser','Samba'];
   const DISCO_B = ['blitz','panda','bär','rakete','einhorn','flamingo','löwe','käfer','fuchs','wirbel'];
-  const tagInput = document.getElementById('startTag');
-  try{ tagInput.value = (myGuestEntry && myGuestEntry.tag) || localStorage.getItem('myDisco') || ''; }catch(e){}
-  function showTag(){ document.getElementById('tagPreview').textContent = tagInput.value.trim() || 'TEAM ?'; }
-  tagInput.addEventListener('input', showTag);
-  document.getElementById('tagRoll').addEventListener('click', () => {
-    const pick = (a) => a[Math.floor(Math.random() * a.length)];
-    tagInput.value = 'Team ' + pick(DISCO_A) + pick(DISCO_B);
-    showTag();
-  });
-  document.getElementById('startName').value = myGuestName();
-  showTag();
-  try{ if(myGuestEntry) document.getElementById('foodName').value = myGuestEntry.name; const pn = document.getElementById('pizzaName'); if(pn && myGuestEntry) pn.value = myGuestEntry.name; }catch(e){}
   async function renderStart(){
-    const items = await listByPrefix('party:start:');
-    const fromGuests = (await listByPrefix('party:guest:')).filter(g => g.tag).map(g => ({ disco: g.tag, name: g.name }));
-    const seen = new Set(fromGuests.map(g => g.disco.toLowerCase()));
-    const named = fromGuests.concat(items.filter(i => i.disco && !seen.has(i.disco.toLowerCase())));
-    document.getElementById('startList').innerHTML = named
-      .map(i => `<li><span class="tag-chip">${esc(shortTag(i.disco))}<small>${esc(i.name)}</small></span>${adm(i, i.disco)}</li>`).join('');
-  }
-  document.getElementById('startForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const name = document.getElementById('startName').value.trim();
-    const tag = tagInput.value.trim();
-    const st = document.getElementById('startStatus');
-    if(!name || !tag) return;
-    st.textContent = 'Speichert…';
-    const ok = await upsert('party:start:' + deviceId(), { name, disco: tag, allergy: document.getElementById('startAllergy').value.trim() });
-    st.textContent = ok ? 'Dein Tag steht: ' + tag + ' ✓' : 'Hat nicht geklappt, bitte nochmal.';
-    if(ok){
-      try{ localStorage.setItem('myDisco', tag); }catch(e){}
-      setTeamTag(tag);
-      if(myGuestEntry){
-        myGuestEntry = Object.assign({}, myGuestEntry, { tag });
-        localStorage.setItem('myGuestEntry', JSON.stringify(myGuestEntry));
-        await upsert(myGuestEntry.key, { name: myGuestEntry.name, when: myGuestEntry.when, extras: myGuestEntry.extras || [], tag, joinedTo: myGuestEntry.joinedTo || null });
-        updateGuestFormUI();
-      }
-      renderStart(); renderGuests(); renderFood();
+    const box = document.getElementById('startPass');
+    if(!box) return;
+    if(myGuestEntry){
+      const n = 1 + (myGuestEntry.extras || []).length;
+      box.innerHTML = `<div class="start-done"><span class="sd-av">${avatarOf(myGuestEntry)}</span><div><strong>Dein Pass ist fertig, ${escHtml(myGuestEntry.name)}!</strong><small>${n} ${n === 1 ? 'Person' : 'Personen'} &middot; ${WHEN_LABEL[myGuestEntry.when]}</small></div></div><a class="btn-outline-warm" href="#gaeste">Pass ansehen</a>`;
+    } else {
+      box.innerHTML = '<a class="btn-warm start-cta" href="#gaeste">🎟️ Pass holen</a>';
     }
-  });
+    const adminBox = document.getElementById('startAdm');
+    if(adminBox){
+      if(!isAdmin){ adminBox.innerHTML = ''; return; }
+      const guests = await listByPrefix('party:guest:');
+      const starts = await listByPrefix('party:start:');
+      const rows = guests.filter(g => g.allergy).map(g => ({ name: g.name, allergy: g.allergy }))
+        .concat(starts.filter(s => s.allergy).map(s => ({ name: s.name, allergy: s.allergy })));
+      adminBox.innerHTML = rows.length ? '<h4 class="adm-h">Allergien (nur Admin)</h4><ul class="prep-list">' + rows.map(r => `<li><strong>${esc(r.name)}</strong>: ${esc(r.allergy)}</li>`).join('') + '</ul>' : '';
+    }
+  }
 
   // ---- Etappe 2: Motto (Kinder-Verkleidung) ----
   const MOTTOS = ['Disco-Tiere (Löwe, Hase, Marienkäfer …)', 'Superhelden & Feen', 'Alles, was glitzert', 'Kein Kostüm, einfach bequem'];
@@ -1513,20 +1681,27 @@
     }));
   }
 
-  // ---- Etappe 3: Turniere ----
+  // ---- Etappe 3: Wettbewerbe ----
   const GAMES = { stopp:'🕺 Stopptanz', turm:'🧱 Turmbau-Duell', beer:'🍺 Beer Pong' };
-  function setTeamTag(tag){
-    ['gameKidsTeam','gameNightTeam'].forEach(id => { const el = document.getElementById(id); if(el && tag) el.value = tag; });
-  }
-  try{ setTeamTag(localStorage.getItem('myDisco') || (myGuestEntry && myGuestEntry.tag) || ''); }catch(e){}
+  // Duo-Namen: nur hier sinnvoll, optional und per Würfel
+  const pickOne = (a) => a[Math.floor(Math.random() * a.length)];
+  document.addEventListener('click', (e) => {
+    const d = e.target.closest('.dice');
+    if(!d) return;
+    const el = document.getElementById(d.dataset.for);
+    if(el) el.value = pickOne(DISCO_A) + pickOne(DISCO_B);
+  });
 
   async function renderGames(){
     const items = await listByPrefix('party:bp:');
     const block = (games) => games.map(g => {
       const rows = items.filter(t => (t.game || 'beer') === g);
       return `<li><strong>${GAMES[g]}</strong> <span class="who">(${rows.length})</span>` +
-        (rows.length ? rows.map(t => `<div class="who">${esc(t.team)} &mdash; ${esc(t.players)}${adm(t, t.team)}</div>`).join('')
-                     : '<div class="who">Noch kein Team angemeldet</div>') + '</li>';
+        (rows.length ? rows.map(t => {
+          const same = !t.team || String(t.team).trim().toLowerCase() === String(t.players).trim().toLowerCase();
+          return `<div class="who">${same ? '' : '<b>' + esc(t.team) + '</b> &mdash; '}${esc(t.players)}${adm(t, t.team || t.players)}</div>`;
+        }).join('')
+                     : '<div class="who">Noch kein Duo angemeldet</div>') + '</li>';
     }).join('');
     document.getElementById('gameKidsList').innerHTML = block(['stopp','turm']);
     document.getElementById('gameNightList').innerHTML = block(['beer']);
@@ -1534,14 +1709,14 @@
   function bindGameForm(formId, getGame, teamId, playersId, statusId){
     document.getElementById(formId).addEventListener('submit', async (e) => {
       e.preventDefault();
-      const team = document.getElementById(teamId).value.trim();
       const players = document.getElementById(playersId).value.trim();
-      if(!team || !players) return;
+      const team = document.getElementById(teamId).value.trim() || players;
+      if(!players) return;
       const st = document.getElementById(statusId);
       st.textContent = 'Speichert…';
       const ok = await upsert('party:bp:' + uid(), { game: getGame(), team, players });
-      st.textContent = ok ? 'Team ist drin! ✓' : 'Hat nicht geklappt, bitte nochmal.';
-      if(ok){ document.getElementById(playersId).value = ''; renderGames(); }
+      st.textContent = ok ? 'Duo ist drin! ✓' : 'Hat nicht geklappt, bitte nochmal.';
+      if(ok){ document.getElementById(playersId).value = ''; document.getElementById(teamId).value = ''; renderGames(); }
     });
   }
   bindGameForm('gameKidsForm', () => document.getElementById('gameKidsType').value, 'gameKidsTeam', 'gameKidsPlayers', 'gameKidsStatus');
@@ -1569,6 +1744,34 @@
     st.textContent = ok ? 'Danke, ist notiert! ✓' : 'Hat nicht geklappt, bitte nochmal.';
     if(ok) renderRSVP();
   });
+
+  // Musikwünsche (Etappe 4) + Spotify-Player zum Mitgestalten
+  function spotifyEmbedUrl(u){
+    const m = String(u || '').match(/open\.spotify\.com\/(?:intl-[a-z]+\/)?(playlist|album)\/([A-Za-z0-9]+)/);
+    return m ? 'https://open.spotify.com/embed/' + m[1] + '/' + m[2] + '?utm_source=generator' : null;
+  }
+  (function renderMusicEmbeds(){
+    const box = document.getElementById('spotEmbeds');
+    const defs = [['🧸 Mini-Disco', KIDS_PLAYLIST_URL], ['🪩 Dance Moves an', SPOTIFY_PLAYLIST_URL]];
+    box.innerHTML = defs.map(([label, url]) => {
+      const emb = spotifyEmbedUrl(url);
+      return emb ? `<div class="embed-item"><div class="embed-label">${label}</div><iframe src="${emb}" width="100%" height="152" frameborder="0" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" title="${label}"></iframe></div>` : '';
+    }).join('');
+  })();
+  function bindSongForm(formId, inputId, prefix, after){
+    document.getElementById(formId).addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const inp = document.getElementById(inputId), title = inp.value.trim();
+      if(!title) return;
+      const st = document.getElementById('ph3SongStatus');
+      st.textContent = 'Speichert…';
+      const ok = await upsert(prefix + uid(), { title });
+      st.textContent = ok ? 'Wunsch ist drin! 🎶' : 'Hat nicht geklappt, bitte nochmal.';
+      if(ok){ inp.value = ''; after(); }
+    });
+  }
+  bindSongForm('ph3KidSongForm', 'ph3KidSong', 'party:kidsong:', () => renderKidsSongs());
+  bindSongForm('ph3NightSongForm', 'ph3NightSong', 'party:song:', () => renderSongs());
 
   tickCountdown(); setInterval(tickCountdown, 1000);
   updatePhases(); setInterval(updatePhases, 60000);
