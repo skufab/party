@@ -397,6 +397,9 @@
   .claim-btn:hover{background:#b5532f;color:#fff;}
   .guest-chip.is-me{outline:2px solid #b5532f;}
   .me-tag{background:#b5532f;color:#fff;border-radius:999px;padding:1px 8px;font-size:.7rem;margin-left:4px;}
+  .already-box{margin-top:14px;padding-top:10px;border-top:1px dashed #d9b99b;}
+  .already-box button{border:1px dashed #b5532f;background:#fff;color:#b5532f;border-radius:999px;padding:5px 12px;font:inherit;font-size:.85rem;margin:3px 4px 3px 0;cursor:pointer;}
+  .extra-chip .cyc{border:0;background:none;padding:0 2px;font-size:1rem;cursor:pointer;}
   .adm-bar{display:inline-flex;gap:4px;margin-left:6px;vertical-align:middle;}
   .adm-bar button{width:22px;height:22px;padding:0;border-radius:50%;font-size:12px;line-height:22px;color:#fff;}
   .adm-bar .adm-e{background:#3E7BFF;}
@@ -558,6 +561,7 @@
         <div class="wiz-step active" data-step="1">
           <div class="wiz-q">Wer bist du?</div>
           <input id="guestName" type="text" placeholder="Dein Vorname" maxlength="30" autocomplete="given-name">
+          <div class="wiz-help" id="claimHint">Schon eingetragen und nur auf einem neuen Ger&auml;t? Unten in der G&auml;steliste auf &bdquo;Das bin ich&ldquo; tippen.</div>
           <div class="wiz-q small">Such dir ein Party-Tier aus</div>
           <div class="avatar-grid" id="avatarGrid"></div>
           <button type="button" class="btn-outline-warm roll" id="avatarRoll">&#127922; &Uuml;berrasch mich</button>
@@ -576,6 +580,10 @@
             <button type="button" id="extraAdd" class="btn-warm" aria-label="Person hinzuf&uuml;gen">OK</button>
           </div>
           <div class="extra-chips" id="extraChips"></div>
+          <div id="alreadyBox" class="already-box" style="display:none;">
+            <div class="wiz-help">Ist jemand von euch schon selbst eingetragen? Tippe den Namen an, dann wird er zu deiner Crew gepackt (und nicht doppelt gez&auml;hlt).</div>
+            <div class="extra-chips" id="alreadyChips"></div>
+          </div>
         </div>
 
         <div class="wiz-step" data-step="3">
@@ -1236,12 +1244,17 @@
 
   function renderExtras(){
     document.getElementById('extraChips').innerHTML = guestExtras.map((x, i) =>
-      `<span class="extra-chip">${emojiOf(x)} ${escHtml(x.name)}<button type="button" data-i="${i}" aria-label="Entfernen">&times;</button></span>`).join('');
-    renderTicket();
+      `<span class="extra-chip"><button type="button" class="cyc" data-c="${i}" title="Erwachsene/r, Kind oder Baby wechseln">${emojiOf(x)}</button> ${escHtml(x.name)}<button type="button" data-i="${i}" aria-label="Entfernen">&times;</button></span>`).join('');
+    renderTicket(); renderAlready();
   }
   document.getElementById('extraChips').addEventListener('click', (e) => {
+    const c = e.target.closest('button[data-c]');
+    if(c){ const x = guestExtras[+c.dataset.c]; const order = ['erw','kind','baby']; x.age = order[(order.indexOf(typeOf(x)) + 1) % 3]; x.kid = x.age !== 'erw'; renderExtras(); return; }
     const b = e.target.closest('button[data-i]'); if(!b) return;
-    guestExtras.splice(+b.dataset.i, 1); renderExtras();
+    const x = guestExtras[+b.dataset.i];
+    if(x.fromKey){ const k = x.fromKey; guestExtras = guestExtras.filter(y => y.fromKey !== k && y.via !== k); }
+    else guestExtras.splice(+b.dataset.i, 1);
+    renderExtras();
   });
   document.getElementById('quickAdd').addEventListener('click', (e) => {
     const b = e.target.closest('button[data-t]'); if(!b) return;
@@ -1251,6 +1264,23 @@
     inp.placeholder = TYPE_PLACEHOLDER[pendingType];
     document.querySelectorAll('#quickAdd button').forEach(x => x.classList.toggle('sel', x === b));
     inp.focus();
+  });
+  async function renderAlready(){
+    const box = document.getElementById('alreadyBox'); if(!box) return;
+    const items = await listByPrefix('party:guest:');
+    const taken = guestExtras.map(x => x.fromKey).filter(Boolean);
+    const myKey = myGuestEntry ? myGuestEntry.key : null;
+    const others = items.filter(i => i._key !== myKey && taken.indexOf(i._key) < 0);
+    box.style.display = others.length ? 'block' : 'none';
+    document.getElementById('alreadyChips').innerHTML = others.map(i => `<button type="button" data-k="${escHtml(i._key)}">${avatarOf(i)} ${escHtml(i.name)}</button>`).join('');
+  }
+  document.getElementById('alreadyChips').addEventListener('click', async (e) => {
+    const b = e.target.closest('button[data-k]'); if(!b) return;
+    const items = await listByPrefix('party:guest:');
+    const g = items.find(i => i._key === b.dataset.k); if(!g) return;
+    guestExtras.push({ name: g.name, age: 'erw', kid: false, fromKey: g._key });
+    (g.extras || []).forEach(x => guestExtras.push({ name: x.name, age: typeOf(x), kid: typeOf(x) !== 'erw', via: g._key }));
+    renderExtras();
   });
   function addExtra(){
     const inp = document.getElementById('extraName');
@@ -1267,6 +1297,8 @@
   document.getElementById('extraName').addEventListener('keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); addExtra(); } });
 
   function showStep(n){
+    if(n === 2) renderAlready();
+    const ch = document.getElementById('claimHint'); if(ch) ch.style.display = myGuestEntry ? 'none' : '';
     wizStep = n;
     document.querySelectorAll('.wiz-step').forEach(s => s.classList.toggle('active', +s.dataset.step === n));
     document.querySelectorAll('#wizSteps span').forEach((s, i) => s.classList.toggle('on', i < n));
@@ -1301,11 +1333,13 @@
     const wasEditing = guestEditing && !!myGuestEntry;
     const old = wasEditing ? myGuestEntry : {};
     const key = wasEditing ? myGuestEntry.key : 'party:guest:' + uid();
-    const entry = { name, when: sel.value, extras: guestExtras.slice(), avatar: wizAvatar,
+    const mergeKeys = guestExtras.map(x => x.fromKey).filter(Boolean);
+    const entry = { name, when: sel.value, extras: guestExtras.map(x => ({ name: x.name, age: typeOf(x), kid: typeOf(x) !== 'erw' })), avatar: wizAvatar,
       allergy: document.getElementById('guestAllergy').value.trim(), tag: old.tag || '', joinedTo: old.joinedTo || null };
     const ok = await upsert(key, entry);
     btn.disabled = false;
     if(!ok){ status.textContent = 'Hat nicht geklappt, bitte nochmal.'; return; }
+    for(const mk of mergeKeys){ try{ await sb.from('storage').delete().eq('key', mk); }catch(e){} }
     myGuestEntry = Object.assign({ key }, entry);
     guestEditing = false;
     try{ localStorage.setItem('myGuestEntry', JSON.stringify(myGuestEntry)); }catch(e){}
@@ -1367,7 +1401,7 @@
       div.className = 'food-group group-' + when;
       div.innerHTML = `<h4>${WHEN_LABEL[when]} <span class="guest-count">${persons}</span></h4><div class="guest-chip-list">${
         group.length
-          ? group.map(g => `<span class="guest-chip${myGuestEntry && g._key === myGuestEntry.key ? ' is-me' : ''}"><span class="gav">${avatarOf(g)}</span>${escHtml(g.name)}${withList(g)}${myGuestEntry && g._key === myGuestEntry.key ? ' <span class="me-tag">Du</span>' : (isAdmin ? '' : ' <button type="button" class="claim-btn" data-claim="' + escHtml(g._key) + '">Das bin ich</button>')}${isAdmin && g.allergy ? ' <span class="with" title="Allergie">⚠️ ' + escHtml(g.allergy) + '</span>' : ''}${adm(g, g.name)}</span>`).join('')
+          ? group.map(g => `<span class="guest-chip${myGuestEntry && g._key === myGuestEntry.key ? ' is-me' : ''}"><span class="gav">${avatarOf(g)}</span>${escHtml(g.name)}${withList(g)}${myGuestEntry && g._key === myGuestEntry.key ? ' <span class="me-tag">Du</span>' : (isAdmin || myGuestEntry ? '' : ' <button type="button" class="claim-btn" data-claim="' + escHtml(g._key) + '">Das bin ich</button>')}${isAdmin && g.allergy ? ' <span class="with" title="Allergie">⚠️ ' + escHtml(g.allergy) + '</span>' : ''}${adm(g, g.name)}</span>`).join('')
           : '<span class="guest-chip-empty">Noch niemand</span>'
       }</div>`;
       container.appendChild(div);
