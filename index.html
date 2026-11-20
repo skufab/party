@@ -411,6 +411,9 @@
   .adm-game-add{margin:6px 0;list-style:none;}
   .pick-list{display:grid;gap:4px;max-height:40vh;overflow:auto;}
   .pick-list label{display:flex;gap:8px;align-items:center;}
+  .rsvp-ov{margin-top:8px;font-size:.92rem;}
+  .rsvp-ov .ro-row{padding:4px 0;border-bottom:1px solid rgba(0,0,0,.07);}
+  .rsvp-ov .ro-h{margin:10px 0 2px;font-weight:700;}
   .adm-bar{display:inline-flex;gap:4px;margin-left:6px;vertical-align:middle;}
   .adm-bar button{width:22px;height:22px;padding:0;border-radius:50%;font-size:12px;line-height:22px;color:#fff;}
   .adm-bar .adm-e{background:#3E7BFF;}
@@ -787,6 +790,7 @@
             <span class="hint" id="rsvpStatus"></span>
           </form>
           <p id="rsvpCount" style="margin:12px 0 0;font-weight:600;opacity:.9;"></p>
+          <div id="rsvpOverview" class="rsvp-ov"></div>
 
           <div class="board-block">
             <h4 class="music-h">&#127942; Bestenliste</h4>
@@ -1456,7 +1460,7 @@
   }
 
   function refreshAll(){
-    renderGuests(); renderFood(); renderMyFood(); renderGames(); renderSongs(); renderKidsSongs(); renderPizzaWishes(); renderStart(); renderBoard();
+    renderGuests(); renderFood(); renderMyFood(); renderGames(); renderSongs(); renderKidsSongs(); renderPizzaWishes(); renderStart(); renderBoard(); renderRSVP();
     if(myGuestEntry){ updateGuestFormUI(); }
   }
 
@@ -1470,6 +1474,7 @@
     bp: [['game','Disziplin','select',{stopp:'Stopptanz',turm:'Turmbau-Duell',beer:'Beer Pong'}],['team','Duo-Name'],['players','Spieler']],
     song: [['title','Songwunsch']], kidsong: [['title','Songwunsch']],
     pizzawish: [['name','Idee von'],['suggestion','Pizza-Name']],
+    rsvp: [['name','Name'],['status','Status','select',{dabei:'Bin dabei',wackelt:'Wackelt noch',nein:'Leider nicht'}],['drink','Getränk']],
     start: [['name','Name'],['disco','Team-Tag'],['allergy','Allergien']]
   };
   function openEditor(key){
@@ -1983,6 +1988,21 @@
     const items = await listByPrefix('party:rsvp:');
     const yes = items.filter(i => i.status === 'dabei').length;
     document.getElementById('rsvpCount').textContent = yes ? `${yes} ${yes === 1 ? 'Zusage' : 'Zusagen'} bisher 🎉` : '';
+    const maybe = items.filter(i => i.status === 'wackelt').length, no = items.filter(i => i.status === 'nein').length;
+    const drinks = {};
+    items.filter(i => i.status !== 'nein' && i.drink).forEach(i => { drinks[i.drink] = (drinks[i.drink] || 0) + 1; });
+    let html = '';
+    if(maybe || no) html += `<div>${maybe ? maybe + ' wackelt noch' : ''}${maybe && no ? ' · ' : ''}${no ? no + ' leider nicht' : ''}</div>`;
+    const dk = Object.entries(drinks);
+    if(dk.length) html += `<div class="ro-h">🍹 Das wird abends getrunken</div><div>${dk.map(([k, v]) => esc(k) + ' ' + v + '×').join(' · ')}</div>`;
+    if(isAdmin && items.length){
+      const L = { dabei:'✅ Dabei', wackelt:'🤔 Wackelt', nein:'❌ Leider nicht' };
+      html += ['dabei','wackelt','nein'].map(s => {
+        const rows = items.filter(i => i.status === s); if(!rows.length) return '';
+        return `<div class="ro-h">${L[s]} (${rows.length})</div>` + rows.map(i => `<div class="ro-row">${esc(i.name)}${i.drink ? ' · ' + esc(i.drink) : ''}${adm(i, i.name)}</div>`).join('');
+      }).join('');
+    }
+    document.getElementById('rsvpOverview').innerHTML = html;
   }
   document.getElementById('rsvpForm').addEventListener('submit', async (e) => {
     e.preventDefault();
