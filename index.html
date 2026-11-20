@@ -414,6 +414,8 @@
   .rsvp-ov{margin-top:8px;font-size:.92rem;}
   .rsvp-ov .ro-row{padding:4px 0;border-bottom:1px solid rgba(0,0,0,.07);}
   .rsvp-ov .ro-h{margin:10px 0 2px;font-weight:700;}
+  .ph3-wl{margin:4px 0 0;padding:0;list-style:none;font-size:.92rem;}
+  .ph3-wl li{padding:4px 0;border-bottom:1px solid rgba(0,0,0,.07);}
   .adm-bar{display:inline-flex;gap:4px;margin-left:6px;vertical-align:middle;}
   .adm-bar button{width:22px;height:22px;padding:0;border-radius:50%;font-size:12px;line-height:22px;color:#fff;}
   .adm-bar .adm-e{background:#3E7BFF;}
@@ -804,6 +806,10 @@
             <form id="ph3KidSongForm"><input id="ph3KidSong" type="text" placeholder="&#129528; Mini-Disco: Songwunsch"><button type="submit" class="btn-warm">Senden</button></form>
             <form id="ph3NightSongForm"><input id="ph3NightSong" type="text" placeholder="&#129705; Abend: Songwunsch"><button type="submit" class="btn-warm">Senden</button></form>
             <span class="hint" id="ph3SongStatus"></span>
+            <div class="ph3-wishes">
+              <div class="ro-h" id="ph3KidWishH"></div><ul class="song-list ph3-wl" id="ph3KidWishes"></ul>
+              <div class="ro-h" id="ph3NightWishH"></div><ul class="song-list ph3-wl" id="ph3NightWishes"></ul>
+            </div>
             <div class="embed-wrap" id="spotEmbeds"></div>
           </div>
         </div>
@@ -1095,6 +1101,12 @@
     list.innerHTML = items.slice().reverse().map(i =>
       `<li>${escHtml(i.title)}${adm(i, i.title)}</li>`
     ).join('');
+    fillWishes('ph3NightWishes', 'ph3NightWishH', '🪩 Wünsche für Dance Moves an', items);
+  }
+  function fillWishes(listId, headId, head, items){
+    const l = document.getElementById(listId), h = document.getElementById(headId); if(!l || !h) return;
+    h.textContent = items.length ? head + ' (' + items.length + ')' : '';
+    l.innerHTML = items.slice().reverse().map(i => `<li>${escHtml(i.title)}${adm(i, i.title)}</li>`).join('');
   }
 
   document.getElementById('songForm').addEventListener('submit', async (e) => {
@@ -1641,6 +1653,7 @@
     const items = await listByPrefix('party:kidsong:');
     const list = document.getElementById('kidsSongList');
     list.innerHTML = items.slice().reverse().map(i => `<li>${escHtml(i.title)}${adm(i, i.title)}</li>`).join('');
+    fillWishes('ph3KidWishes', 'ph3KidWishH', '🧸 Wünsche für die Mini-Disco', items);
   }
 
   document.getElementById('kidsSongForm').addEventListener('submit', async (e) => {
