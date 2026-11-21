@@ -86,6 +86,7 @@ input:focus,textarea:focus{outline:none;border-color:var(--yellow)}
 .huge{font-size:64px;font-weight:900;line-height:1}
 .demo{background:var(--cream);color:var(--ink);border-radius:16px;padding:14px;font-weight:900;font-size:22px;min-height:56px}
 .chip.all{border-style:dashed}.chip.all.on{border-style:solid}
+.clash{color:var(--coral);font-weight:700;font-size:14px;margin:0}.clash:empty{display:none}
 .combo{color:var(--coral);font-weight:900}
 .card.steal{background:#FFE3A3}
 .btn:disabled{opacity:.35}
@@ -141,6 +142,7 @@ input:focus,textarea:focus{outline:none;border-color:var(--yellow)}
       <p class="sub" id="peerInfo">Noch kein weiteres Gerät verbunden.</p>
       <h2>Dieses Gerät gehört zu</h2>
       <div class="chips" id="hostMyTeam"></div>
+      <p class="clash" id="hostClash"></p>
       <button class="btn sm ghost" id="closeRoom">Raum schließen</button>
     </div>
   </div>
@@ -223,6 +225,7 @@ input:focus,textarea:focus{outline:none;border-color:var(--yellow)}
   <div class="panel">
     <h2>Dieses Gerät gehört zu</h2>
     <div class="chips" id="cliMyTeam"></div>
+    <p class="clash" id="cliClash"></p>
   </div>
   <div class="spacer"></div>
   <button class="btn ghost" id="leaveBtn">Raum verlassen</button>
@@ -234,10 +237,12 @@ input:focus,textarea:focus{outline:none;border-color:var(--yellow)}
   <p class="sub" id="hoRound">Runde 1</p>
   <div class="huge" id="hoTeam">Team</div>
   <div class="roletag" id="hoRole"></div>
+  <p class="clash" id="hoClash"></p>
   <p class="sub" style="max-width:340px" id="hoText"></p>
   <div class="score" style="width:100%" id="hoScores"></div>
   <div class="spacer"></div>
   <button class="btn y big" style="width:100%" id="goBtn">Uhr starten</button>
+  <button class="btn ghost sm" id="hoSwitch" style="display:none"></button>
   <button class="btn ghost sm" id="hoQuit">Spiel beenden</button>
 </section>
 
@@ -834,7 +839,7 @@ function makeCode(){const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let c="";for(let 
 function connect(code,role){
   if(!window.mqtt){alert("Die Verbindungs-Bibliothek konnte nicht geladen werden. Bitte Internetverbindung prüfen.");return;}
   netClose(true);
-  NET.code=code;NET.role=role;NET.peers={};NET.gotState=false;
+  NET.code=code;NET.role=role;NET.peers={};NET.gotState=false;NET.devs=null;NET.autoPicked=false;
   store.set("room",{code,role});
   const c=mqtt.connect(BROKER,{clientId:"ss_"+ME.id+"_"+Math.random().toString(16).slice(2,6),clean:true,reconnectPeriod:2000,connectTimeout:10000,keepalive:30});
   NET.client=c;
@@ -852,20 +857,35 @@ function connect(code,role){
     if(topic.endsWith("/state") && NET.role==="client"){
       if(!m.G) return;
       NET.offset=Date.now()-m.now; NET.gotState=true;
-      G=m.G; render();
+      G=m.G; NET.devs=m.devs||null;
+      // Beim Beitreten automatisch ein anderes Team als das Host-Handy wählen
+      if(!NET.autoPicked&&NET.devs&&G.teams&&G.teams.length){
+        NET.autoPicked=true;
+        const cnt=G.teams.map(()=>0);
+        [NET.devs.host,...Object.entries(NET.devs.peers||{}).filter(([id])=>id!==ME.id).map(([,t])=>t)]
+          .forEach(t=>{if(cnt[t]!==undefined)cnt[t]++;});
+        const min=Math.min(...cnt);
+        const best=cnt.map((c,i)=>i).filter(i=>cnt[i]===min);
+        const pickT=best.includes(ME.team)?ME.team:best[0];
+        if(pickT!==ME.team){ ME.team=pickT; store.set("myTeam",ME.team); }
+        hello();
+      }
+      render();
     } else if(topic.endsWith("/act") && NET.role==="host"){
       apply(m.a,m.p);
     } else if(topic.endsWith("/hello") && NET.role==="host"){
       if(m.id===ME.id) return;
+      const before=JSON.stringify(NET.peers[m.id]&&NET.peers[m.id].team);
       if(m.bye) delete NET.peers[m.id]; else NET.peers[m.id]={team:m.team,seen:Date.now()};
-      renderNet(); publish();
+      publish(); if(m.bye||before!==JSON.stringify(m.team)) render(); else renderNet();
     }
   });
   render();
 }
 function publish(){
   if(NET.role!=="host"||!NET.client||!NET.connected) return;
-  NET.client.publish(base()+"/state",JSON.stringify({now:Date.now(),G}),{retain:true,qos:1});
+  const peers={};for(const k in NET.peers) peers[k]=NET.peers[k].team;
+  NET.client.publish(base()+"/state",JSON.stringify({now:Date.now(),G,devs:{host:ME.team,peers}}),{retain:true,qos:1});
 }
 function netSend(sub,obj){ if(NET.client&&NET.connected) NET.client.publish(base()+"/"+sub,JSON.stringify(obj),{qos:1}); }
 function hello(bye){ netSend("hello",{id:ME.id,team:ME.team,bye:!!bye}); }
@@ -929,10 +949,36 @@ function teamChips(el,teams){
     const b=document.createElement("button");
     b.className="chip"+(ME.team===i?" on":"");
     b.style.borderColor=TEAMCOL[i];
-    b.textContent=t.name||t;
-    b.onclick=()=>{ME.team=i;store.set("myTeam",i);if(NET.role==="client")hello();render();};
+    const c=NET.role!=="local"?devCounts()[i]:0;
+    b.innerHTML=esc(t.name||t)+(NET.role!=="local"?` <small>${c} 📱</small>`:"");
+    b.onclick=()=>setMyTeam(i);
     el.appendChild(b);
   });
+}
+function setMyTeam(i){
+  ME.team=i;store.set("myTeam",i);
+  if(NET.role==="client") hello(); else if(NET.role==="host") publish();
+  render();
+}
+/* Wie viele Handys sind in welchem Team? */
+function devCounts(){
+  const n=(G.teams&&G.teams.length?G.teams.length:CFG.teams.length), cnt=Array(n).fill(0);
+  const add=t=>{if(t>=0&&t<n)cnt[t]++;};
+  if(NET.role==="host"){ add(ME.team); Object.values(NET.peers).forEach(p=>add(p.team)); }
+  else if(NET.devs){ add(NET.devs.host); Object.entries(NET.devs.peers||{}).forEach(([id,t])=>add(id===ME.id?ME.team:t));
+    if(!(NET.devs.peers||{})[ME.id]) add(ME.team); }
+  return cnt;
+}
+/* Hinweis, wenn ein Team kein Handy hat */
+function clashText(){
+  if(NET.role==="local") return "";
+  const names=(G.teams&&G.teams.length?G.teams.map(t=>t.name):CFG.teams);
+  const cnt=devCounts(), total=cnt.reduce((a,b)=>a+b,0);
+  if(total<2) return "";
+  const empty=cnt.map((c,i)=>c?null:names[i]).filter(Boolean);
+  if(cnt.filter(c=>c>0).length<2) return `⚠️ Alle Handys sind in ${names[cnt.findIndex(c=>c>0)]}. Dann sieht niemand die Lösung. Bitte mindestens ein Handy umstellen.`;
+  if(empty.length) return `⚠️ ${empty.join(" und ")} ${empty.length>1?"haben":"hat"} noch kein Handy. Dieses Team sieht seine Karten sonst nur bei den anderen (mit Lösung).`;
+  return "";
 }
 function statusHtml(){return NET.connected?'<span class="led on"></span>verbunden':'<span class="led"></span>verbinde …';}
 
@@ -946,9 +992,10 @@ function renderNet(){
   $("hostStatus").innerHTML=statusHtml();
   const peers=Object.values(NET.peers);
   $("peerInfo").innerHTML= peers.length
-    ? peers.length+(peers.length===1?" Gerät":" Geräte")+" verbunden: "+peers.map(p=>`<b style="color:${TEAMCOL[p.team]||"#fff"}">${esc(CFG.teams[p.team]||"?")}</b>`).join(", ")
+    ? (peers.length+1)+" Handys im Raum (inkl. diesem). Jedes Handy wählt selbst sein Team, neue landen automatisch im kleinsten Team."
     : "Noch kein weiteres Gerät verbunden. Auf dem zweiten Handy diese Seite öffnen und den Code eingeben.";
   teamChips($("hostMyTeam"),CFG.teams);
+  $("hostClash").textContent=clashText();
 }
 function renderLobby(){
   $("cliCode").textContent=NET.code||"-----";
@@ -958,10 +1005,16 @@ function renderLobby(){
     : "Warte auf das Host-Gerät … (Code richtig? Ist der Raum auf dem anderen Handy offen?)";
   if(ME.team>=(G.teams||[]).length&&G.teams.length) ME.team=0;
   teamChips($("cliMyTeam"),G.teams||[]);
+  $("cliClash").textContent=clashText();
 }
 
 function renderHandover(){
   const t=G.teams[G.turn], role=myRole();
+  const sw=$("hoSwitch");
+  if(NET.role!=="local"){ sw.style.display="inline-block";
+    sw.innerHTML=`Dieses Handy: <b style="color:${TEAMCOL[ME.team]}">${esc(G.teams[ME.team]?G.teams[ME.team].name:"?")}</b> · wechseln`; }
+  else sw.style.display="none";
+  $("hoClash").textContent=clashText();
   $("hoRound").textContent=`Runde ${G.round} von ${G.rounds} · ${LEVELS[G.level]?LEVELS[G.level].name:""}`;
   $("hoTeam").textContent=t.name;$("hoTeam").style.color=TEAMCOL[G.turn];
   const tag=$("hoRole");
@@ -1175,6 +1228,7 @@ $("shareBtn").onclick=async()=>{
 /* Spiel-Buttons */
 $("startBtn").onclick=()=>{beep(880,.01,.01);dispatch("start");};
 $("goBtn").onclick=()=>dispatch("go");
+$("hoSwitch").onclick=()=>setMyTeam((ME.team+1)%G.teams.length);
 $("hoQuit").onclick=()=>dispatch("quit");
 $("okBtn").onclick=()=>G.card&&dispatch("ok",{n:G.card.num});
 $("skipBtn").onclick=()=>G.card&&dispatch("skip",{n:G.card.num});
