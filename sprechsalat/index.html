@@ -266,7 +266,7 @@ input:focus,textarea:focus{outline:none;border-color:var(--yellow)}
       <button class="btn s" id="rerollBtn">🎲 Andere Variante</button>
     </div>
   </div>
-  <button class="btn ghost" id="solBtn">👁 Lösung (gedrückt halten)</button>
+  <button class="btn ghost" id="solBtn">👁 Lösung zeigen (sperrt die Karte)</button>
 </section>
 
 <!-- ROUND END -->
@@ -767,8 +767,9 @@ const H={
     setLevel();drawNext();G.phase="play";
     G.dur=G.time*1000; G.endAt=G.mode==="team"?Date.now()+G.dur:0;
   },
+  reveal(p){ if(G.card&&p.n===G.card.num) G.card.revealed=true; },
   ok(p){
-    if(!G.card||p.n!==G.card.num) return;
+    if(!G.card||p.n!==G.card.num||G.card.revealed) return;
     if(G.phase==="steal") return finishSteal("ok");
     if(G.phase!=="play") return;
     G.streak++;
@@ -779,11 +780,12 @@ const H={
     if(!G.card||p.n!==G.card.num) return;
     if(G.phase==="steal") return finishSteal("fail");
     if(G.phase!=="play") return;
-    if(G.mode==="team"&&skipsLeft()<=0) return;
+    const rv=!!G.card.revealed;
+    if(G.mode==="team"&&skipsLeft()<=0&&!rv) return;
     G.skips++;G.streak=0;
-    G.log.push({enc:G.card.enc,text:G.card.text,ok:false,pts:(G.mode==="team"&&G.skipRule==="minus")?-1:0}); drawNext();
+    G.log.push({enc:G.card.enc,text:G.card.text,ok:false,revealed:rv,pts:(G.mode==="team"&&G.skipRule==="minus")?-1:0}); drawNext();
   },
-  reroll(p){ if(G.phase!=="play"||!G.card||p.n!==G.card.num) return; G.card.enc=encode(G.card.text,G.level); },
+  reroll(p){ if(G.phase!=="play"||!G.card||p.n!==G.card.num) return; const rv=G.card.revealed; G.card.enc=encode(G.card.text,G.level); if(rv) G.card.revealed=true; },
   end(p){
     if(p.t!==G.turnId) return;
     if(G.phase==="steal"){ if(G.card) finishSteal("fail"); return; }
@@ -993,13 +995,17 @@ function renderPlay(){
     const card=$("card");card.classList.remove("pop");void card.offsetWidth;card.classList.add("pop");
   }
   $("card").classList.toggle("steal",st);
-  $("okBtn").textContent=st?"✓ Geklaut!":"✓ Erraten";
+  const rv=!!c.revealed;
+  $("okBtn").textContent= rv?"🔒 Lösung gesehen":(st?"✓ Geklaut!":"✓ Erraten");
+  $("okBtn").disabled=rv;
   const sl=skipsLeft();
-  $("skipBtn").textContent= st?"✗ Nicht geschafft" :
+  $("skipBtn").textContent= st?"✗ Nicht geschafft" : rv?"Weiter zur nächsten Karte" :
     (team&&G.skipRule==="max3"?`Überspringen (${sl})`: team&&G.skipRule==="minus"?"Überspringen (−1)":"Überspringen");
-  $("skipBtn").disabled= !st&&team&&sl<=0;
-  $("rerollBtn").style.display=st?"none":"";
-  $("skipBtn").style.gridColumn=st?"1 / -1":"";
+  $("skipBtn").disabled= !st&&!rv&&team&&sl<=0;
+  $("skipBtn").style.gridColumn=(st||rv)?"1 / -1":"";
+  $("rerollBtn").style.display=(st||rv)?"none":"";
+  if(rv) $("sol").classList.remove("hide");
+
   const tag=$("roleTag");
   if(role==="reader"){
     tag.style.display="block";tag.className="roletag rd";
@@ -1042,8 +1048,8 @@ function renderRoundEnd(){
   $("rePts").textContent=points();
   const sn=G.stealTeam!=null?esc(G.teams[G.stealTeam].name):"";
   $("reLog").innerHTML=G.log.map(l=>{
-    const icon=l.ok?(l.pts>1?"🔥":"✅"):l.steal==="ok"?"🦝":l.open?"⏱":"⏭";
-    const extra=l.steal==="ok"?` · geklaut von ${sn} (+1)`:l.steal==="fail"?" · Klau-Versuch daneben":"";
+    const icon=l.ok?(l.pts>1?"🔥":"✅"):l.steal==="ok"?"🦝":l.revealed?"👁":l.open?"⏱":"⏭";
+    const extra=l.revealed?" · Lösung angesehen":l.steal==="ok"?` · geklaut von ${sn} (+1)`:l.steal==="fail"?" · Klau-Versuch daneben":"";
     const pt=l.pts>0?`+${l.pts}`:l.pts<0?`${l.pts}`:"";
     return `<div><span>${icon}</span><span class="grow"><b>${esc(l.enc)}</b><em>${esc(l.text)}${extra}</em></span><span class="pt">${pt}</span></div>`;}).join("");
   $("reScores").innerHTML=G.teams.map((x,i)=>`<div class="score"><span style="color:${TEAMCOL[i]}">${esc(x.name)}</span><b>${x.score}</b></div>`).join("");
@@ -1164,8 +1170,9 @@ $("hoQuit").onclick=()=>dispatch("quit");
 $("okBtn").onclick=()=>G.card&&dispatch("ok",{n:G.card.num});
 $("skipBtn").onclick=()=>G.card&&dispatch("skip",{n:G.card.num});
 $("rerollBtn").onclick=()=>G.card&&dispatch("reroll",{n:G.card.num});
-$("solBtn").addEventListener("pointerdown",e=>{e.preventDefault();$("sol").classList.remove("hide");});
-["pointerup","pointerleave","pointercancel"].forEach(ev=>$("solBtn").addEventListener(ev,()=>$("sol").classList.add("hide")));
+$("solBtn").addEventListener("pointerdown",e=>{e.preventDefault();$("sol").classList.remove("hide");
+  if(G.card&&!G.card.revealed&&(G.phase==="play"||G.phase==="steal")) dispatch("reveal",{n:G.card.num});});
+["pointerup","pointerleave","pointercancel"].forEach(ev=>$("solBtn").addEventListener(ev,()=>{ if(!(G.card&&G.card.revealed)) $("sol").classList.add("hide"); }));
 $("solBtn").oncontextmenu=e=>e.preventDefault();
 $("quitBtn").onclick=()=>{if(G.mode!=="team"||window.confirm("Spiel wirklich beenden?"))dispatch("quit");};
 $("nextBtn").onclick=()=>dispatch("next");
