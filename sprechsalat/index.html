@@ -85,6 +85,7 @@ input:focus,textarea:focus{outline:none;border-color:var(--yellow)}
 .center{text-align:center;align-items:center;justify-content:center}
 .huge{font-size:64px;font-weight:900;line-height:1}
 .demo{background:var(--cream);color:var(--ink);border-radius:16px;padding:14px;font-weight:900;font-size:22px;min-height:56px}
+.chip.all{border-style:dashed}.chip.all.on{border-style:solid}
 .combo{color:var(--coral);font-weight:900}
 .card.steal{background:#FFE3A3}
 .btn:disabled{opacity:.35}
@@ -1100,6 +1101,14 @@ function loadCustom(){
 }
 function renderCats(){
   const el=$("cats");el.innerHTML="";
+  const keys=Object.keys(DECKS).filter(k=>DECKS[k].items.length);
+  const allOn=keys.every(k=>CFG.cats.has(k));
+  const total=keys.reduce((n,k)=>n+DECKS[k].items.length,0);
+  const ab=document.createElement("button");
+  ab.className="chip all"+(allOn?" on":"");
+  ab.innerHTML=`${allOn?"✓ Alle":"Alle auswählen"} <small>${total}</small>`;
+  ab.onclick=()=>{ if(allOn) CFG.cats.clear(); else keys.forEach(k=>CFG.cats.add(k)); store.set("cats",[...CFG.cats]);renderCats(); };
+  el.appendChild(ab);
   Object.entries(DECKS).forEach(([k,d])=>{
     const b=document.createElement("button");
     b.className="chip"+(CFG.cats.has(k)?" on":"");
